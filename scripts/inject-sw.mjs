@@ -1,0 +1,9 @@
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+const assetDir = 'dist/assets';
+const assets = readdirSync(assetDir).filter(x => /\.(js|css|svg|png|webp|woff2)$/.test(x)).map(x => `assets/${x}`);
+const list = ['index.html','manifest.webmanifest','icons/iguana-mark.svg','icons/app-192.png','icons/app-512.png',...assets];
+const path = 'dist/sw.js';
+const original = readFileSync(path,'utf8');
+writeFileSync(path, original.replace('/* GENERATED_PRECACHE */', `const PRECACHE = ${JSON.stringify(list)};`));
+console.log(`Service worker prepared with ${list.length} public app-shell resources.`);

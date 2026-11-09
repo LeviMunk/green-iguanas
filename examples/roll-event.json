@@ -1,0 +1,20 @@
+{
+  "note": "SYNTHETIC FORMAT EXAMPLE. This is not a Green Iguanas campaign event.",
+  "events": [
+    {
+      "schema_version": "1.0",
+      "event_id": "SYNTHETIC-EXAMPLE-001",
+      "source": "documentation-example",
+      "occurred_at": "2026-11-09T18:30:00Z",
+      "campaign_external_id": "green-iguanas",
+      "session_external_id": null,
+      "character_external_id": "bobby-kills",
+      "roll_type": "attack",
+      "dice": [{"sides":20,"face":17,"kept":true}],
+      "modifier_total": 5,
+      "total": 22,
+      "critical_hit": false,
+      "visibility": "members"
+    }
+  ]
+}

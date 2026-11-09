@@ -1,0 +1,211 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { campaign, characters, type Character } from './data/campaign';
+import { demoRolls } from './data/demo';
+import { summarize, validateEvents, type RollEvent } from './lib/dice';
+import { useCampaignContent } from './lib/content';
+
+type Glyph = 'arrow'|'arrow-up'|'chevron'|'compass'|'book'|'dice'|'shield'|'users'|'spark'|'crown'|'hourglass'|'lock'|'menu'|'close'|'search'|'plus'|'scroll'|'download'|'upload'|'feather'|'trophy'|'external'|'moon'|'check'|'filter'|'swords'|'user'|'coins';
+function Icon({name, size=20}: {name:Glyph; size?:number}) {
+  const common = { width:size, height:size, viewBox:'0 0 24 24', fill:'none', stroke:'currentColor', strokeWidth:1.55, strokeLinecap:'round' as const, strokeLinejoin:'round' as const, 'aria-hidden': true as const };
+  const paths:Record<Glyph, React.ReactNode> = {
+    arrow:<><path d="M4 12h15M13 6l6 6-6 6"/></>,
+    'arrow-up':<><path d="M5 19 19 5M8 5h11v11"/></>,
+    chevron:<><path d="m9 18 6-6-6-6"/></>,
+    compass:<><circle cx="12" cy="12" r="9"/><path d="m15 9-2.5 5.5L9 15l2.5-5.5z"/></>,
+    book:<><path d="M12 6a7 7 0 0 0-9-1v14a7 7 0 0 1 9 1V6Zm0 0a7 7 0 0 1 9-1v14a7 7 0 0 0-9 1V6Z"/></>,
+    dice:<><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="8.5" cy="8.5" r=".75" fill="currentColor"/><circle cx="15.5" cy="8.5" r=".75" fill="currentColor"/><circle cx="12" cy="12" r=".75" fill="currentColor"/><circle cx="8.5" cy="15.5" r=".75" fill="currentColor"/><circle cx="15.5" cy="15.5" r=".75" fill="currentColor"/></>,
+    shield:<><path d="M12 2 21 6v6c0 5-3.4 8.2-9 10-5.6-1.8-9-5-9-10V6l9-4Z"/></>,
+    users:<><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 14a6 6 0 0 1 4 6"/></>,
+    spark:<><path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2ZM19 17l.8 2.2L22 20l-2.2.8L19 23l-.8-2.2L16 20l2.2-.8L19 17Z"/></>,
+    crown:<><path d="m3 8 4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8Z"/></>,
+    hourglass:<><path d="M5 2h14M5 22h14M7 2v4c0 3 5 6 5 6s5-3 5-6V2M7 22v-4c0-3 5-6 5-6s5 3 5 6v4"/></>,
+    lock:<><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></>,
+    menu:<><path d="M4 7h16M4 12h16M4 17h16"/></>,
+    close:<><path d="M5 5 19 19M19 5 5 19"/></>,
+    search:<><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></>,
+    plus:<><path d="M12 5v14M5 12h14"/></>,
+    scroll:<><path d="M7 4h13v13a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 6 0v10a2 2 0 0 1-4 0"/><path d="M9 4h11M11 9h6M11 13h6"/></>,
+    download:<><path d="M12 3v12m-5-5 5 5 5-5M4 18v3h16v-3"/></>,
+    upload:<><path d="M12 17V5m-5 5 5-5 5 5M4 18v3h16v-3"/></>,
+    feather:<><path d="M20 4c-6-1-12 2-14 9-1 3-1 5-1 7M3 21C9 14 14 11 21 3M9 15h5M12 11h6"/></>,
+    trophy:<><path d="M7 4h10v7a5 5 0 0 1-10 0V4ZM7 6H3v3a4 4 0 0 0 4 4M17 6h4v3a4 4 0 0 1-4 4M12 16v4M8 21h8"/></>,
+    external:<><path d="M14 4h6v6M20 4l-9 9M19 14v5H5V5h5"/></>,
+    moon:<><path d="M20 15.5A9 9 0 0 1 8.5 4 9 9 0 1 0 20 15.5Z"/></>,
+    check:<><path d="m5 12 4 4L19 6"/></>,
+    filter:<><path d="M4 7h16M7 12h10M10 17h4"/></>,
+    swords:<><path d="m3 3 7 7m4 4 7 7m-10-3-4 4M5 5l4-2 12 12-3 3L5 5ZM21 3 3 21"/></>,
+    user:<><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>,
+    coins:<><circle cx="9" cy="9" r="6"/><path d="M13 14a6 6 0 1 0 7-7M6 9h6M9 6v6"/></>,
+  };
+  return <svg {...common}>{paths[name]}</svg>;
+}
+
+function Crest({size=56}: {size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 80 90" fill="none" aria-hidden="true" className="crest-svg">
+    <path d="M40 3 70 14v29c0 19-14 32-30 43C24 75 10 62 10 43V14L40 3Z" stroke="currentColor" strokeWidth="1.25"/>
+    <path d="M40 10 64 19v23c0 15-10 27-24 36-14-9-24-21-24-36V19l24-9Z" stroke="currentColor" strokeOpacity=".36"/>
+    <path d="M48 24c-6-3-17 1-18 11-1 7 6 10 12 13 5 3 6 7 2 11-3 3-10 3-15-2" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"/>
+    <path d="m29 21 4 7m19-5-6 8m-18 22-6 4m25 0 7 3m-20 6 6 6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+    <circle cx="49" cy="35" r="1.8" fill="currentColor"/>
+    <path d="M30 35c-6 1-9 6-8 11M43 49l10-2-6 6" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
+  </svg>;
+}
+
+const nav = [
+  {href:'#/',label:'Home',glyph:'compass' as Glyph},
+  {href:'#/party',label:'The Party',glyph:'users' as Glyph},
+  {href:'#/dice',label:'Dice Chronicle',glyph:'dice' as Glyph},
+  {href:'#/journal',label:'Journal',glyph:'book' as Glyph},
+  {href:'#/archive',label:'World Archive',glyph:'scroll' as Glyph},
+  {href:'#/dragonbowl',label:'Dragonbowl',glyph:'trophy' as Glyph},
+];
+function useRoute() {
+  const [route,setRoute] = useState(() => window.location.hash.slice(1) || '/');
+  useEffect(() => {
+    const update = () => {setRoute(window.location.hash.slice(1) || '/');window.scrollTo({top:0,behavior:'instant'});};
+    window.addEventListener('hashchange',update);
+    return () => window.removeEventListener('hashchange',update);
+  }, []);
+  return route;
+}
+function Label({children}: {children:React.ReactNode}) {return <div className="eyebrow"><span className="eyebrow-rule"/>{children}</div>;}
+function Action({href,children,variant='primary',icon='arrow'}:{href:string;children:React.ReactNode;variant?:'primary'|'outline'|'text';icon?:Glyph}) {return <a href={href} className={`btn btn-${variant}`}>{children}<Icon name={icon} size={17}/></a>;}
+function PageIntro({eyebrow,title,description}: {eyebrow:string;title:React.ReactNode;description:string}) {return <header className="page-intro container"><Label>{eyebrow}</Label><h1 className="page-title">{title}</h1><p className="lead">{description}</p><span className="thin-divider"/></header>;}
+function PlaceholderArt({character,large=false}: {character:Character;large?:boolean}) {
+  const artworkSrc = character.portrait ? (character.portrait.startsWith("https://") ? character.portrait : `${import.meta.env.BASE_URL}${character.portrait.replace(/^\/+/, "")}`) : null;
+  return <div className={`portrait-stage ${large?'portrait-large':''}`} style={{'--character-accent':character.accent} as React.CSSProperties}>
+    <div className="portrait-radial"/><div className="portrait-ring portrait-ring-one"/><div className="portrait-ring portrait-ring-two"/>{artworkSrc&&<img className="character-portrait-image" src={artworkSrc} alt={`Approved artwork of ${character.name}`} loading="lazy"/>}
+    {!character.portrait&&<div className="portrait-sigil"><span className="sigil-ornament">✦</span><span className="sigil-initials">{character.givenInitials}</span><span className="sigil-decoration">✧</span></div>}
+    {!character.portrait&&<div className="portrait-footnote">ILLUSTRATION PENDING</div>}
+  </div>;
+}
+function CharacterCard({character,position}:{character:Character;position?:'full'|'mini'}) {
+  return <a href={`#/character/${character.id}`} className={`character-card ${position==='mini'?'character-mini':''}`} style={{'--character-accent':character.accent} as React.CSSProperties}>
+    <PlaceholderArt character={character}/>
+    <div className="character-info"><div className="character-topline"><span>THE FELLOWSHIP / {character.index}</span><Icon name="arrow-up" size={15}/></div><div className="character-name">{character.name}</div><div className="character-subline">Character dossier <span>↗</span></div></div>
+  </a>;
+}
+function SiteHeader({route}: {route:string}) {
+  const [open,setOpen]=useState(false);
+  useEffect(()=>setOpen(false),[route]);
+  return <><header className="site-header"><div className="header-inner container">
+    <a href="#/" className="brand" aria-label="Green Iguanas home"><Crest size={45}/><span className="brand-copy"><strong>GREEN IGUANAS</strong><small>THE LIVING CHRONICLE</small></span></a>
+    <nav className="desktop-nav" aria-label="Main navigation">{nav.slice(0,6).map(item=><a key={item.href} href={item.href} className={route===item.href.slice(1)?'active':''}>{item.label}</a>)}</nav>
+    <div className="header-right"><span className="header-status"><span className="status-dot"/> CAMPAIGN COMPANION</span><button type="button" className="menu-trigger" onClick={()=>setOpen(!open)} aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open}><Icon name={open?'close':'menu'} size={24}/></button></div>
+  </div></header>
+  {open && <nav className="mobile-menu" aria-label="Expanded navigation">{nav.map(n=><a href={n.href} key={n.href}><Icon name={n.glyph}/>{n.label}<Icon name="arrow" size={15}/></a>)}</nav>}
+  <nav className="bottom-nav" aria-label="Mobile navigation">{[nav[0],nav[1],nav[2],nav[3]].map(n=><a key={n.href} href={n.href} className={route===n.href.slice(1)?'active':''}><Icon name={n.glyph} size={21}/><span>{n.label==='Dice Chronicle'?'Dice':n.label==='The Party'?'Party':n.label}</span></a>)}<button type="button" onClick={()=>setOpen(!open)} aria-label="More navigation"><Icon name="menu" size={21}/><span>More</span></button></nav></>;
+}
+function SectionTitle({eyebrow,title,sub,href,link}:{eyebrow:string;title:React.ReactNode;sub?:string;href?:string;link?:string}) {return <div className="section-heading"><div><Label>{eyebrow}</Label><h2>{title}</h2>{sub&&<p>{sub}</p>}</div>{href&&<Action href={href} variant="text">{link||'Explore'}</Action>}</div>}
+
+function Home() {
+  const { content } = useCampaignContent();
+  const latest = [...content.sessions].sort((a,b)=>b.number-a.number)[0];
+  return <main>
+    <section className="hero container"><div className="hero-content"><Label>THE CHRONICLE OF OUR ADVENTURES</Label><div className="hero-chapter">AN ONGOING STORY <span>✦</span> FIVE ADVENTURERS</div>
+      <h1>Every legend<br/>begins with a<br/><em>fellowship.</em></h1><p>A home for the moments that become legends. Five companions, countless rolls of the dice, and a story that belongs to us.</p>
+      <div className="hero-actions"><Action href="#/party">Meet the fellowship</Action><Action href="#/journal" variant="outline">Enter the archive</Action></div>
+      <div className="hero-meta"><span className="meta-line"/><span><strong>05</strong> HEROES</span><span className="meta-dot">✦</span><span>ONE SHARED STORY</span></div>
+    </div>
+    <div className="hero-art" aria-label="Decorative Green Iguanas campaign emblem"><div className="hero-atmosphere"/><div className="hero-inner-ring"/><div className="hero-outer-ring"/><div className="hero-crosshair crosshair-top">✧</div><div className="hero-crosshair crosshair-bottom">✧</div><div className="hero-symbol"><Crest size={205}/></div><div className="hero-art-caption"><span>THE GREEN IGUANAS</span><span>EST. IN ADVENTURE</span></div><span className="hero-orbit-label">A • CHRONICLE • UNFOLDING</span></div>
+    </section>
+    <section className="home-next-chapter container"><div><Label>THE LATEST CHAPTER</Label><h2>{latest ? `Session ${latest.number}: ${latest.title}` : 'The next chapter awaits.'}</h2><p>{latest ? latest.summary : 'Our adventure journal will come alive as approved session recaps are published.'}</p></div><Action href="#/journal" variant="outline">Read the adventure journal</Action></section>
+    <section className="verse-bar"><div className="container verse-inner"><span>✦</span><p>THE STORIES WE TELL. THE CHOICES WE MAKE. THE LEGENDS WE LEAVE BEHIND.</p><span>✦</span></div></section>
+    <section className="section party-preview container"><SectionTitle eyebrow="I / THE FELLOWSHIP" title={<>Bound by <em>adventure.</em></>} sub="Five characters. Five perspectives. One extraordinary tale." href="#/party" link="View all characters"/>
+      <div className="characters-grid">{characters.map(c=><CharacterCard key={c.id} character={c}/>)}</div><div className="section-caption"><span>01 — 05</span><span>Individual portraits will be added from campaign artwork.</span></div>
+    </section>
+    <section className="section archive-preview"><div className="container"><SectionTitle eyebrow="II / THE LIVING RECORD" title={<>The adventure, <em>remembered.</em></>} sub="A place for every turning point, improbable triumph, and story still unfolding."/>
+    <div className="feature-grid">
+      <a href="#/dice" className="feature-card feature-dice"><div className="feature-graphic"><Icon name="dice" size={76}/></div><div className="feature-top"><span>01 / THE ODDS</span><Icon name="arrow-up" size={18}/></div><div className="feature-bottom"><span className="feature-marker">✦ FEATURE COLLECTION</span><h3>Dice<br/><i>Chronicle</i></h3><p>Every roll tells a story. Explore the numbers behind the legend.</p><span className="feature-link">Explore the chronicle <Icon name="arrow" size={17}/></span></div></a>
+      <a href="#/journal" className="feature-card feature-journal"><div className="feature-graphic"><Icon name="book" size={76}/></div><div className="feature-top"><span>02 / THE TALE</span><Icon name="arrow-up" size={18}/></div><div className="feature-bottom"><span className="feature-marker">✦ CAMPAIGN RECORDS</span><h3>Adventure<br/><i>Journal</i></h3><p>Sessions, discoveries, and memories preserved beyond the table.</p><span className="feature-link">Read the journal <Icon name="arrow" size={17}/></span></div></a>
+      <a href="#/dragonbowl" className="feature-card feature-arena"><div className="feature-graphic"><Icon name="trophy" size={76}/></div><div className="feature-top"><span>03 / THE ARENA</span><Icon name="arrow-up" size={18}/></div><div className="feature-bottom"><span className="feature-marker">✦ TOURNAMENT ARCHIVE</span><h3>The<br/><i>Dragonbowl</i></h3><p>Every match. Every opponent. Every moment worth revisiting.</p><span className="feature-link">Enter the arena <Icon name="arrow" size={17}/></span></div></a>
+    </div></div></section>
+    <section className="closing-section container"><div className="closing-ornament">✦</div><Label>THE STORY IS STILL BEING WRITTEN</Label><p>“The best stories aren't found in books. They're made together.”</p><Action href="#/party" variant="outline">Explore the fellowship</Action></section>
+  </main>;
+}
+function Party() {
+  const [query,setQuery]=useState('');
+  const filtered=characters.filter(c=>c.name.toLowerCase().includes(query.trim().toLowerCase()));
+  return <main><PageIntro eyebrow="THE COMPANY / I" title={<>The <em>Fellowship.</em></>} description="Five companions at the heart of this story. Step into their dossiers, revisit their journeys, and discover the people behind the legend."/>
+    <section className="container directory-section"><div className="directory-toolbar"><div className="directory-count">THE PARTY <span>{String(filtered.length).padStart(2,'0')} / 05</span></div><label className="search-field"><Icon name="search" size={18}/><input aria-label="Search characters" placeholder="Find a character" value={query} onChange={e=>setQuery(e.target.value)}/></label></div>
+      {filtered.length?<div className="characters-grid party-grid">{filtered.map(c=><CharacterCard key={c.id} character={c}/>)}</div>:<div className="empty-mini">No characters match “{query}”.</div>}
+      <div className="directory-note"><Icon name="lock" size={17}/>Character details will be updated from reviewed D&D Beyond PDF exports; artwork is added only when approved.</div>
+    </section></main>;
+}
+function DetailBox({label,value}:{label:string;value:string|null|number}) {return <div className="detail-box"><span>{label}</span><strong>{value ?? 'Awaiting records'}</strong></div>}
+function EmptyState({glyph='scroll',heading,detail}:{glyph?:Glyph;heading:string;detail:string}) {return <div className="empty-state"><div className="empty-icon"><Icon name={glyph} size={30}/></div><h3>{heading}</h3><p>{detail}</p></div>}
+function CharacterPage({id}:{id:string}) {
+ const character=characters.find(c=>c.id===id);
+ const [tab,setTab]=useState<'overview'|'timeline'|'chronicle'>('overview');
+ useEffect(()=>setTab('overview'),[id]);
+ if(!character) return <main className="container"><EmptyState heading="The name is not in our records" detail="This character could not be found in the Green Iguanas roster."/><Action href="#/party" variant="outline">Return to the party</Action></main>;
+ return <main style={{'--character-accent':character.accent} as React.CSSProperties}>
+   <section className="container dossier-top"><a className="breadcrumb" href="#/party">THE FELLOWSHIP <Icon name="chevron" size={12}/> DOSSIER {character.index}</a><div className="dossier-layout"><div className="dossier-portrait"><PlaceholderArt character={character} large/></div><div className="dossier-copy"><Label>CHARACTER FILE {character.index} / 05</Label><h1>{character.name}</h1><p className="dossier-kicker">A MEMBER OF THE GREEN IGUANAS</p><div className="accent-line"/><p className="dossier-description">A character's legacy is more than their abilities. Their choices, connections and memorable moments will live here once their story is recorded.</p>
+     <div className="dossier-details"><DetailBox label="CLASS" value={character.class}/><DetailBox label="LEVEL" value={character.level}/><DetailBox label="ANCESTRY" value={character.ancestry}/><DetailBox label="BACKGROUND" value={character.background}/></div>
+     {character.sheetSnapshot?<div className="sheet-stat-group"><div className="sheet-stat-head">VERIFIED SHEET SNAPSHOT <span>UPDATED {character.sheetSnapshot.asOf}</span></div><div className="dossier-details"><DetailBox label="ARMOR CLASS" value={character.sheetSnapshot.armorClass??null}/><DetailBox label="MAXIMUM HP" value={character.sheetSnapshot.maxHitPoints??null}/><DetailBox label="MOVEMENT" value={character.sheetSnapshot.speed??null}/><DetailBox label="INITIATIVE" value={character.sheetSnapshot.initiative??null}/></div></div>:<div className="sheet-pending">D&D Beyond PDF snapshot not uploaded yet. Character mechanics are intentionally blank.</div>}
+     <div className="dossier-actions">{character.beyondUrl?<a className="btn btn-primary" href={character.beyondUrl} target="_blank" rel="noopener noreferrer">Open D&D Beyond <Icon name="external" size={16}/></a>:<span className="muted-action"><Icon name="external" size={16}/>D&D Beyond link not supplied</span>}</div>
+   </div></div></section>
+   <div className="tab-wrapper"><div className="container tab-row" role="tablist" aria-label={`${character.name} sections`}>{(['overview','timeline','chronicle'] as const).map(item=><button key={item} type="button" role="tab" aria-selected={tab===item} className={tab===item?'selected':''} onClick={()=>setTab(item)}>{item==='overview'?'Profile & Story':item==='timeline'?'The Journey':'Dice & Moments'}</button>)}</div></div>
+   <section className="container dossier-body">{tab==='overview'?<div className="dossier-columns"><div><Label>THE STORY SO FAR</Label><h2>A story yet to be <em>recorded.</em></h2><p className="body-muted">{character.biography ?? 'Biography, personality, and character history have not yet been provided. The Dungeon Master can add verified details when the campaign archive opens.'}</p></div><div className="dossier-side"><div className="small-panel"><Icon name="feather" size={23}/><h3>Personal journal</h3><p>Player-submitted notes can be added as approved campaign content in a later release.</p><span>PLANNED / STORY FEATURE</span></div><div className="small-panel"><Icon name="shield" size={23}/><h3>People & possessions</h3><p>Relationships, significant items, and discoveries will appear here after verified entry.</p><span>AWAITING RECORDS</span></div></div></div>:tab==='timeline'?<EmptyState glyph="hourglass" heading="The timeline begins here" detail="Sessions and milestones have not yet been entered for this character. No events have been invented."/>:<div className="centered"><EmptyState glyph="dice" heading="No verified dice events yet" detail="Once approved TableOS events are imported, this section will reveal the character's dice history and remarkable moments."/><Action href="#/dice" variant="outline">Open Dice Chronicle</Action></div>}</section>
+   <div className="container dossier-next"><span>CONTINUE THE STORY</span><a href={`#/character/${characters[(characters.indexOf(character)+1)%characters.length].id}`}>NEXT DOSSIER <strong>{characters[(characters.indexOf(character)+1)%characters.length].name}</strong> <Icon name="arrow" size={22}/></a></div>
+ </main>;
+}
+
+function DiceChronicle() {
+ const [bundle,setBundle]=useState<{events:RollEvent[];label:string;mode:'demo'|'import'|'published'}|null>(null);
+ useEffect(()=>{let cancelled=false;fetch(`${import.meta.env.BASE_URL}data/rolls.json`,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('Public roll feed unavailable');return r.json()}).then(raw=>{const events=validateEvents(raw);if(events.some(e=>e.visibility!=='public'))throw new Error('Public feed contains restricted events');if(!cancelled&&events.length) setBundle(prev=>prev??{events,label:'published campaign export',mode:'published'});}).catch(()=>{/* Missing feed leaves the honest empty state. */});return()=>{cancelled=true}},[]);
+ const [character,setCharacter]=useState('all');
+ const [kind,setKind]=useState('all');
+ const [query,setQuery]=useState('');
+ const [error,setError]=useState('');
+ const input=useRef<HTMLInputElement>(null);
+ const filtered=useMemo(()=> (bundle?.events||[]).filter(e=>(character==='all'||e.character_external_id===character)&&(kind==='all'||e.roll_type===kind)&&(query===''||`${e.event_id} ${e.session_external_id ?? ''} ${e.total}`.toLowerCase().includes(query.toLowerCase()))).sort((a,b)=>b.occurred_at.localeCompare(a.occurred_at)),[bundle,character,kind,query]);
+ const stats=useMemo(()=>summarize(filtered),[filtered]);
+ async function handleImport(file:File|undefined){
+   if(!file)return;
+   try {if(file.size>5*1024*1024)throw new Error('File too large (5 MB maximum).'); const parsed=JSON.parse(await file.text()); const events=validateEvents(parsed); setBundle({events,label:file.name,mode:'import'});setError('');setCharacter('all');setKind('all');setQuery('');}
+   catch(e){setError(e instanceof Error?e.message:'Could not read that file.');}
+   if(input.current)input.current.value='';
+ }
+ const characterName=(id:string)=>characters.find(c=>c.id===id)?.name||id;
+ return <main><PageIntro eyebrow="THE ARCHIVE / II" title={<>Dice <em>Chronicle.</em></>} description="Behind every impossible victory and spectacular failure is a roll worth remembering. Explore the record with the mathematics kept honest."/>
+  <section className="container dice-workspace">
+  <div className="workspace-banner"><div><div className="banner-eyebrow"><span className="status-dot"/>{bundle?.mode==='demo'?'DEMONSTRATION MODE':bundle?.mode==='import'?'LOCAL IMPORT / UNVERIFIED':bundle?.mode==='published'?'PUBLISHED CAMPAIGN EXPORT':'AWAITING PUBLISHED EVENTS'}</div><h2>{bundle?'Your current viewing session':'A legend in the making.'}</h2><p>{bundle?.mode==='demo'?'These fictitious rolls are strictly demonstration data. They are not campaign history.':bundle?.mode==='import'?`Showing ${bundle.events.length} locally imported events from ${bundle.label}. This file has not been authenticated against TableOS.`:bundle?.mode==='published'?`Displaying ${bundle.events.length} approved public events from the campaign export. Raw faces and modifiers are kept distinct.`:'There are no published rolls yet. Load clearly marked sample rolls to explore the interface, or import a JSON export locally.'}</p></div>
+  <div className="workspace-actions"><input type="file" accept=".json,application/json" hidden ref={input} onChange={e=>handleImport(e.target.files?.[0])}/><button type="button" className="btn btn-outline" onClick={()=>input.current?.click()}><Icon name="upload" size={17}/> Import JSON</button>{bundle?<button type="button" className="btn btn-quiet" onClick={()=>{setBundle(null);setError('');}}>Clear session</button>:<button type="button" className="btn btn-primary" onClick={()=>{setBundle({events:demoRolls,label:'Fictitious demonstration set',mode:'demo'});setError('');}}><Icon name="spark" size={17}/> Try demo data</button>}</div></div>
+  {error&&<div role="alert" className="import-error">{error}</div>}
+  <div className="dice-filters"><div className="filter-title"><Icon name="filter" size={17}/> FILTER THE RECORD</div><div className="filter-controls"><label><span>CHARACTER</span><select value={character} onChange={e=>setCharacter(e.target.value)}><option value="all">All characters</option>{characters.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label><label><span>ROLL TYPE</span><select value={kind} onChange={e=>setKind(e.target.value)}><option value="all">All types</option><option value="attack">Attacks</option><option value="ability_check">Ability checks</option><option value="saving_throw">Saving throws</option><option value="other">Other</option></select></label><label className="dice-search"><span>SEARCH EVENTS</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Event ID, session, result…"/></label></div></div>
+  <div className="stat-grid">{[{label:'D20 FACES',value:stats.d20s|| (bundle?'0':'—'),note:'Kept d20 results'},{label:'NATURAL 20S',value:bundle?stats.natural20s:'—',note:'Raw faces of 20'},{label:'NATURAL 1S',value:bundle?stats.natural1s:'—',note:'Raw faces of 1'},{label:'AVERAGE RAW D20',value:stats.average===null?'—':stats.average.toFixed(2),note:'Unmodified mean'}].map((s,i)=><div className="stat-card" key={s.label}><div className="stat-head"><span>{s.label}</span><span>0{i+1}</span></div><strong>{s.value}</strong><small>{s.note}</small></div>)}</div>
+  <div className="analytics-grid"><div className="analytics-panel"><div className="panel-heading"><div><Label>ROLL DISTRIBUTION</Label><h3>Twenty faces. <em>Endless possibilities.</em></h3></div><span className="panel-index">01 / 02</span></div>{stats.d20s>0?<><div className="distribution" role="img" aria-label="Raw kept d20 face distribution">{stats.distribution.map((count,i)=><div className="bar-column" key={i}><span className="bar-count">{count||''}</span><div className={`bar ${i===0||i===19?'bar-special':''}`} style={{height:`${Math.max(3,(count/Math.max(...stats.distribution))*100)}%`}} title={`Face ${i+1}: ${count} rolls`}/><span className="bar-label">{i+1}</span></div>)}</div><p className="chart-footnote">Based on {stats.d20s} kept raw d20 faces. Advantage/disadvantage discarded dice are excluded. Interpret small samples cautiously.</p></>:<EmptyState glyph="dice" heading="Nothing to chart yet" detail="The face distribution will appear when dice events are loaded."/>}</div>
+  <div className="analytics-panel records-panel"><div className="panel-heading"><div><Label>THE LOGBOOK</Label><h3>Roll <em>history.</em></h3></div><span className="panel-index">02 / 02</span></div>{filtered.length?<div className="roll-list">{filtered.slice(0,30).map(e=>{const d=e.dice.find(d=>d.sides===20&&d.kept);return <div className="roll-row" key={e.event_id}><div className={`roll-face ${d?.face===20?'nat20':d?.face===1?'nat1':''}`}>{d?.face??'—'}</div><div className="roll-description"><strong>{characterName(e.character_external_id)}</strong><span>{e.roll_type.replaceAll('_',' ')} · {new Date(e.occurred_at).toLocaleDateString()}</span></div><div className="roll-total"><span>RAW {d?.face??'—'} · MOD {e.modifier_total>=0?'+':''}{e.modifier_total}</span><strong>{e.total}</strong></div></div>})}</div>:<EmptyState glyph="scroll" heading="An empty ledger" detail="No events match the current filters. Import an export or try demonstration data."/>}</div></div>
+  <div className="dice-disclaimer"><Icon name="shield" size={19}/><div><strong>Integrity of the record</strong><p>Imported JSON is validated locally, not authenticated. The production ingestion service will enforce event IDs, role-based permissions, deduplication and signatures. Critical hits are recorded only when explicitly supplied for attack rolls.</p></div></div>
+ </section></main>;
+}
+
+const archiveSections = [
+  {name:'Adventure Journal',href:'#/journal',glyph:'book' as Glyph,description:'Session recaps, major discoveries and memorable moments.'},
+  {name:'Quests & Mysteries',href:'#/quests',glyph:'compass' as Glyph,description:'Ongoing, completed, failed and unresolved storylines.'},
+  {name:'People & Places',href:'#/archive',glyph:'scroll' as Glyph,description:'NPCs, factions, locations and their connections.'},
+  {name:'Dragonbowl',href:'#/dragonbowl',glyph:'trophy' as Glyph,description:'Opponents, tournament matches and outcomes.'},
+  {name:'Party Treasury',href:'#/treasury',glyph:'coins' as Glyph,description:'Shared riches, discoveries and important assets.'},
+  {name:'Achievements',href:'#/achievements',glyph:'spark' as Glyph,description:'Milestones earned by the company and its members.'}
+];
+function WorldArchive(){const [search,setSearch]=useState('');const {content}=useCampaignContent();const items=archiveSections.filter(x=>`${x.name} ${x.description}`.toLowerCase().includes(search.toLowerCase()));return <main><PageIntro eyebrow="THE ARCHIVE / III" title={<>World <em>Archive.</em></>} description="A growing encyclopedia of the people, places, pursuits, and legends that shape our world."/><section className="container directory-section"><div className="directory-toolbar"><span className="directory-count">EXPLORE THE INDEX <span>06 COLLECTIONS</span></span><label className="search-field"><Icon name="search" size={18}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search collections" aria-label="Search archive collections"/></label></div><div className="archive-cards">{items.map((section,i)=><a href={section.href} key={section.name} className="archive-tile"><span className="archive-number">{String(i+1).padStart(2,'0')}</span><Icon name={section.glyph} size={32}/><h3>{section.name}</h3><p>{section.description}</p><span>EXPLORE COLLECTION <Icon name="arrow" size={17}/></span></a>)}</div>{content.npcs.length>0&&<div className="world-npcs"><SectionTitle eyebrow="KNOWN TO THE PARTY" title={<>People <em>we’ve met.</em></>}/><div className="record-grid">{content.npcs.map(n=><article className="record-entry" key={n.id}><span className="record-star">✦</span><h3>{n.name}</h3><p>{n.description}</p></article>)}</div></div>}{!items.length&&<EmptyState glyph="search" heading="No matching collection" detail="Try a broader search."/>}<div className="directory-note"><Icon name="lock" size={17}/>This public archive contains only player-known material. Keep unrevealed DM notes outside the public repository.</div></section></main>}
+function Collection({kind}:{kind:'journal'|'quests'|'dragonbowl'|'treasury'|'achievements'}){
+ const {content}=useCampaignContent();
+ const entries = kind==='journal' ? content.sessions.map(x=>({key:x.id,title:`Session ${x.number}: ${x.title}`,details:[x.date,x.summary].filter(Boolean).join(' · ')})) : kind==='quests' ? content.quests.map(x=>({key:x.id,title:x.title,details:`${x.status} · ${x.summary}`})) : kind==='dragonbowl' ? content.dragonbowlMatches.map(x=>({key:x.id,title:x.title,details:x.summary})) : kind==='achievements' ? content.achievements.map(x=>({key:x.id,title:x.title,details:x.description})) : [];
+ const cfg={journal:{overline:'CAMPAIGN RECORDS / IV',title:'Adventure Journal',description:'The record of roads traveled, choices made, and moments we refuse to forget.',glyph:'book' as Glyph,empty:'The first entry awaits',detail:'No verified session recaps have been published yet. Entries will feature dates, illustrated moments, participants and linked discoveries.'},quests:{overline:'STORYLINES / V',title:'Quests & Mysteries',description:'Some threads are resolved. Others are waiting to be pulled.',glyph:'compass' as Glyph,empty:'No quests published',detail:'This record will track active, completed, failed and unresolved quests with their NPC, place and session backlinks.'},dragonbowl:{overline:'THE TOURNAMENT / VI',title:'Dragonbowl',description:'An arena for the names, matches, and outcomes that deserve to be remembered.',glyph:'trophy' as Glyph,empty:'The tournament records await',detail:'Opponents, matches, results and major Dragonbowl developments will appear after verified details are entered.'},treasury:{overline:'THE COMPANY / VII',title:'Party Treasury',description:'What we carry tells part of our story.',glyph:'coins' as Glyph,empty:'The treasury ledger is empty',detail:'Shared currency, meaningful discoveries and party assets will be tracked after an authorized DM entry.'},achievements:{overline:'THE COMPANY / VIII',title:'Achievements',description:'Not every victory is measured in gold.',glyph:'spark' as Glyph,empty:'No achievements certified',detail:'Achievements will be earned from verified campaign milestones and TableOS dice records, never invented.'}}[kind];
+ return <main><PageIntro eyebrow={cfg.overline} title={<>{cfg.title.split(' ').slice(0,-1).join(' ')} <em>{cfg.title.split(' ').slice(-1)}</em></>} description={cfg.description}/><section className="container collection-body"><div className="collection-section-label"><span>THE COMPLETE RECORD</span><span>{entries.length} PUBLISHED ENTRIES</span></div>{entries.length?<div className="record-grid">{entries.map(entry=><article className="record-entry" key={entry.key}><span className="record-star">✦</span><h3>{entry.title}</h3><p>{entry.details}</p></article>)}</div>:<EmptyState glyph={cfg.glyph} heading={cfg.empty} detail={cfg.detail}/>}<div className="centered"><Action href="#/archive" variant="outline">Return to World Archive</Action></div></section></main>
+}
+function Restricted({mode}:{mode:'account'|'dm'}){return <main><PageIntro eyebrow="THE VAULT / RESTRICTED" title={mode==='account'?<>Player <em>Access.</em></>:<>DM <em>Sanctum.</em></>} description="Private campaign information belongs behind actual authentication and database-level access controls."/><section className="container collection-body"><EmptyState glyph="lock" heading="Secure access is not yet enabled" detail="This first public release does not collect passwords or store personal notes. Player sign-in and DM publishing tools will appear only after secure backend configuration and permission tests."/></section></main>}
+function Footer(){return <footer className="footer"><div className="container footer-inner"><div className="footer-brand"><Crest size={48}/><div><strong>THE GREEN IGUANAS</strong><span>THE LIVING CHRONICLE</span></div></div><div className="footer-quote">{campaign.tagline}</div><div className="footer-links"><a href="#/archive">ARCHIVE</a><a href="#/achievements">ACHIEVEMENTS</a><a href="#/dragonbowl">DRAGONBOWL</a></div></div><div className="container footer-bottom"><span>A CAMPAIGN COMPANION BUILT FOR OUR TABLE</span><span>EST. IN ADVENTURE · PHASE I</span></div></footer>}
+export default function App(){const route=useRoute();let page:React.ReactNode;
+ if(route==='/'||route==='')page=<Home/>;
+ else if(route==='/party')page=<Party/>;
+ else if(route.startsWith('/character/'))page=<CharacterPage id={route.split('/')[2]}/>;
+ else if(route==='/dice')page=<DiceChronicle/>;
+ else if(route==='/archive')page=<WorldArchive/>;
+ else if(['journal','quests','dragonbowl','treasury','achievements'].includes(route.replace('/','')))page=<Collection kind={route.slice(1) as 'journal'|'quests'|'dragonbowl'|'treasury'|'achievements'}/>;
+ else if(route==='/account'||route==='/dm')page=<Restricted mode={route==='/dm'?'dm':'account'}/>;
+ else page=<WorldArchive/>;
+ return <div className="site-shell"><div className="ambient ambient-a"/><div className="ambient ambient-b"/><SiteHeader route={route}/>{page}<Footer/></div>
+}
