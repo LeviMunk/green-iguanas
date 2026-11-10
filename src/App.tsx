@@ -98,12 +98,6 @@ const heroOrder=['owen','bobby-kills','indigo','freed','heilbrun'];
 function HeroFellowship() {
   const heroes=heroOrder.map(id=>characters.find(c=>c.id===id)).filter((c):c is Character=>!!c);
   const [activeId,setActiveId]=useState('indigo');
-  const active=heroes.find(c=>c.id===activeId) ?? heroes[0];
-  function shiftHero(direction:number){
-    const next=heroes[(heroes.findIndex(c=>c.id===activeId)+direction+heroes.length)%heroes.length];
-    setActiveId(next.id);
-    document.getElementById(`hero-${next.id}`)?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-  }
   return <section className="cinematic-home" aria-labelledby="cinematic-title">
     <div className="cinematic-scenery" aria-hidden="true"><span className="ruin-arch arch-one"/><span className="ruin-arch arch-two"/><span className="ruin-arch arch-three"/><span className="cinematic-stars"/></div>
     <div className="cinematic-title-wrap">
@@ -113,29 +107,22 @@ function HeroFellowship() {
       <p>Five adventurers. One unfolding legend.</p>
     </div>
     <div className="cinematic-stage-outer">
-      <div className="cinematic-stage" role="group" aria-label="Choose a hero to spotlight">
-        {heroes.map((character,index)=><button
+      <div className="cinematic-stage" role="group" aria-label="Select a character to view their dossier">
+        {heroes.map((character,index)=><a
+            href={`#/character/${character.id}`}
             id={`hero-${character.id}`}
             key={character.id}
-            type="button"
             style={{'--character-accent':character.accent, '--hero-index':index} as React.CSSProperties}
             className={`cinematic-hero ${activeId===character.id?'is-active':''}`}
             onMouseEnter={()=>setActiveId(character.id)}
             onFocus={()=>setActiveId(character.id)}
-            onClick={()=>setActiveId(character.id)}
-            aria-pressed={activeId===character.id}
-            aria-label={`Spotlight ${character.name}`}
+            aria-label={`View ${character.name}'s character dossier`}
           >
             <span className="hero-backglow" aria-hidden="true" />
             <img src={`${import.meta.env.BASE_URL}${character.portrait}`} alt="" loading={index===2?'eager':'lazy'} decoding="async"/>
             <span className="hero-nameplate"><span className="hero-number">{character.index} / 05</span><strong>{character.name}</strong><span className="hero-role">{character.class ?? 'Adventurer'}</span><span className="hero-divider" /></span>
-          </button>)}
+          </a>)}
       </div>
-    </div>
-    <div className="hero-selection-bar" aria-live="polite">
-      <div className="hero-selection-copy"><span>NOW IN THE SPOTLIGHT</span><strong>{active.name}</strong><small>{active.descriptor}</small></div>
-      <div className="hero-selection-controls"><button type="button" onClick={()=>shiftHero(-1)} aria-label="Previous hero"><Icon name="chevron" size={19}/></button><span>{active.index} / 05</span><button type="button" onClick={()=>shiftHero(1)} aria-label="Next hero"><Icon name="chevron" size={19}/></button></div>
-      <a className="cinematic-enter" href={`#/character/${active.id}`}>Explore {active.name}<Icon name="arrow" size={19}/></a>
     </div>
     <div className="cinematic-links"><a href="#/party">MEET THE FELLOWSHIP <Icon name="arrow" size={16}/></a><span>✦</span><a href="#/dice">THE DICE CHRONICLE <Icon name="arrow" size={16}/></a></div>
     <div className="cinematic-bottom-line" aria-hidden="true" />
