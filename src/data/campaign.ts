@@ -146,6 +146,7 @@ export type StoryChapter = {
   title: string;
   kicker: string;
   summary: string;
+  record?: { title: string; text: string }[]; // Verified notes and uncertainty about played outcomes.
   status: 'confirmed' | 'details-pending';
   mood: 'museum' | 'ocean' | 'red-run' | 'freed' | 'dragon' | 'dragonbowl' | 'victory';
   hero: StoryArtwork;
@@ -158,6 +159,10 @@ export const storyChapters: StoryChapter[] = [
   {
     id:'museum-heist', title:'The Museum Heist', kicker:'THE RELIC THAT STARTED A RECKONING',
     summary:'Earlier campaign material references a museum heist involving a rare magical egg or Murkmire Stone, a rival crew and a chaotic escape. The relic’s ultimate fate, exact encounter details and consequences still need verification against the table record.',
+    record:[
+      {title:"The museum and the relic",text:"The early campaign record references a heist centered on the Murkmire Stone, also described as a rare magical egg, inside a museum. The adventure notes identify the Varkenbluff Museum of Natural History."},
+      {title:"A rival in the shadows",text:"The adventure material includes a rival crew and a chaotic encounter. Which encounters actually happened, who secured the relic, and its ultimate fate still need to be reconstructed."}
+    ],
     status:'details-pending', mood:'museum',
     hero:{src:'history/museum-relic.webp',alt:'Bobby Kills, Freed, Owen and Indigo inside a moonlit museum beside a glowing turquoise egg',caption:'The rare egg · museum chapter illustration',label:'THE RELIC'},
     gallery:[{src:'history/museum-original.webp',alt:'The original Green Iguanas art of the party entering a museum with a luminous egg under a glass dome',caption:'The original museum heist artwork',label:'THE FIRST CAPER'}]
@@ -165,6 +170,10 @@ export const storyChapters: StoryChapter[] = [
   {
     id:'revels-end', title:'A Voyage to Revel’s End', kicker:'BEYOND THE EDGE OF THE MAP',
     summary:'The Green Iguanas traveled by sea toward Revel’s End. Their reason for going, the people they met and the outcome of the voyage have not yet been established in the published record.',
+    record:[
+      {title:"A voyage north",text:"The Green Iguanas traveled by sea toward Revel’s End, the remote fortress-prison."},
+      {title:"The prison mission",text:"The adventure preparation describes an infiltration involving Prisoner 13 and the Axebreaker mystery. The party’s actual entry method, decisions, prisoner interactions and outcome still need confirmation from the played record."}
+    ],
     status:'details-pending', mood:'ocean',
     hero:{src:'history/revels-voyage.webp',alt:'The Green Iguanas on the deck of a sailing ship as the sea rises toward a coastal stronghold',caption:'The party at sea · chapter illustration',label:'SAIL THE UNKNOWN'},
     gallery:[
@@ -175,6 +184,10 @@ export const storyChapters: StoryChapter[] = [
   {
     id:'red-run', title:'The Red Run', kicker:'DUST. TEETH. THE SOUND OF THE CROWD.',
     summary:'The Green Iguanas entered Vhal Drakar’s Red Run, a dangerous monster-racing chapter. Owen rode the Shadow Panther. The remaining mounts, wagers and final standings have not yet been verified.',
+    record:[
+      {title:"A dangerous race",text:"The party reached Vhal Drakar and entered the Red Run, a contest involving unusual racing beasts. The race rules and rivals are described in the adventure notes."},
+      {title:"Owen and the Shadow Panther",text:"Owen rode the Shadow Panther. The other riders, their mounts, the critical racing moments, and final standings still need to be documented."}
+    ],
     status:'details-pending', mood:'red-run',
     hero:{src:'history/red-run-charge.webp',alt:'Owen rides a shadow panther amid a ferocious monster race while the Green Iguanas charge through the arena',caption:'Vhal Drakar’s Red Run · racing illustration',label:'THE RACE'},
     gallery:[
@@ -185,6 +198,10 @@ export const storyChapters: StoryChapter[] = [
   {
     id:'eye-of-freed', title:'The Price of Sight', kicker:'ONE WISH. ONE SACRIFICE. ONE HUNDRED.',
     summary:'Before entering the red dragon’s den, Freed sacrificed one of his eyes as part of a Wish. A natural 100 on the d100 roll brought forth the Eye of Freed, an evolving artifact-grade replacement. Its exact mechanical powers still await verification against the character sheet.',
+    record:[
+      {title:"The sacrifice",text:"Before the red dragon confrontation, Freed sacrificed an eye as part of a Wish. This is established campaign history."},
+      {title:"A perfect hundred",text:"A natural 100 on the d100 roll brought forth the Eye of Freed, an evolving replacement with artifact-level significance. Its precise mechanical powers and later evolution await documentation."}
+    ],
     status:'confirmed', mood:'freed',
     hero:{src:'history/freed-eye.webp',alt:'A close-up of Freed in steel armor, sword raised across his chest and a red glow visible within his visor',caption:'The Eye of Freed · character illustration',label:'THE SACRIFICE'},
     gallery:[]
@@ -192,6 +209,10 @@ export const storyChapters: StoryChapter[] = [
   {
     id:'red-dragon', title:'The Dragon’s False Fortune', kicker:'NOT ALL THAT GLITTERS IS GOLD',
     summary:'The Green Iguanas fought and defeated a red dragon. Its immense hoard was largely counterfeit: painted wooden coins, gilded cheap metal and glass. The party also freed a wizard who had been forced to manufacture the illusion of wealth.',
+    record:[
+      {title:"The confrontation",text:"The Green Iguanas fought and defeated a red dragon. The battle and victory are established campaign events."},
+      {title:"A false fortune",text:"Much of the hoard was counterfeit, with wood disguised as gold, cheaply gilded metal, and glass instead of gems. The party freed a captive wizard forced to manufacture the illusion of wealth."}
+    ],
     status:'confirmed', mood:'dragon',
     hero:{src:'history/dragon-hoard.webp',alt:'The Green Iguanas face a gigantic red dragon perched above a hoard of glittering treasure',caption:'The red dragon’s counterfeit hoard · chapter illustration',label:'THE HOARD'},
     gallery:[
@@ -201,6 +222,10 @@ export const storyChapters: StoryChapter[] = [
   {
     id:'dragonbowl-arrival', title:'Under Mount Waterdeep', kicker:'THE WORLD’S BIGGEST ARENA AWAITS',
     summary:'After freeing the captive wizard, the party gained access to an already-paid tournament entry and reached Dragonbowl XLIX beneath Mount Waterdeep. They toured the festival and entered the competition. Heilbrun joined the Green Iguanas at Dragonbowl, becoming the party’s fifth member. The precise circumstances of his arrival and earlier history remain to be documented.',
+    record:[
+      {title:"A new opportunity",text:"After freeing the captive wizard, the party gained access to a previously paid tournament entry and reached Dragonbowl XLIX beneath Mount Waterdeep."},
+      {title:"The fifth member",text:"The Green Iguanas explored the festivities and entered the tournament. Heilbrun joined the team at Dragonbowl; the precise introduction still needs to be reconstructed."}
+    ],
     status:'confirmed', mood:'dragonbowl',
     hero:{src:'history/dragonbowl-arrival.webp',alt:'Bobby, Freed, Owen and Indigo stand together at sunset overlooking the city and sea before Dragonbowl',caption:'Arrival at the tournament · chapter illustration',label:'A NEW ARENA'},
     gallery:[
@@ -212,6 +237,11 @@ export const storyChapters: StoryChapter[] = [
   {
     id:'cackle-crew', title:'Cackle Crew Falls', kicker:'THE UNDERDOGS HAVE ENTERED THE STORY',
     summary:'In their first Dragonbowl bout, the Green Iguanas defeated Cackle Crew. Freed severed King Cackle’s arm and held it high, Bobby delivered a devastating axe strike, Owen fought in tiger form under Globe of Twilight, and Indigo whipped the crowd into celebration. Their next known opponent is the Dandy War Dolls in the quarterfinal.',
+    record:[
+      {title:"The opening victory",text:"In their first Dragonbowl match, the Green Iguanas defeated Cackle Crew. Bobby Kills delivered a devastating axe strike; Owen fought in tiger shape under Globe of Twilight."},
+      {title:"A moment for the crowd",text:"Freed severed King Cackle’s arm and raised it after the victory. Indigo celebrated in sunglasses, dancing and hyping the crowd."},
+      {title:"What comes next",text:"Their known quarterfinal opponent is Dandy War Dolls. This match has not yet been played."}
+    ],
     status:'confirmed', mood:'victory',
     hero:{src:'history/dragonbowl-victory.webp',alt:'The Green Iguanas celebrate a victorious pose beneath confetti and a tournament airship in the arena',caption:'Dragonbowl Round One · victory illustration',label:'THE VICTORY'},
     gallery:[
