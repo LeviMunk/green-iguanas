@@ -97,10 +97,14 @@ function SectionTitle({eyebrow,title,sub,href,link}:{eyebrow:string;title:React.
 const heroOrder=['owen','bobby-kills','indigo','freed','heilbrun'];
 function HeroFellowship() {
   const heroes=heroOrder.map(id=>characters.find(c=>c.id===id)).filter((c):c is Character=>!!c);
-  // The first hero starts highlighted. On phones, the hero nearest the
-  // carousel's center becomes active without requiring an extra tap.
   const [activeId,setActiveId]=useState(heroOrder[0]);
+  const activeHero=heroes.find(c=>c.id===activeId)??heroes[0];
+  const activeIndex=Math.max(0,heroes.findIndex(c=>c.id===activeId));
   const stageRef=useRef<HTMLDivElement>(null);
+  const sceneRef=useRef<HTMLElement>(null);
+
+  // Mobile selection follows the centered scroll-snap item, including the
+  // first one on initial load. One tap still opens the character dossier.
   useEffect(()=>{
     const stage=stageRef.current;
     if(!stage)return;
@@ -109,61 +113,116 @@ function HeroFellowship() {
     const update=()=>{
       frame=0;
       if(!mobile.matches)return;
-      const stageRect=stage.getBoundingClientRect();
-      const center=stageRect.left+stageRect.width/2;
+      const rect=stage.getBoundingClientRect();
+      const center=rect.left+rect.width/2;
       const cards=stage.querySelectorAll<HTMLAnchorElement>('.cinematic-hero');
-      let nearestId:string|null=null;
-      let nearestDistance=Infinity;
+      let id:string|null=null;
+      let distance=Infinity;
       cards.forEach(card=>{
-        const rect=card.getBoundingClientRect();
-        const distance=Math.abs(rect.left+rect.width/2-center);
-        if(distance<nearestDistance){nearestDistance=distance;nearestId=card.dataset.heroId??null;}
+        const position=card.getBoundingClientRect();
+        const delta=Math.abs(position.left+position.width/2-center);
+        if(delta<distance){distance=delta;id=card.dataset.heroId??null;}
       });
-      if(nearestId)setActiveId(current=>current===nearestId?current:nearestId!);
+      if(id)setActiveId(previous=>previous===id?previous:id!);
     };
-    const schedule=()=>{
-      if(!frame)frame=window.requestAnimationFrame(update);
-    };
-    const onModeChange=()=>{if(mobile.matches)schedule();};
+    const schedule=()=>{if(!frame)frame=window.requestAnimationFrame(update);};
     stage.addEventListener('scroll',schedule,{passive:true});
     window.addEventListener('resize',schedule);
-    mobile.addEventListener('change',onModeChange);
+    mobile.addEventListener('change',schedule);
     schedule();
     return ()=>{
       stage.removeEventListener('scroll',schedule);
       window.removeEventListener('resize',schedule);
-      mobile.removeEventListener('change',onModeChange);
+      mobile.removeEventListener('change',schedule);
       if(frame)window.cancelAnimationFrame(frame);
     };
   },[]);
-  return <section className="cinematic-home" aria-labelledby="cinematic-title">
-    <div className="cinematic-scenery" aria-hidden="true"><span className="ruin-arch arch-one"/><span className="ruin-arch arch-two"/><span className="ruin-arch arch-three"/><span className="cinematic-stars"/></div>
+
+  // A very soft mouse-follow light brings depth to the atmosphere without
+  // rerendering React on pointer movement. Never tracks touch or reduced motion.
+  useEffect(()=>{
+    const scene=sceneRef.current;
+    if(!scene || window.matchMedia('(pointer:coarse), (prefers-reduced-motion: reduce)').matches)return;
+    let frame=0, x=50, y=38;
+    const move=(event:PointerEvent)=>{
+      const bounds=scene.getBoundingClientRect();
+      x=Math.min(100,Math.max(0,(event.clientX-bounds.left)/bounds.width*100));
+      y=Math.min(100,Math.max(0,(event.clientY-bounds.top)/bounds.height*100));
+      if(!frame)frame=window.requestAnimationFrame(()=>{
+        frame=0;
+        scene.style.setProperty('--cursor-x',x+'%');
+        scene.style.setProperty('--cursor-y',y+'%');
+      });
+    };
+    const leave=()=>{
+      scene.style.setProperty('--cursor-x','50%');
+      scene.style.setProperty('--cursor-y','38%');
+    };
+    scene.addEventListener('pointermove',move,{passive:true});
+    scene.addEventListener('pointerleave',leave);
+    return ()=>{
+      scene.removeEventListener('pointermove',move);
+      scene.removeEventListener('pointerleave',leave);
+      if(frame)window.cancelAnimationFrame(frame);
+    };
+  },[]);
+
+  return <section ref={sceneRef} className="cinematic-home cinematic-home--immersive"
+    aria-labelledby="cinematic-title"
+    style={{'--scene-aura':activeHero?.accent??'#91a186','--scene-index':activeIndex} as React.CSSProperties}>
+    <div className="cinematic-scenery" aria-hidden="true">
+      <span className="cinematic-sky-haze"/>
+      <span className="cinematic-moonlight"/>
+      <span className="cinematic-distant-hills"/>
+      <span className="ruin-arch arch-one"/>
+      <span className="ruin-arch arch-two"/>
+      <span className="ruin-arch arch-three"/>
+      <span className="cinematic-stars"/>
+      <span className="cinematic-grain"/>
+    </div>
+    <div className="cinematic-scene-glow" aria-hidden="true"/>
+    <div className="cinematic-ember-field" aria-hidden="true">
+      {Array.from({length:21},(_,i)=><span key={i}
+        style={{
+          '--ember-x':((i*37+11)%96+2)+'%',
+          '--ember-y':((i*29+19)%72+9)+'%',
+          '--ember-delay':(-i*.87)+'s',
+          '--ember-speed':(7+i%6*1.7)+'s',
+          '--ember-size':(i%4===0?3:1.5)+'px'
+        } as React.CSSProperties}/>)}
+    </div>
     <div className="cinematic-title-wrap">
-      
-      <img src={`${import.meta.env.BASE_URL}art/crest.webp`} className="cinematic-crest" alt="The Green Iguanas crest" width="114" height="114" />
+      <img src={`${import.meta.env.BASE_URL}art/crest.webp`}
+        className="cinematic-crest" alt="The Green Iguanas crest"
+        width="114" height="114"/>
       <h1 id="cinematic-title"><span>THE</span> GREEN IGUANAS</h1>
     </div>
     <div className="cinematic-stage-outer">
-      <div ref={stageRef} className="cinematic-stage" role="group" aria-label="Scroll through characters; the centered character is highlighted. Tap to open a dossier.">
+      <div ref={stageRef} className="cinematic-stage" role="group"
+        aria-label="Scroll through the Green Iguanas. The centered character lights up; tap to open their dossier.">
         {heroes.map((character,index)=><a
-            href={`#/character/${character.id}`}
-            id={`hero-${character.id}`}
-            data-hero-id={character.id}
-            key={character.id}
-            style={{'--character-accent':character.accent, '--hero-index':index} as React.CSSProperties}
-            className={`cinematic-hero ${activeId===character.id?'is-active':''}`}
-            onMouseEnter={()=>setActiveId(character.id)}
-            onFocus={()=>setActiveId(character.id)}
-            aria-label={`View ${character.name}'s character dossier`}
-          >
-            <span className="hero-backglow" aria-hidden="true" />
-            <img src={`${import.meta.env.BASE_URL}${character.portrait}`} alt="" loading={index===2?'eager':'lazy'} decoding="async"/>
-            <span className="hero-nameplate"><strong>{character.name}</strong><span className="hero-role">{character.class ?? 'Adventurer'}</span><span className="hero-divider" /></span>
-          </a>)}
+          href={`#/character/${character.id}`}
+          id={`hero-${character.id}`}
+          data-hero-id={character.id}
+          key={character.id}
+          style={{'--character-accent':character.accent,'--hero-index':index} as React.CSSProperties}
+          className={`cinematic-hero ${activeId===character.id?'is-active':''}`}
+          onMouseEnter={()=>setActiveId(character.id)}
+          onFocus={()=>setActiveId(character.id)}
+          aria-label={`View ${character.name}'s character dossier`}>
+          <span className="hero-backglow" aria-hidden="true"/>
+          <img src={`${import.meta.env.BASE_URL}${character.portrait}`}
+            alt="" loading="eager" decoding="async"/>
+          <span className="hero-nameplate">
+            <strong>{character.name}</strong>
+            <span className="hero-role">{character.class??'Adventurer'}</span>
+            <span className="hero-divider"/>
+          </span>
+        </a>)}
       </div>
     </div>
-    
-    <div className="cinematic-bottom-line" aria-hidden="true" />
+    <div className="cinematic-floor-mist" aria-hidden="true"/>
+    <div className="cinematic-bottom-line" aria-hidden="true"/>
   </section>;
 }
 
