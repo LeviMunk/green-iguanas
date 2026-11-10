@@ -147,7 +147,7 @@ export const storyChapters: StoryChapter[] = [
     summary:'Earlier campaign material references a museum heist involving a rare magical egg or Murkmire Stone, a rival crew and a chaotic escape. The relic’s ultimate fate, exact encounter details and consequences still need verification against the table record.',
     status:'details-pending', mood:'museum',
     hero:{src:'history/museum-relic.webp',alt:'Bobby Kills, Freed, Owen and Indigo inside a moonlit museum beside a glowing turquoise egg',caption:'The rare egg · museum chapter illustration',label:'THE RELIC'},
-    gallery:[]
+    gallery:[{src:'history/museum-original.webp',alt:'The original Green Iguanas art of the party entering a museum with a luminous egg under a glass dome',caption:'The original museum heist artwork',label:'THE FIRST CAPER'}]
   },
   {
     id:'revels-end', title:'A Voyage to Revel’s End', kicker:'BEYOND THE EDGE OF THE MAP',
@@ -202,8 +202,7 @@ export const storyChapters: StoryChapter[] = [
     status:'confirmed', mood:'victory',
     hero:{src:'history/dragonbowl-victory.webp',alt:'The Green Iguanas celebrate a victorious pose beneath confetti and a tournament airship in the arena',caption:'Dragonbowl Round One · victory illustration',label:'THE VICTORY'},
     gallery:[
-      {src:'history/dragonbowl-original.webp',alt:'The four adventurers pose together in a brightly lit tournament arena with banners and cheering crowds',caption:'Another view of the Dragonbowl arena',label:'THE FOUR'},
-      {src:'history/dragonbowl-sunset.webp',alt:'Four adventurers pose before a spectacular orange sunset over a fantasy city and ships',caption:'The original Dragonbowl roster · atmospheric group portrait',label:'THE FELLOWSHIP'}
+      {src:'history/dragonbowl-original.webp',alt:'The four adventurers pose together in a brightly lit tournament arena with banners and cheering crowds',caption:'Another view of the Dragonbowl arena',label:'THE FOUR'}
     ]
   }
 ];
