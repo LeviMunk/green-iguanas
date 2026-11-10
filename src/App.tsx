@@ -302,13 +302,26 @@ function CharacterDicePanel({character}:{character:Character}) {
     <div className="centered"><Action href={'#/dice?character='+encodeURIComponent(character.id)} variant="outline">Open full Dice Chronicle</Action></div>
   </div>;
 }
+const dossierThemes:Record<string,{accent:string;highlight:string;deep:string;mid:string;ink:string}>={
+ 'bobby-kills':{accent:'#d9a063',highlight:'#f4c88a',deep:'#170e0b',mid:'#422618',ink:'#1d120f'},
+ indigo:{accent:'#e5b968',highlight:'#ffe0a0',deep:'#0d0c24',mid:'#30214b',ink:'#17122f'},
+ owen:{accent:'#a5d6a7',highlight:'#d7edbd',deep:'#0c201c',mid:'#244c3f',ink:'#102b25'},
+ freed:{accent:'#dd8b82',highlight:'#f8b8a1',deep:'#17141a',mid:'#462731',ink:'#261a21'},
+ heilbrun:{accent:'#e7cb82',highlight:'#fff0ba',deep:'#101b2d',mid:'#304b76',ink:'#15233b'}
+};
 function CharacterPage({id}:{id:string}) {
  const character=characters.find(c=>c.id===id);
  const [tab,setTab]=useState<'overview'|'timeline'|'chronicle'|'sheet'>('overview');
  useEffect(()=>setTab('overview'),[id]);
+ const theme=dossierThemes[id]??dossierThemes.owen;
+ const sceneBase=import.meta.env.BASE_URL+'character-art/'+id+'/';
  if(!character)return <main id="main-content" tabIndex={-1} className="container"><EmptyState heading="The name is not in our records" detail="This character could not be found in the Green Iguanas roster."/><Action href="#/" variant="outline">Return to the homepage</Action></main>;
- return <main id="main-content" tabIndex={-1} style={{'--character-accent':character.accent} as React.CSSProperties}>
-   <section className="container dossier-top"><a className="breadcrumb" href="#/">THE GREEN IGUANAS <Icon name="chevron" size={12}/> DOSSIER {character.index}</a>
+ return <main id="main-content" tabIndex={-1}
+   className={`character-dossier character-dossier--${character.id}`}
+   style={{'--character-accent':theme.accent,'--dossier-highlight':theme.highlight,'--dossier-deep':theme.deep,'--dossier-mid':theme.mid,'--dossier-ink':theme.ink} as React.CSSProperties}>
+   <section className="dossier-top">
+     <div className="dossier-backdrop" aria-hidden="true"><img src={sceneBase+'backdrop.webp'} alt="" decoding="async" onError={e=>{e.currentTarget.style.display='none'}}/></div>
+     <div className="container dossier-top-inner"><a className="breadcrumb" href="#/">THE GREEN IGUANAS <Icon name="chevron" size={12}/> DOSSIER {character.index}</a>
     <div className="dossier-layout"><div className="dossier-portrait"><PlaceholderArt character={character} large/></div>
      <div className="dossier-copy"><Label>CHARACTER FILE {character.index} / 05</Label><h1>{character.name}</h1><p className="dossier-kicker">{character.descriptor}</p><div className="accent-line"/><p className="dossier-description">{character.highlight}</p>
       <div className="dossier-details"><DetailBox label="CLASS" value={character.class}/><DetailBox label="LEVEL" value={character.level}/><DetailBox label="ANCESTRY" value={character.ancestry}/><DetailBox label="SHEET BACKGROUND" value={character.background}/></div>
@@ -316,12 +329,24 @@ function CharacterPage({id}:{id:string}) {
       <div className="dossier-actions">{character.beyondUrl&&<a className="btn btn-primary" href={character.beyondUrl} target="_blank" rel="noopener noreferrer"><Icon name="external" size={16}/> View on D&D Beyond</a>}<a className="btn btn-outline" href={'#/dice?character='+character.id}><Icon name="dice" size={16}/> Character Dice Log</a></div>
      </div>
     </div>
-   </section>
+   </div></section>
    <div className="tab-wrapper"><div className="container tab-row" role="group" aria-label={character.name+' sections'}>{(['overview','timeline','chronicle','sheet'] as const).map(item=><button type="button" key={item} aria-pressed={tab===item} className={tab===item?'selected':''} onClick={()=>setTab(item)}>{item==='overview'?'Background & Story':item==='timeline'?'The Journey':item==='chronicle'?'Dice & Achievements':'D&D Beyond Sheet'}</button>)}</div></div>
    <section className="container dossier-body">
-    {tab==='overview'?<div className="dossier-columns character-story-layout"><div><Label>THE CHARACTER'S ORIGIN</Label><h2>Deeds behind <em>the name.</em></h2><p className="body-muted">{character.biography??'Character history is still being documented.'}</p>
-      <div className="character-story-sections">{character.profileSections.map((section,i)=><article className="character-story-chapter" key={i}><span>{String(i+1).padStart(2,'0')}{section.status==='concept'?' / CHARACTER CONCEPT, NOT CANON':' / CHARACTER HISTORY'}</span><h3>{section.title}</h3><p>{section.text}</p></article>)}</div>
-      </div><div className="dossier-side"><div className="small-panel"><Icon name="scroll" size={23}/><h3>Character sheet</h3><p>See the living D&D Beyond sheet or a reviewed PDF snapshot when attached.</p><span>SHEET TAB</span></div><div className="small-panel"><Icon name="trophy" size={23}/><h3>Dice & achievements</h3><p>See the character's story achievements, verified rolls and trophy unlocks.</p><span>CHRONICLE TAB</span></div></div>
+    {tab==='overview'?<div className="dossier-columns character-story-layout"><div><Label>THE CHARACTER'S ORIGIN</Label><h2>Deeds behind <em>the name.</em></h2><p className="body-muted">{character.biography??'Character history is still being documented.'}</p><p className="character-story-art-disclaimer">Story illustrations are artistic interpretations. Unverified details remain unconfirmed in the written record.</p>
+      <div className="character-story-sections">{character.profileSections.map((section,i)=><article className="character-story-chapter character-story-chapter--illustrated" key={i}>
+        <div className="character-story-image">
+          <div className="character-story-art-fallback" aria-hidden="true">
+            {character.portrait&&<img src={import.meta.env.BASE_URL+character.portrait} alt="" loading="lazy" decoding="async"/>}
+          </div>
+          <img className="character-story-artwork" src={sceneBase+'beat-'+(i+1)+'.webp'} alt={`Illustrated interpretation of ${character.name}'s story: ${section.title}`} loading="lazy" decoding="async" onError={e=>{e.currentTarget.style.display='none'}}/>
+          <span className="character-story-image-mark" aria-hidden="true">✦</span>
+        </div>
+        <div className="character-story-text">
+          <span>{String(i+1).padStart(2,'0')}{section.status==='concept'?' / CHARACTER CONCEPT, NOT CANON':' / CHARACTER HISTORY'}</span>
+          <h3>{section.title}</h3><p>{section.text}</p>
+        </div>
+       </article>)}</div>
+      </div><div className="dossier-side character-story-support"><div className="small-panel"><Icon name="scroll" size={23}/><h3>Character sheet</h3><p>See the living D&D Beyond sheet or a reviewed PDF snapshot when attached.</p><span>SHEET TAB</span></div><div className="small-panel"><Icon name="trophy" size={23}/><h3>Dice & achievements</h3><p>See the character's story achievements, verified rolls and trophy unlocks.</p><span>CHRONICLE TAB</span></div></div>
     </div>:tab==='timeline'?(character.moments.length?<div className="moments-list"><Label>RECORDED CHARACTER MOMENTS</Label><h2>The path <em>so far.</em></h2>{character.moments.map((moment,i)=><article className="moment-entry" key={i}><span>{String(i+1).padStart(2,'0')}</span><div><h3>{moment.title}</h3><p>{moment.description}</p></div></article>)}</div>:<EmptyState glyph="hourglass" heading="The introduction awaits" detail="No played moments are confirmed for this character yet."/>):tab==='chronicle'?<CharacterDicePanel character={character}/>:<CharacterSheetPanel character={character}/>}
    </section>
    <div className="container dossier-next"><span>CONTINUE THE STORY</span><a href={'#/character/'+characters[(characters.indexOf(character)+1)%characters.length].id}>NEXT DOSSIER <strong>{characters[(characters.indexOf(character)+1)%characters.length].name}</strong><Icon name="arrow" size={22}/></a></div>
