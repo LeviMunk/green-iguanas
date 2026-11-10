@@ -169,7 +169,7 @@ function HeroFellowship() {
 
   return <section ref={sceneRef} className="cinematic-home cinematic-home--immersive"
     aria-labelledby="cinematic-title"
-    style={{'--scene-aura':activeHero?.accent??'#91a186','--scene-index':activeIndex} as React.CSSProperties}>
+    style={{'--scene-aura':activeHero?.accent??'#91a186','--scene-spot':(10+activeIndex*20)+'%'} as React.CSSProperties}>
     <div className="cinematic-scenery" aria-hidden="true">
       <span className="cinematic-sky-haze"/>
       <span className="cinematic-moonlight"/>
