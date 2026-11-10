@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { campaign, characters, storyChapters, type Character } from './data/campaign';
+import { characters, storyChapters, type Character } from './data/campaign';
 import { dragonbowlBracket, dragonbowlOddsByTeam, dragonbowlFacts, type BracketMatch, type BracketRound } from './data/dragonbowl';
 import { demoRolls } from './data/demo';
 import { summarize, validateEvents, type RollEvent } from './lib/dice';
