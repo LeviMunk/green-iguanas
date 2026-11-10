@@ -629,3 +629,53 @@
  .dragon-round-shortcuts button{transition:none}
  .dragon-bracket-viewport{scroll-behavior:auto}
 }
+
+
+/* Mobile cinematic home cleanup: top navigation is redundant with the bottom bar.
+   The decorative ambient layer formerly extended to 2,050px below the viewport,
+   creating a long scrollable blank tail on short pages. */
+.site-shell--home .ambient{display:none}
+.site-shell--home{min-height:0}
+.home-simplified{padding-bottom:0}
+.home-simplified .campaign-pulse{margin-top:8px;margin-bottom:0}
+@media(max-width:700px){
+  .site-header{display:none}
+  .bottom-nav{
+    display:flex;position:fixed;bottom:0;left:0;right:0;z-index:50;
+    min-height:calc(60px + env(safe-area-inset-bottom));
+    padding-bottom:env(safe-area-inset-bottom);
+    border-top:1px solid rgba(211,181,119,.29);
+    background:rgba(12,24,18,.98);backdrop-filter:blur(20px);
+    justify-content:space-around;
+  }
+  .bottom-nav a,.bottom-nav button{
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    gap:4px;padding:8px 5px;border:0;background:none;color:#849c89;
+    font-size:10px;min-width:50px;min-height:58px;
+  }
+  .bottom-nav a.active,.bottom-nav button.active,.bottom-nav button[aria-expanded="true"]{color:#ddbd7b}
+  .mobile-menu{
+    display:flex;position:fixed;top:0;left:0;right:0;
+    bottom:calc(60px + env(safe-area-inset-bottom));
+    z-index:45;width:100%;max-width:none;max-height:none;
+    padding:calc(24px + env(safe-area-inset-top)) 20px 22px;
+    overflow-y:auto;overscroll-behavior:contain;
+    background:rgba(12,24,18,.99);border:0;
+  }
+  .mobile-menu .mobile-menu-main{display:none}
+  /* The artwork itself must fit inside the snap target, even while active.
+     Previous 97%-height images sat 8% from the bottom and were scaled up,
+     pushing character heads above the clipping edge. */
+  .cinematic-title-wrap{padding:17px 10px 0}
+  .cinematic-title-wrap h1{margin-bottom:0}
+  .cinematic-crest{width:68px;height:68px;margin:3px auto 0}
+  .cinematic-stage-outer{margin-top:5px}
+  .cinematic-hero>img{
+    height:89%;width:112%;bottom:5%;
+    transform:translateX(-50%) scale(.96);
+    object-fit:contain;object-position:center bottom;
+  }
+  .cinematic-hero.is-active>img{transform:translateX(-50%) scale(1)}
+  .home-simplified{padding-bottom:calc(61px + env(safe-area-inset-bottom))}
+  .home-simplified .campaign-pulse{margin-top:5px}
+}
