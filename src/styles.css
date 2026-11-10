@@ -722,3 +722,300 @@
   .sheet-link-card{padding:22px}
   .sheet-link-card h3{overflow-wrap:anywhere}
 }
+
+
+/* FULL-VIEWPORT CINEMATIC HOME · 2026-11-10
+   Full-bleed scene rather than a boxed character gallery.
+   Intentional z-order: scenery 0, atmospheric light 1, heading 3,
+   foreground fog 4, sparks 7, active/keyboard hero 8. */
+.site-shell--home{background:#070e0c;overflow-x:clip}
+.site-shell--home .site-header{
+  background:linear-gradient(180deg,rgba(5,12,11,.90),rgba(5,12,11,.50));
+  border-bottom:1px solid rgba(183,174,120,.09);box-shadow:0 20px 55px #0209086b
+}
+.home-simplified{min-height:0;padding:0;background:#060d0b}
+.home-simplified .cinematic-home--immersive{
+  --scene-aura:#91a186;--scene-spot:10%;--cursor-x:50%;--cursor-y:38%;
+  position:relative;display:block;width:100%;min-height:660px;
+  height:calc(100svh - 91px);margin:0;padding:0;border:0;
+  isolation:isolate;overflow:hidden;color:#eee6cf;
+  background:
+    radial-gradient(ellipse 65% 55% at 49% 57%,rgba(45,89,66,.14),transparent 80%),
+    linear-gradient(180deg,#050c0d 0%,#0b1a1a 45%,#14231a 75%,#070d0b 100%);
+}
+.cinematic-home--immersive:before{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 68% 55% at 50% 48%,transparent 35%,rgba(0,0,0,.53)),
+    linear-gradient(90deg,rgba(0,0,0,.43),transparent 18%,transparent 82%,rgba(0,0,0,.43));
+}
+.cinematic-home--immersive .cinematic-scenery{
+  position:absolute;inset:0;overflow:hidden;z-index:0;pointer-events:none;
+}
+.cinematic-home--immersive .cinematic-scenery:before{opacity:.12;animation:gi-mist 36s ease-in-out infinite alternate}
+.cinematic-sky-haze,.cinematic-moonlight,.cinematic-distant-hills,.cinematic-grain{
+  position:absolute;display:block;pointer-events:none
+}
+.cinematic-sky-haze{
+  inset:-10%;background:
+  radial-gradient(ellipse 25% 35% at var(--cursor-x,50%) var(--cursor-y,38%),rgba(194,170,102,.10),transparent 82%),
+  radial-gradient(ellipse 42% 53% at 51% 32%,rgba(75,128,103,.18),transparent 80%),
+  radial-gradient(ellipse 78% 32% at 47% 80%,rgba(85,113,68,.09),transparent 75%);
+}
+.cinematic-moonlight{
+  top:-28%;left:19%;width:64%;height:80%;
+  background:radial-gradient(ellipse 42% 56% at 50% 49%,rgba(164,203,168,.19),rgba(82,123,103,.06) 54%,transparent 82%);
+  filter:blur(31px);animation:gi-home-breathe 11s ease-in-out infinite alternate
+}
+.cinematic-distant-hills{
+  bottom:0;left:-4%;width:108%;height:52%;
+  background:linear-gradient(0deg,rgba(6,12,9,.92),rgba(20,39,29,.40));
+  opacity:.7;clip-path:polygon(0 56%,7% 50%,14% 58%,22% 35%,28% 49%,38% 38%,46% 53%,57% 35%,65% 52%,74% 39%,83% 55%,90% 43%,100% 53%,100% 100%,0 100%);
+  filter:blur(12px)
+}
+.cinematic-home--immersive .ruin-arch{
+  bottom:4%;width:21%;height:70%;border-width:clamp(15px,2.3vw,37px);
+  border-color:rgba(117,140,100,.12);box-shadow:0 0 60px #0007,inset 0 0 35px #070e0b9e;
+  opacity:.7;filter:blur(1px)
+}
+.cinematic-home--immersive .arch-one{left:4%}
+.cinematic-home--immersive .arch-two{left:38%;height:95%;opacity:.44}
+.cinematic-home--immersive .arch-three{right:4%}
+.cinematic-grain{
+  inset:0;opacity:.22;mix-blend-mode:screen;
+  background-image:radial-gradient(circle,rgba(226,202,128,.34) .6px,transparent 1.1px),
+  radial-gradient(circle,rgba(186,221,181,.3) .7px,transparent 1.3px);
+  background-size:94px 106px,141px 169px;background-position:11px 29px,64px 91px;
+  animation:gi-home-drift 33s linear infinite
+}
+.cinematic-home--immersive .cinematic-scene-glow{
+  position:absolute;z-index:1;pointer-events:none;
+  top:7%;bottom:0;width:44%;left:var(--scene-spot,50%);
+  transform:translateX(-50%);
+  background:radial-gradient(ellipse 64% 70% at 50% 53%,color-mix(in srgb,var(--scene-aura),transparent 72%),transparent 83%);
+  filter:blur(39px);opacity:.74;
+  transition:left .7s cubic-bezier(.16,.75,.2,1),opacity .7s
+}
+.cinematic-home--immersive .cinematic-title-wrap{
+  position:absolute;z-index:3;pointer-events:none;
+  top:clamp(23px,4.8svh,64px);left:0;right:0;
+  padding:0 18px;text-align:center;
+}
+.cinematic-home--immersive .cinematic-crest{
+  width:clamp(70px,7.2vw,103px);height:clamp(70px,7.2vw,103px);
+  margin:0 auto 7px;
+  filter:drop-shadow(0 0 28px rgba(180,202,132,.26));
+  animation:gi-crest-enter 1.2s ease both,gi-home-crest-float 7.5s ease-in-out 1.2s infinite alternate
+}
+.cinematic-home--immersive .cinematic-title-wrap h1{
+  font:500 clamp(43px,6.45vw,108px)/.94 'Cinzel',Georgia,serif;
+  letter-spacing:.01em;color:#e6d9ad;
+  margin:0;text-shadow:0 2px 12px #020805,0 10px 48px #070d0bc7;
+}
+.cinematic-home--immersive .cinematic-title-wrap h1 span{
+  display:block;font-size:.18em;letter-spacing:.51em;margin:0 0 10px
+}
+.cinematic-home--immersive .cinematic-stage-outer{
+  position:absolute;left:0;right:0;bottom:0;height:78.5%;
+  width:100%;max-width:none;margin:0;padding:0 clamp(12px,2.4vw,49px);
+  z-index:auto;pointer-events:none
+}
+.cinematic-home--immersive .cinematic-stage{
+  position:relative;isolation:auto;z-index:auto;
+  width:100%;height:100%;min-height:0;display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;
+  gap:0;padding:0;pointer-events:auto
+}
+.cinematic-home--immersive .cinematic-stage:before{
+  content:'';pointer-events:none;position:absolute;z-index:0;
+  bottom:2%;left:0;right:0;width:100%;height:38%;
+  background:radial-gradient(ellipse 75% 50% at 50% 80%,rgba(109,143,77,.16),transparent 70%)
+}
+.cinematic-home--immersive .cinematic-hero{
+  position:relative;isolation:isolate;z-index:0;
+  height:100%;min-height:0;min-width:0;
+  cursor:pointer;transform:translateY(7px);
+  transition:transform .65s cubic-bezier(.2,.8,.2,1);
+}
+.cinematic-home--immersive .cinematic-hero>img{
+  bottom:9%;left:50%;width:160%;height:106%;
+  max-width:none;object-fit:contain;object-position:center bottom;
+  transform:translateX(-50%) scale(.94);transform-origin:center bottom;
+  opacity:.76;
+  filter:grayscale(.88) brightness(.51) contrast(1.11) drop-shadow(0 20px 28px #000b);
+  transition:filter .68s ease,opacity .68s ease,transform .68s cubic-bezier(.16,.8,.2,1)
+}
+.cinematic-home--immersive .cinematic-hero:before{
+  content:'';position:absolute;z-index:-1;left:-18%;bottom:7%;
+  width:136%;height:76%;border-radius:50%;
+  background:radial-gradient(ellipse at 50% 58%,color-mix(in srgb,var(--character-accent),transparent 61%),transparent 72%);
+  filter:blur(39px);opacity:0;transition:opacity .75s ease
+}
+.cinematic-home--immersive .cinematic-hero.is-active,
+.cinematic-home--immersive .cinematic-hero:focus-visible{
+  z-index:8;transform:translateY(-17px)
+}
+.cinematic-home--immersive .cinematic-hero.is-active>img,
+.cinematic-home--immersive .cinematic-hero:focus-visible>img{
+  opacity:1;
+  filter:grayscale(0) brightness(1.09) contrast(1.08) drop-shadow(0 24px 43px #000e);
+  transform:translateX(-50%) scale(1.055)
+}
+.cinematic-home--immersive .cinematic-hero.is-active:before,
+.cinematic-home--immersive .cinematic-hero:focus-visible:before{opacity:.75}
+.cinematic-home--immersive .cinematic-hero:focus-visible{outline:2px solid #edcc89;outline-offset:-2px}
+.cinematic-home--immersive .hero-nameplate{
+  z-index:9;bottom:clamp(15px,3.1svh,46px);
+  padding:24px 2px 12px;background:none;text-align:center;
+  filter:drop-shadow(0 4px 13px #020803eb)
+}
+.cinematic-home--immersive .hero-nameplate strong{
+  font:500 clamp(15px,1.75vw,27px)/1.15 'Cinzel',Georgia,serif;
+  letter-spacing:.05em;color:#8c9b8a;text-shadow:0 3px 16px #000,0 0 25px #000;
+  transition:color .45s ease,text-shadow .45s
+}
+.cinematic-home--immersive .cinematic-hero.is-active .hero-nameplate strong{
+  color:#f4e4ba;text-shadow:0 3px 18px #000,0 0 18px color-mix(in srgb,var(--character-accent),transparent 30%)
+}
+.cinematic-home--immersive .hero-role{
+  display:block;margin-top:7px;font-size:clamp(8px,.75vw,10px);
+  letter-spacing:.12em;line-height:1.35;color:#8e9f91
+}
+.cinematic-home--immersive .hero-divider{
+  width:25px;margin:11px auto 0;height:1px;background:#ab9a6c;
+  transition:width .5s,background .5s,box-shadow .5s
+}
+.cinematic-home--immersive .cinematic-hero.is-active .hero-divider{
+  width:64px;background:#e5c881;box-shadow:0 0 19px #e2bf7a77
+}
+.cinematic-floor-mist{
+  position:absolute;inset:auto -8% -18% -8%;height:49%;z-index:4;
+  background:radial-gradient(ellipse 78% 55% at 45% 83%,rgba(91,117,92,.20),transparent 78%),
+             linear-gradient(0deg,#060d0c 15%,rgba(6,15,13,.58) 35%,transparent 90%);
+  filter:blur(18px);pointer-events:none;
+  animation:gi-home-mist-flow 14s ease-in-out infinite alternate
+}
+.cinematic-home--immersive .cinematic-bottom-line{
+  bottom:0;height:1px;z-index:9;opacity:.35;
+  background:linear-gradient(90deg,transparent,rgba(203,182,121,.6),transparent)
+}
+.cinematic-ember-field{position:absolute;inset:0;z-index:7;overflow:hidden;pointer-events:none}
+.cinematic-ember-field>span{
+  position:absolute;left:var(--ember-x);top:var(--ember-y);
+  width:var(--ember-size);height:var(--ember-size);
+  border-radius:50%;background:#e3c98b;opacity:0;
+  box-shadow:0 0 12px 2px rgba(238,184,107,.55);
+  animation:gi-home-ember var(--ember-speed) ease-in-out var(--ember-delay) infinite
+}
+@keyframes gi-home-breathe{
+  from{transform:scale(.92) translateY(-4%);opacity:.65}
+  to{transform:scale(1.07) translateY(4%);opacity:1}
+}
+@keyframes gi-home-drift{
+  from{background-position:11px 29px,64px 91px}
+  to{background-position:61px -58px,21px 34px}
+}
+@keyframes gi-home-crest-float{
+  from{transform:translateY(0)}
+  to{transform:translateY(-5px)}
+}
+@keyframes gi-home-mist-flow{
+  from{transform:translate3d(-2%,0,0);opacity:.68}
+  to{transform:translate3d(3%,-3%,0);opacity:.89}
+}
+@keyframes gi-home-ember{
+  0%,100%{opacity:0;transform:translate3d(-10px,18px,0) scale(.6)}
+  25%{opacity:.52}
+  68%{opacity:.2}
+  92%{opacity:0;transform:translate3d(17px,-34px,0) scale(1.12)}
+}
+@media(min-width:701px) and (max-width:1100px){
+  .cinematic-home--immersive .cinematic-stage{height:100%;min-height:0}
+  .cinematic-home--immersive .cinematic-hero>img{width:165%}
+}
+@media(max-width:700px){
+  .site-shell--home .site-header{display:none}
+  .home-simplified{padding:0 0 calc(60px + env(safe-area-inset-bottom));min-height:0}
+  .home-simplified .cinematic-home--immersive{
+    height:calc(100svh - 60px - env(safe-area-inset-bottom));
+    min-height:520px;overflow:hidden;
+    background:linear-gradient(180deg,#060e10,#13231e 57%,#070d0a 100%)
+  }
+  .cinematic-home--immersive .cinematic-title-wrap{
+    top:clamp(10px,2svh,23px);padding:0 9px
+  }
+  .cinematic-home--immersive .cinematic-crest{
+    width:clamp(59px,10svh,78px);height:clamp(59px,10svh,78px);
+    margin:0 auto 3px
+  }
+  .cinematic-home--immersive .cinematic-title-wrap h1{
+    font-size:clamp(30px,7.55vw,50px);letter-spacing:-.025em;
+    line-height:.98;white-space:nowrap
+  }
+  .cinematic-home--immersive .cinematic-title-wrap h1 span{
+    font-size:.24em;letter-spacing:.4em;margin-bottom:8px
+  }
+  .cinematic-home--immersive .cinematic-stage-outer{
+    position:absolute;top:clamp(109px,14svh,143px);
+    left:0;right:0;bottom:0;height:auto;width:100%;padding:0;margin:0
+  }
+  .cinematic-home--immersive .cinematic-stage{
+    display:flex;width:100%;height:100%;min-height:0;gap:0;
+    padding:0 19vw;align-items:stretch;
+    overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch
+  }
+  .cinematic-home--immersive .cinematic-stage::-webkit-scrollbar{display:none}
+  .cinematic-home--immersive .cinematic-hero{
+    scroll-snap-align:center;scroll-snap-stop:always;
+    flex:0 0 62vw;height:100%;transform:none
+  }
+  .cinematic-home--immersive .cinematic-hero>img{
+    width:115%;height:90%;bottom:7%;max-width:none;
+    object-fit:contain;object-position:center bottom;
+    transform:translateX(-50%) scale(.93)
+  }
+  .cinematic-home--immersive .cinematic-hero.is-active,
+  .cinematic-home--immersive .cinematic-hero:focus-visible{transform:none}
+  .cinematic-home--immersive .cinematic-hero.is-active>img,
+  .cinematic-home--immersive .cinematic-hero:focus-visible>img{
+    transform:translateX(-50%) scale(1)
+  }
+  .cinematic-home--immersive .cinematic-scene-glow{
+    left:50%;width:102%;top:17%;opacity:.64;filter:blur(32px)
+  }
+  .cinematic-home--immersive .cinematic-moonlight{top:-17%;left:0;width:100%;height:60%}
+  .cinematic-home--immersive .ruin-arch{opacity:.28;bottom:5%;height:68%;border-width:16px}
+  .cinematic-home--immersive .arch-two{opacity:.35}
+  .cinematic-home--immersive .hero-nameplate{
+    bottom:clamp(15px,3.3svh,38px);padding:10px 1px 5px
+  }
+  .cinematic-home--immersive .hero-nameplate strong{font-size:clamp(19px,5.8vw,25px)}
+  .cinematic-home--immersive .hero-role{
+    font-size:9px;letter-spacing:.08em;line-height:1.25
+  }
+  .cinematic-home--immersive .cinematic-ember-field{z-index:7}
+  .cinematic-floor-mist{height:38%;inset:auto -8% -14% -8%}
+}
+@media(max-width:390px){
+  .cinematic-home--immersive .cinematic-hero{flex-basis:64vw}
+  .cinematic-home--immersive .cinematic-stage{padding-inline:18vw}
+}
+@media(max-height:690px) and (min-width:701px){
+  .home-simplified .cinematic-home--immersive{min-height:570px}
+  .cinematic-home--immersive .cinematic-title-wrap{top:15px}
+  .cinematic-home--immersive .cinematic-crest{width:64px;height:64px}
+}
+@media(prefers-reduced-motion:reduce){
+  .cinematic-home--immersive .cinematic-crest,
+  .cinematic-home--immersive .cinematic-scenery:before,
+  .cinematic-moonlight,.cinematic-grain,.cinematic-floor-mist,
+  .cinematic-ember-field>span{animation:none!important}
+  .cinematic-ember-field>span{opacity:.16}
+  .cinematic-home--immersive .cinematic-scene-glow,
+  .cinematic-home--immersive .cinematic-hero,
+  .cinematic-home--immersive .cinematic-hero>img,
+  .cinematic-home--immersive .cinematic-hero:before,
+  .cinematic-home--immersive .hero-nameplate strong{transition:none!important}
+  .cinematic-home--immersive .cinematic-stage{scroll-behavior:auto}
+}
