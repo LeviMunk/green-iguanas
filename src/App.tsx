@@ -176,22 +176,39 @@ function DetailBox({label,value}:{label:string;value:string|null|number}) {retur
 function EmptyState({glyph='scroll',heading,detail}:{glyph?:Glyph;heading:string;detail:string}) {return <div className="empty-state"><div className="empty-icon"><Icon name={glyph} size={30}/></div><h3>{heading}</h3><p>{detail}</p></div>}
 
 function CharacterSheetPanel({character}:{character:Character}) {
+  const snapshot=character.sheetSnapshot;
   const pdf=character.sheetPdf ? import.meta.env.BASE_URL+(character.sheetPdf.startsWith('/')?character.sheetPdf.slice(1):character.sheetPdf) : null;
+  const abilities=[['STR','strength'],['DEX','dexterity'],['CON','constitution'],['INT','intelligence'],['WIS','wisdom'],['CHA','charisma']] as const;
   return <div className="sheet-panel">
-    <Label>D&D BEYOND · CHARACTER RECORD</Label>
+    <Label>D&D BEYOND · VERIFIED CHARACTER RECORD</Label>
     <h2>The character <em>sheet.</em></h2>
-    <p className="body-muted">Two complementary views: the current D&D Beyond character sheet and the last DM-reviewed PDF snapshot. A static PDF will not update automatically.</p>
+    <p className="body-muted">A direct link to the character's living D&D Beyond sheet, plus a quick reference based on the PDF reviewed {snapshot?.asOf??'with the DM'}. The live sheet may change after this snapshot.</p>
     <div className="sheet-link-grid">
-      <article className="sheet-link-card"><Icon name="external" size={26}/><span>LIVE CHARACTER</span><h3>D&D Beyond</h3>
-        <p>{character.beyondUrl?'Visit this character in D&D Beyond.':'A direct D&D Beyond character URL has not been supplied yet.'}</p>
-        {character.beyondUrl?<a className="btn btn-outline" href={character.beyondUrl} target="_blank" rel="noopener noreferrer">Open character sheet <Icon name="external" size={16}/></a>:<small className="sheet-awaiting">LINK NOT YET ATTACHED</small>}
+      <article className="sheet-link-card sheet-link-card--live">
+        <Icon name="external" size={26}/>
+        <span>LIVE D&D BEYOND CHARACTER</span>
+        <h3>{character.sheetName}</h3>
+        <p>Open the full interactive player sheet to see current features, equipment, spells, resources and updates.</p>
+        {character.beyondUrl?<a className="btn btn-primary" href={character.beyondUrl} target="_blank" rel="noopener noreferrer">View live player sheet <Icon name="external" size={16}/></a>:<small className="sheet-awaiting">LINK NOT YET AVAILABLE</small>}
       </article>
-      <article className="sheet-link-card"><Icon name="scroll" size={26}/><span>APPROVED EXPORT</span><h3>PDF snapshot</h3>
-        <p>{pdf?'View the most recent DM-reviewed exported character sheet.':'No approved PDF export has been added to this character yet.'}</p>
-        {pdf?<a className="btn btn-outline" href={pdf} target="_blank" rel="noopener noreferrer">View PDF snapshot <Icon name="external" size={16}/></a>:<small className="sheet-awaiting">PDF NOT YET ATTACHED</small>}
+      <article className="sheet-link-card sheet-link-card--verified">
+        <Icon name="shield" size={26}/>
+        <span>PDF SNAPSHOT · REVIEWED {snapshot?.asOf??'DATE PENDING'}</span>
+        <h3>Level {character.level??'—'} {character.class??'Adventurer'}</h3>
+        <p>{snapshot?`AC ${snapshot.armorClass??'—'} · ${snapshot.maxHitPoints??'—'} maximum HP · Passive Perception ${snapshot.passivePerception??'—'}`:'Character mechanics have not yet been reviewed.'}</p>
+        {character.sheetHighlights?.length?<ul className="sheet-highlights">{character.sheetHighlights.map(feature=><li key={feature}>{feature}</li>)}</ul>:null}
       </article>
     </div>
-    <p className="sheet-footnote">Character links may require D&D Beyond login or sharing permissions. Every PDF committed to GitHub Pages is publicly accessible; approve each export before publishing it.</p>
+    {snapshot?.abilityScores?<div className="sheet-abilities" aria-label="Ability scores from reviewed character sheet">
+      <div className="sheet-abilities-heading"><span>ABILITY SCORES</span><small>PDF snapshot · Not automatically synchronized</small></div>
+      <div className="sheet-ability-grid">{abilities.map(([label,key])=>{
+        const score=snapshot.abilityScores?.[key];
+        const modifier=score===undefined?null:Math.floor((score-10)/2);
+        return <div key={label} className="sheet-ability"><span>{label}</span><strong>{score??'—'}</strong><small>{modifier===null?'—':modifier>=0?`+${modifier}`:String(modifier)}</small></div>;
+      })}</div>
+    </div>:null}
+    {pdf&&<a className="btn btn-outline" href={pdf} target="_blank" rel="noopener noreferrer">View approved PDF export <Icon name="external" size={16}/></a>}
+    <p className="sheet-footnote">D&D Beyond may require the player's sharing permissions or login. The reviewed PDF is summarized here but is not publicly hosted. Heilbrun's Oath of Vengeance is confirmed by the player/DM although his current D&D Beyond export does not show that subclass.</p>
   </div>;
 }
 function CharacterDicePanel({character}:{character:Character}) {
@@ -236,8 +253,8 @@ function CharacterPage({id}:{id:string}) {
     <div className="dossier-layout"><div className="dossier-portrait"><PlaceholderArt character={character} large/></div>
      <div className="dossier-copy"><Label>CHARACTER FILE {character.index} / 05</Label><h1>{character.name}</h1><p className="dossier-kicker">{character.descriptor}</p><div className="accent-line"/><p className="dossier-description">{character.highlight}</p>
       <div className="dossier-details"><DetailBox label="CLASS" value={character.class}/><DetailBox label="LEVEL" value={character.level}/><DetailBox label="ANCESTRY" value={character.ancestry}/><DetailBox label="SHEET BACKGROUND" value={character.background}/></div>
-      {character.sheetSnapshot?<div className="sheet-stat-group"><div className="sheet-stat-head">VERIFIED PDF SNAPSHOT <span>UPDATED {character.sheetSnapshot.asOf}</span></div><div className="dossier-details"><DetailBox label="ARMOR CLASS" value={character.sheetSnapshot.armorClass??null}/><DetailBox label="MAXIMUM HP" value={character.sheetSnapshot.maxHitPoints??null}/><DetailBox label="MOVEMENT" value={character.sheetSnapshot.speed??null}/><DetailBox label="INITIATIVE" value={character.sheetSnapshot.initiative??null}/></div></div>:<div className="sheet-pending">Current sheet mechanics await a verified D&D Beyond PDF export.</div>}
-      <div className="dossier-actions"><a className="btn btn-outline" href={'#/dice?character='+character.id}><Icon name="dice" size={16}/> Character Dice Log</a><span className="muted-action"><Icon name="scroll" size={16}/>{character.sheetPdf||character.beyondUrl?'Character sheet available':'Sheet PDF / link not attached'}</span></div>
+      {character.sheetSnapshot?<div className="sheet-stat-group"><div className="sheet-stat-head">REVIEWED PDF SNAPSHOT <span>REVIEWED {character.sheetSnapshot.asOf}</span></div><div className="dossier-details"><DetailBox label="ARMOR CLASS" value={character.sheetSnapshot.armorClass??null}/><DetailBox label="MAXIMUM HP" value={character.sheetSnapshot.maxHitPoints??null}/><DetailBox label="MOVEMENT" value={character.sheetSnapshot.speed??null}/><DetailBox label="INITIATIVE" value={character.sheetSnapshot.initiative??null}/></div></div>:<div className="sheet-pending">Current sheet mechanics await a verified D&D Beyond PDF export.</div>}
+      <div className="dossier-actions">{character.beyondUrl&&<a className="btn btn-primary" href={character.beyondUrl} target="_blank" rel="noopener noreferrer"><Icon name="external" size={16}/> View on D&D Beyond</a>}<a className="btn btn-outline" href={'#/dice?character='+character.id}><Icon name="dice" size={16}/> Character Dice Log</a></div>
      </div>
     </div>
    </section>
