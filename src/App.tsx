@@ -85,11 +85,11 @@ function SiteHeader({route}: {route:string}) {
   useEffect(()=>{const key=(e:KeyboardEvent)=>{if(e.key==='Escape')setOpen(false)};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[]);
   return <><header className="site-header"><div className="header-inner container">
     <a href="#/" className="brand" aria-label="Green Iguanas home"><Crest size={26}/><span className="brand-copy"><strong>GREEN IGUANAS</strong></span></a>
-    <nav className="desktop-nav" aria-label="Main navigation">{nav.slice(0,6).map(item=><a key={item.href} href={item.href} className={route===item.href.slice(1)?'active':''} aria-current={route===item.href.slice(1)?'page':undefined}>{item.label}</a>)}</nav>
+    <nav className="desktop-nav" aria-label="Main navigation">{nav.slice(0,6).map(item=><a key={item.href} href={item.href} className={(route===item.href.slice(1)||(item.href==='#/journal'&&route.startsWith('/adventure/')))?'active':''} aria-current={(route===item.href.slice(1)||(item.href==='#/journal'&&route.startsWith('/adventure/')))?'page':undefined}>{item.label}</a>)}</nav>
     <div className="header-right"><span className="header-status"><span className="status-dot"/> CAMPAIGN COMPANION</span><button type="button" className="menu-trigger" onClick={()=>setOpen(!open)} aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="mobile-navigation"><Icon name={open?'close':'menu'} size={24}/></button></div>
   </div></header>
-  {open && <nav id="mobile-navigation" className="mobile-menu" aria-label="Additional navigation">{nav.filter(n=>n.href!=='#/archive').map(n=><a className="mobile-menu-main" href={n.href} key={n.href} aria-current={route===n.href.slice(1)?'page':undefined}><Icon name={n.glyph}/>{n.label}<Icon name="arrow" size={15}/></a>)}{moreNav.map(n=><a href={n.href} key={n.href} aria-current={route===n.href.slice(1)?'page':undefined}><Icon name={n.glyph}/>{n.label}<Icon name="arrow" size={15}/></a>)}</nav>}
-  <nav className="bottom-nav" aria-label="Mobile navigation">{[nav[0],nav[1],nav[2],nav[4]].map(n=><a key={n.href} href={n.href} aria-current={route===n.href.slice(1)?'page':undefined} className={route===n.href.slice(1)?'active':''}><Icon name={n.glyph} size={21}/><span>{n.label==='Dice Chronicle'?'Dice':n.label==='Story So Far'?'Story':n.label}</span></a>)}<button type="button" className={moreNav.some(n=>n.href.slice(1)===route)?'active':''} onClick={()=>setOpen(current=>!current)} aria-controls="mobile-navigation" aria-expanded={open} aria-label={open?'Close additional navigation':'More navigation'}><Icon name={open?'close':'menu'} size={21}/><span>More</span></button></nav></>;
+  {open && <nav id="mobile-navigation" className="mobile-menu" aria-label="Additional navigation">{nav.filter(n=>n.href!=='#/archive').map(n=><a className="mobile-menu-main" href={n.href} key={n.href} aria-current={(route===n.href.slice(1)||(n.href==='#/journal'&&route.startsWith('/adventure/')))?'page':undefined}><Icon name={n.glyph}/>{n.label}<Icon name="arrow" size={15}/></a>)}{moreNav.map(n=><a href={n.href} key={n.href} aria-current={route===n.href.slice(1)?'page':undefined}><Icon name={n.glyph}/>{n.label}<Icon name="arrow" size={15}/></a>)}</nav>}
+  <nav className="bottom-nav" aria-label="Mobile navigation">{[nav[0],nav[1],nav[2],nav[4]].map(n=><a key={n.href} href={n.href} aria-current={route===n.href.slice(1)?'page':undefined} className={(route===n.href.slice(1)||(n.href==='#/journal'&&route.startsWith('/adventure/')))?'active':''}><Icon name={n.glyph} size={21}/><span>{n.label==='Dice Chronicle'?'Dice':n.label==='Story So Far'?'Story':n.label}</span></a>)}<button type="button" className={moreNav.some(n=>n.href.slice(1)===route)?'active':''} onClick={()=>setOpen(current=>!current)} aria-controls="mobile-navigation" aria-expanded={open} aria-label={open?'Close additional navigation':'More navigation'}><Icon name={open?'close':'menu'} size={21}/><span>More</span></button></nav></>;
 }
 function SectionTitle({eyebrow,title,sub,href,link}:{eyebrow:string;title:React.ReactNode;sub?:string;href?:string;link?:string}) {return <div className="section-heading"><div><Label>{eyebrow}</Label><h2>{title}</h2>{sub&&<p>{sub}</p>}</div>{href&&<Action href={href} variant="text">{link||'Explore'}</Action>}</div>}
 
@@ -368,62 +368,117 @@ const archiveSections = [
 ];
 function WorldArchive(){const [search,setSearch]=useState('');const {content}=useCampaignContent();const items=archiveSections.filter(x=>`${x.name} ${x.description}`.toLowerCase().includes(search.toLowerCase()));return <main id="main-content" tabIndex={-1}><PageIntro eyebrow="THE ARCHIVE / III" title={<>World <em>Archive.</em></>} description="A growing encyclopedia of the people, places, pursuits, and legends that shape our world."/><section className="container directory-section"><div className="directory-toolbar"><span className="directory-count">EXPLORE THE INDEX <span>06 COLLECTIONS</span></span><label className="search-field"><Icon name="search" size={18}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search collections" aria-label="Search archive collections"/></label></div><div className="archive-cards">{items.map((section,i)=><a href={section.href} key={section.name} className="archive-tile"><span className="archive-number">{String(i+1).padStart(2,'0')}</span><Icon name={section.glyph} size={32}/><h3>{section.name}</h3><p>{section.description}</p><span>EXPLORE COLLECTION <Icon name="arrow" size={17}/></span></a>)}</div>{content.npcs.length>0&&<div className="world-npcs"><SectionTitle eyebrow="KNOWN TO THE PARTY" title={<>People <em>we’ve met.</em></>}/><div className="record-grid">{content.npcs.map(n=><article className="record-entry" key={n.id}><span className="record-star">✦</span><h3>{n.name}</h3><p>{n.description}</p></article>)}</div></div>}{!items.length&&<EmptyState glyph="search" heading="No matching collection" detail="Try a broader search."/>}<div className="directory-note"><Icon name="lock" size={17}/>This public archive contains only player-known material. Keep unrevealed DM notes outside the public repository.</div></section></main>}
 
+// Story So Far is the chapter bookshelf; individual adventure routes contain
+// the full cinematic art, verified story record, and chapter scene galleries.
 function StorySoFar(){
  const artUrl=(src:string)=>import.meta.env.BASE_URL+src;
- return <div className="cinema-chronicle">
+ return <div className="cinema-chronicle cinema-chronicle--index">
    <header className="cinema-prologue" id="story-top">
      <div className="cinema-prologue-light" aria-hidden="true"/>
      <div className="cinema-prologue-content container">
-       <span className="cinema-kicker">THE GREEN IGUANAS / A LIVING CAMPAIGN</span>
+       <span className="cinema-kicker">THE GREEN IGUANAS / OUR ADVENTURES</span>
        <h1>Previously, in the <em>Green Iguanas…</em></h1>
-       <p>From a midnight museum caper to the roaring arena beneath Mount Waterdeep. Seven chapters of adventures, legends and unfinished business.</p>
+       <p>Every legend is a collection of chapters. Explore the journey from a museum heist to the blood-soaked arena beneath Mount Waterdeep, one adventure at a time.</p>
        <div className="cinema-prologue-utility">
-         <button type="button" className="cinema-scroll-link" onClick={()=>document.getElementById("story-chapters")?.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})}>Enter the story <Icon name="chevron" size={17}/></button>
-         <span>SCROLL TO REVISIT THE CAMPAIGN</span>
+         <a className="cinema-scroll-link" href="#/adventure/museum-heist">Start with the first adventure <Icon name="arrow" size={17}/></a>
+         <span>SELECT AN ADVENTURE TO ENTER ITS STORY</span>
        </div>
      </div>
    </header>
-   <div className="cinema-chapter-index container" aria-label="Chapter navigation">
-     {storyChapters.map((chapter,i)=><button type="button" key={chapter.id} onClick={()=>document.getElementById("chapter-"+chapter.id)?.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})} aria-label={"Jump to "+chapter.title}><span>{String(i+1).padStart(2,'0')}</span><strong>{chapter.title}</strong></button>)}
-   </div>
-   <div className="cinema-chapters" id="story-chapters">{storyChapters.map((chapter,i)=>
-      <article key={chapter.id} className={'cinema-chapter cinema-chapter--'+chapter.mood+(i%2?' cinema-chapter--right':'')} id={'chapter-'+chapter.id} aria-labelledby={'chapter-title-'+chapter.id}>
-       <div className="cinema-chapter-hero">
-         <img src={artUrl(chapter.hero.src)} alt={chapter.hero.alt} className="cinema-chapter-image" loading={i<2?'eager':'lazy'} decoding="async" onError={e=>{e.currentTarget.style.display='none'}}/>
-         <div className="cinema-chapter-shade" aria-hidden="true"/>
-         <div className="cinema-chapter-glow" aria-hidden="true"/>
-         <div className="cinema-chapter-caption"><span>THE GREEN IGUANAS</span><span>{chapter.hero.caption}</span></div>
-         <div className="cinema-chapter-content container">
-           <div className="cinema-chapter-copy">
-             <div className="cinema-chapter-topline"><span>CHAPTER {String(i+1).padStart(2,'0')} / {String(storyChapters.length).padStart(2,'0')}</span><span className={chapter.status==='confirmed'?'cinema-confirmed':'cinema-pending'}>{chapter.status==='confirmed'?'RECORDED HISTORY':'DETAILS TO VERIFY'}</span></div>
-             <span className="cinema-chapter-kicker">{chapter.kicker}</span>
-             <h2 id={'chapter-title-'+chapter.id}>{chapter.title}</h2>
-             <p className="cinema-chapter-description">{chapter.summary}</p>
-             <span className="cinema-chapter-signature">THE GREEN IGUANAS <i aria-hidden="true">✦</i> {chapter.hero.label}</span>
-           </div>
+   <section className="cinema-adventure-collection container" id="story-chapters" aria-labelledby="story-collection-title">
+     <div className="cinema-collection-header">
+       <div><span className="cinema-kicker">THE STORY / CHAPTER BY CHAPTER</span><h2 id="story-collection-title">The adventure <em>archive.</em></h2></div>
+       <span className="cinema-collection-count">{String(storyChapters.length).padStart(2,'0')} CHAPTERS</span>
+     </div>
+     <div className="cinema-adventure-grid">
+       {storyChapters.map((chapter,i)=><a key={chapter.id}
+         href={'#/adventure/'+chapter.id}
+         className={'cinema-adventure-card cinema-chapter--'+chapter.mood}
+         aria-label={'Read '+chapter.title+' adventure page'}>
+         <span className="cinema-adventure-image">
+           <img src={artUrl(chapter.hero.src)} alt={chapter.hero.alt} loading={i<2?'eager':'lazy'} decoding="async" onError={e=>{e.currentTarget.style.display='none'}}/>
+           <span className="cinema-adventure-image-shade" aria-hidden="true"/>
+           <span className="cinema-adventure-chapter">CHAPTER {String(i+1).padStart(2,'0')}</span>
+         </span>
+         <span className="cinema-adventure-card-body">
+           <span className="cinema-adventure-kicker">{chapter.kicker}</span>
+           <strong>{chapter.title}</strong>
+           <span className="cinema-adventure-summary">{chapter.summary}</span>
+           <span className="cinema-adventure-card-foot">
+             <span className={chapter.status==='confirmed'?'cinema-adventure-status is-confirmed':'cinema-adventure-status'}>{chapter.status==='confirmed'?'HISTORY CONFIRMED':'DETAILS BEING RECONSTRUCTED'}</span>
+             <span className="cinema-adventure-cta">ENTER CHAPTER <Icon name="arrow" size={17}/></span>
+           </span>
+         </span>
+       </a>)}
+     </div>
+   </section>
+ </div>;
+}
+
+function AdventurePage({id}:{id:string}){
+ const chapterIndex=storyChapters.findIndex(c=>c.id===id);
+ const chapter=storyChapters[chapterIndex];
+ const artUrl=(src:string)=>import.meta.env.BASE_URL+src;
+ if(!chapter)return <main id="main-content" tabIndex={-1} className="container cinema-adventure-notfound">
+   <EmptyState glyph="book" heading="This chapter isn't in the archive" detail="The Green Iguanas' story continues to unfold, but this adventure has not been published."/>
+   <Action href="#/journal" variant="outline">Return to Story So Far</Action>
+ </main>;
+ const previous=chapterIndex>0?storyChapters[chapterIndex-1]:null;
+ const next=chapterIndex<storyChapters.length-1?storyChapters[chapterIndex+1]:null;
+ return <main id="main-content" tabIndex={-1} className="cinema-chronicle cinema-adventure-detail">
+   <nav className="container cinema-adventure-breadcrumb" aria-label="Adventure breadcrumb">
+     <a href="#/journal"><Icon name="chevron" size={14}/> ALL ADVENTURES</a>
+     <span aria-hidden="true">/</span>
+     <span>CHAPTER {String(chapterIndex+1).padStart(2,'0')}</span>
+   </nav>
+   <article className={'cinema-chapter cinema-chapter--'+chapter.mood} aria-labelledby="adventure-title">
+     <div className="cinema-chapter-hero">
+       <img src={artUrl(chapter.hero.src)} alt={chapter.hero.alt} className="cinema-chapter-image" loading="eager" decoding="async" onError={e=>{e.currentTarget.style.display='none'}}/>
+       <div className="cinema-chapter-shade" aria-hidden="true"/>
+       <div className="cinema-chapter-glow" aria-hidden="true"/>
+       <div className="cinema-chapter-caption"><span>THE GREEN IGUANAS</span><span>{chapter.hero.caption}</span></div>
+       <div className="cinema-chapter-content container"><div className="cinema-chapter-copy">
+         <div className="cinema-chapter-topline"><span>CHAPTER {String(chapterIndex+1).padStart(2,'0')} / {String(storyChapters.length).padStart(2,'0')}</span><span className={chapter.status==='confirmed'?'cinema-confirmed':'cinema-pending'}>{chapter.status==='confirmed'?'RECORDED HISTORY':'DETAILS TO VERIFY'}</span></div>
+         <span className="cinema-chapter-kicker">{chapter.kicker}</span>
+         <h1 id="adventure-title">{chapter.title}</h1>
+         <p className="cinema-chapter-description">{chapter.summary}</p>
+         <span className="cinema-chapter-signature">THE GREEN IGUANAS <i aria-hidden="true">✦</i> {chapter.hero.label}</span>
+       </div></div>
+     </div>
+     <section className="cinema-adventure-record" aria-labelledby="adventure-record-heading">
+       <div className="container cinema-adventure-record-layout">
+         <div><span className="cinema-kicker">FROM THE ADVENTURE RECORD</span><h2 id="adventure-record-heading">The story <em>so far.</em></h2></div>
+         <div className="cinema-adventure-record-copy">
+           {(chapter.record??[{title:'What is known',text:chapter.summary}]).map((entry,i)=><div className="cinema-adventure-record-entry" key={entry.title}>
+             <span>{String(i+1).padStart(2,'0')}</span>
+             <div><h3>{entry.title}</h3><p>{entry.text}</p></div>
+           </div>)}
+           {chapter.status!=='confirmed'&&<p className="cinema-adventure-verification">This chapter is being reconstructed from existing campaign material. Planned encounters and possible outcomes are not presented as events that definitely occurred.</p>}
          </div>
        </div>
-       {chapter.gallery.length>0&&<div className="cinema-gallery-wrap">
-         <div className="container cinema-gallery">
-           <div className="cinema-gallery-label"><span>SCENES FROM THE CHAPTER</span><small>ORIGINAL ARTWORK & OTHER PERSPECTIVES</small></div>
-           <div className="cinema-gallery-grid">{chapter.gallery.map((art,index)=>
-             <a key={art.src} href={artUrl(art.src)} className="cinema-memory" target="_blank" rel="noopener noreferrer" aria-label={'Open illustration: '+art.caption}>
-               <span className="cinema-memory-image"><img src={artUrl(art.src)} loading="lazy" decoding="async" alt={art.alt} onError={e=>{e.currentTarget.style.display='none'}}/></span>
-               <span className="cinema-memory-meta"><small>{String(index+1).padStart(2,'0')} · {art.label}</small><strong>{art.caption}</strong><Icon name="external" size={16}/></span>
-             </a>
-           )}</div>
-         </div>
-       </div>}
-      </article>
-   )}</div>
-   <footer className="cinema-epilogue">
-     <span className="cinema-kicker">OUR STORY IS STILL BEING WRITTEN</span>
-     <h2>Next stop: <em>The Dandy War Dolls.</em></h2>
-     <p>The Green Iguanas' first Dragonbowl victory is on the record. What happens in the quarterfinal will only become history after it is played.</p>
-     <div className="cinema-end-links"><Action href="#/dragonbowl" variant="outline">The Dragonbowl</Action><Action href="#/" variant="outline">Return to the Heroes</Action></div>
-     <small>ARTISTIC RENDITIONS OF CAMPAIGN EVENTS · ILLUSTRATIONS DO NOT VERIFY UNRECORDED DETAILS</small>
-   </footer>
- </div>;
+     </section>
+     {chapter.gallery.length>0&&<section className="cinema-gallery-wrap" aria-labelledby="adventure-scenes-heading">
+       <div className="container cinema-gallery">
+         <div className="cinema-gallery-label"><span id="adventure-scenes-heading">SCENES FROM THIS ADVENTURE</span><small>ILLUSTRATED MOMENTS & OTHER PERSPECTIVES</small></div>
+         <div className="cinema-gallery-grid">{chapter.gallery.map((art,index)=>
+           <a key={art.src} href={artUrl(art.src)} className="cinema-memory" target="_blank" rel="noopener noreferrer" aria-label={'Open illustration: '+art.caption}>
+             <span className="cinema-memory-image"><img src={artUrl(art.src)} loading="lazy" decoding="async" alt={art.alt} onError={e=>{e.currentTarget.style.display='none'}}/></span>
+             <span className="cinema-memory-meta"><small>{String(index+1).padStart(2,'0')} · {art.label}</small><strong>{art.caption}</strong><Icon name="external" size={16}/></span>
+           </a>
+         )}</div>
+         <p className="cinema-adventure-art-note">Illustrations are artistic interpretations and do not establish undocumented actions or outcomes.</p>
+       </div>
+     </section>}
+   </article>
+   <nav className="container cinema-adventure-next" aria-label="Adventure navigation">
+     {previous?<a href={'#/adventure/'+previous.id} className="cinema-adventure-direction">
+       <small><Icon name="chevron" size={15}/> PREVIOUS ADVENTURE</small><strong>{previous.title}</strong>
+     </a>:<a href="#/journal" className="cinema-adventure-direction"><small><Icon name="chevron" size={15}/> BACK TO THE ARCHIVE</small><strong>All adventures</strong></a>}
+     {next?<a href={'#/adventure/'+next.id} className="cinema-adventure-direction cinema-adventure-direction--next">
+       <small>NEXT ADVENTURE <Icon name="arrow" size={16}/></small><strong>{next.title}</strong>
+     </a>:<a href="#/dragonbowl" className="cinema-adventure-direction cinema-adventure-direction--next"><small>CONTINUE THE JOURNEY <Icon name="arrow" size={16}/></small><strong>Dragonbowl XLIX</strong></a>}
+   </nav>
+ </main>;
 }
 
 function DragonbowlMatch({match,round}:{match:BracketMatch;round:BracketRound['id']}) {
@@ -518,12 +573,14 @@ export default function App(){const route=useRoute();let page:React.ReactNode;
  useEffect(()=>{
     const names:Record<string,string>={'/':'The Living Chronicle','/party':'The Living Chronicle','/dice':'Dice Chronicle','/journal':'Previously in the Green Iguanas','/archive':'World Archive','/dragonbowl':'Dragonbowl','/quests':'Quests','/treasury':'Party Treasury','/achievements':'Achievements'};
     const member=route.startsWith('/character/')?characters.find(c=>c.id===route.split('/')[2]):null;
-    document.title=`${member?.name ?? names[route] ?? 'Green Iguanas'} | The Green Iguanas`;
+    const chapter=route.startsWith('/adventure/')?storyChapters.find(c=>c.id===route.split('/')[2]):null;
+    document.title=`${member?.name ?? chapter?.title ?? names[route] ?? 'Green Iguanas'} | The Green Iguanas`;
  },[route]);
  if(route==='/'||route==='')page=<Home/>;
  else if(route==='/party')page=<Home/>;
  else if(route.startsWith('/character/'))page=<CharacterPage id={route.split('/')[2]}/>;
  else if(route==='/dice')page=<DiceChronicle/>;
+ else if(route.startsWith('/adventure/'))page=<AdventurePage id={route.split('/')[2]}/>;
  else if(route==='/archive')page=<WorldArchive/>;
  else if(['journal','quests','dragonbowl','treasury','achievements'].includes(route.replace('/','')))page=<Collection kind={route.slice(1) as 'journal'|'quests'|'dragonbowl'|'treasury'|'achievements'}/>;
  else if(route==='/account'||route==='/dm')page=<Restricted mode={route==='/dm'?'dm':'account'}/>;
