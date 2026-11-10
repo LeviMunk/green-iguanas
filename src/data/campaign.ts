@@ -108,69 +108,102 @@ export const characters: Character[] = [
   {
     id:'heilbrun',name:'Heilbrun',givenInitials:'HE',index:'05',
     accent:'#c5aa69',portrait:'art/heilbrun.webp',
-    descriptor:'High elf paladin · The quiet tempest',
-    highlight:'A composed noble bearing a warhammer, glowing gold eyes and an unspoken past.',
+    descriptor:'High elf paladin · Joined at Dragonbowl',
+    highlight:'A golden-eyed paladin who joined the Green Iguanas at Dragonbowl XLIX.',
     class:'Paladin',level:null,ancestry:'High elf',background:null,
-    biography:'Heilbrun is an elegant high elf paladin with long blond hair, regal blue-and-gold armor, an ornate warhammer and glowing golden eyes. His composed, reasonable demeanor contrasts with a proposed character direction of sudden, fierce intensity. His played introduction and sworn oath are not yet established.',
+    biography:'Heilbrun is an elegant high elf paladin with long blond hair, regal blue-and-gold armor, an ornate warhammer and glowing golden eyes. His composed, reasonable demeanor contrasts with a proposed character direction of sudden, fierce intensity. He joined the Green Iguanas at Dragonbowl XLIX. The detailed circumstances of his introduction and sworn oath remain undocumented.',
     profileSections:[
       {title:'The noble exterior',text:'Heilbrun’s established visual identity is a calm, stern high elf in intricate blue, ivory and gold armor, with long blond hair, a shimmering cloak and a heavy warhammer. His eyes glow gold.'},
       {title:'A possible oath',text:'The concept under consideration is an Oath of Vengeance paladin with a Haunted One background: outwardly controlled and reasonable, but capable of unexpectedly intense action. This is a creative direction, not a locked-in oath, sheet background or played backstory.',status:'concept'},
-      {title:'The unwritten chapter',text:'The guest character’s prior team, personal history, relationships and first played introduction remain unspecified. These details should be established by the player and the table before they become campaign canon.',status:'concept'}
+      {title:'The fifth Iguana',text:'Heilbrun joined the Green Iguanas at Dragonbowl XLIX. His earlier company, relationships and the exact circumstances of that meeting still await the player’s history.'}
     ],
-    moments:[],
+    moments:[{title:'Dragonbowl XLIX · Joined the Green Iguanas',description:'Heilbrun became the party’s fifth member at Dragonbowl. How the introduction unfolded has not yet been recorded.'}],
     beyondUrl:null,sheetPdf:null
   }
 ];
 
+export type StoryArtwork = {
+  src: string;
+  alt: string;
+  caption: string;
+  label: string;
+};
 export type StoryChapter = {
   id: string;
   title: string;
+  kicker: string;
   summary: string;
   status: 'confirmed' | 'details-pending';
+  mood: 'museum' | 'ocean' | 'red-run' | 'freed' | 'dragon' | 'dragonbowl' | 'victory';
+  hero: StoryArtwork;
+  gallery: StoryArtwork[];
 };
 
+// All artwork depicts the campaign artistically. An illustration is not itself
+// evidence of mounts, exact actions, ordering, or the completion of unplayed scenes.
 export const storyChapters: StoryChapter[] = [
   {
-    id:'museum-heist',
-    title:'Museum & the rare egg',
-    summary:'Earlier campaign material references a museum heist, a rare magical egg or Murkmire Stone, a rival crew and an escape. The exact outcome and consequences still need to be checked against play records.',
-    status:'details-pending'
+    id:'museum-heist', title:'The Museum Heist', kicker:'THE RELIC THAT STARTED A RECKONING',
+    summary:'Earlier campaign material references a museum heist involving a rare magical egg or Murkmire Stone, a rival crew and a chaotic escape. The relic’s ultimate fate, exact encounter details and consequences still need verification against the table record.',
+    status:'details-pending', mood:'museum',
+    hero:{src:'history/museum-relic.webp',alt:'Bobby Kills, Freed, Owen and Indigo inside a moonlit museum beside a glowing turquoise egg',caption:'The rare egg · museum chapter illustration',label:'THE RELIC'},
+    gallery:[{src:'history/museum-original.webp',alt:'The original Green Iguanas art of the party entering a museum with a luminous egg under a glass dome',caption:'The original museum heist artwork',label:'THE FIRST CAPER'}]
   },
   {
-    id:'revels-end',
-    title:'Voyage to Revel’s End',
-    summary:'An earlier voyage is referenced in campaign notes. Its purpose, encounters and final outcome are not yet verified.',
-    status:'details-pending'
+    id:'revels-end', title:'A Voyage to Revel’s End', kicker:'BEYOND THE EDGE OF THE MAP',
+    summary:'The Green Iguanas traveled by sea toward Revel’s End. Their reason for going, the people they met and the outcome of the voyage have not yet been established in the published record.',
+    status:'details-pending', mood:'ocean',
+    hero:{src:'history/revels-voyage.webp',alt:'The Green Iguanas on the deck of a sailing ship as the sea rises toward a coastal stronghold',caption:'The party at sea · chapter illustration',label:'SAIL THE UNKNOWN'},
+    gallery:[
+      {src:'history/revels-ship.webp',alt:'A tall sailing ship cuts through deep-blue ocean waves beneath large white clouds',caption:'The voyage across the open water',label:'THE PASSAGE'},
+      {src:'history/indigo-sunset.webp',alt:'Indigo plays his lute on a cliff at sunset under a fiery orange sky',caption:'Indigo · a quieter moment',label:'A SONG AT SUNSET'}
+    ]
   },
   {
-    id:'red-run',
-    title:'Vhal Drakar’s Red Run',
-    summary:'The party participated in a monster-racing chapter. Owen rode the Shadow Panther; winners, wagers and the other mounts remain unconfirmed.',
-    status:'details-pending'
+    id:'red-run', title:'The Red Run', kicker:'DUST. TEETH. THE SOUND OF THE CROWD.',
+    summary:'The Green Iguanas entered Vhal Drakar’s Red Run, a dangerous monster-racing chapter. Owen rode the Shadow Panther. The remaining mounts, wagers and final standings have not yet been verified.',
+    status:'details-pending', mood:'red-run',
+    hero:{src:'history/red-run-charge.webp',alt:'Owen rides a shadow panther amid a ferocious monster race while the Green Iguanas charge through the arena',caption:'Vhal Drakar’s Red Run · racing illustration',label:'THE RACE'},
+    gallery:[
+      {src:'history/red-run-original.webp',alt:'Monster racers surge through a red-dust canyon beneath the Red Run banner',caption:'A second view of the Red Run spectacle',label:'THE ARENA'},
+      {src:'history/owen-moon.webp',alt:'Owen in hooded druid robes beneath a full moon with his owl companion',caption:'Owen · the rider of the Shadow Panther',label:'THE DRUID'}
+    ]
   },
   {
-    id:'eye-of-freed',
-    title:'The Wish & the Eye of Freed',
-    summary:'Before the red dragon’s den, Freed sacrificed one of his eyes in a Wish, rolled a natural 100 on d100 and gained the evolving Eye of Freed. Its specific powers still need character-sheet confirmation.',
-    status:'confirmed'
+    id:'eye-of-freed', title:'The Price of Sight', kicker:'ONE WISH. ONE SACRIFICE. ONE HUNDRED.',
+    summary:'Before entering the red dragon’s den, Freed sacrificed one of his eyes as part of a Wish. A natural 100 on the d100 roll brought forth the Eye of Freed, an evolving artifact-grade replacement. Its exact mechanical powers still await verification against the character sheet.',
+    status:'confirmed', mood:'freed',
+    hero:{src:'history/freed-eye.webp',alt:'A close-up of Freed in steel armor, sword raised across his chest and a red glow visible within his visor',caption:'The Eye of Freed · character illustration',label:'THE SACRIFICE'},
+    gallery:[]
   },
   {
-    id:'red-dragon',
-    title:'The dragon’s counterfeit fortune',
-    summary:'The Green Iguanas defeated a red dragon. Much of its apparently enormous hoard was fake: painted wooden coins, cheap metal and glass. They freed the wizard compelled to manufacture it.',
-    status:'confirmed'
+    id:'red-dragon', title:'The Dragon’s False Fortune', kicker:'NOT ALL THAT GLITTERS IS GOLD',
+    summary:'The Green Iguanas fought and defeated a red dragon. Its immense hoard was largely counterfeit: painted wooden coins, gilded cheap metal and glass. The party also freed a wizard who had been forced to manufacture the illusion of wealth.',
+    status:'confirmed', mood:'dragon',
+    hero:{src:'history/dragon-hoard.webp',alt:'The Green Iguanas face a gigantic red dragon perched above a hoard of glittering treasure',caption:'The red dragon’s counterfeit hoard · chapter illustration',label:'THE HOARD'},
+    gallery:[
+      {src:'history/dragon-original.webp',alt:'A huge crimson dragon spreads its wings inside a torchlit vaulted chamber above the four adventurers',caption:'The dragon confrontation · another perspective',label:'THE ENCOUNTER'}
+    ]
   },
   {
-    id:'dragonbowl-arrival',
-    title:'Beneath Mount Waterdeep',
-    summary:'The freed wizard’s former party had an existing tournament entry. The Green Iguanas used that opportunity to enter Dragonbowl XLIX, explored the festival and began their arena journey.',
-    status:'confirmed'
+    id:'dragonbowl-arrival', title:'Under Mount Waterdeep', kicker:'THE WORLD’S BIGGEST ARENA AWAITS',
+    summary:'After freeing the captive wizard, the party gained access to an already-paid tournament entry and reached Dragonbowl XLIX beneath Mount Waterdeep. They toured the festival and entered the competition. Heilbrun joined the Green Iguanas at Dragonbowl, becoming the party’s fifth member. The precise circumstances of his arrival and earlier history remain to be documented.',
+    status:'confirmed', mood:'dragonbowl',
+    hero:{src:'history/dragonbowl-arrival.webp',alt:'Bobby, Freed, Owen and Indigo stand together at sunset overlooking the city and sea before Dragonbowl',caption:'Arrival at the tournament · chapter illustration',label:'A NEW ARENA'},
+    gallery:[
+      {src:'history/dragonbowl-airship.webp',alt:'A majestic tournament airship with a pale balloon and red trim floats through the sky',caption:'The championship airship',label:'OVER THE ARENA'},
+      {src:'history/dragonbowl-tavern.webp',alt:'Bobby, Freed, Owen and Indigo gather at a feast while a blond elf paladin stands at a nearby bar',caption:'The Dragonbowl gathering · featuring Heilbrun',label:'FIFTH IGUANA'},
+      {src:'history/bobby-tavern.webp',alt:'Bobby Kills sits in a warm candlelit tavern holding a drink with his massive axe nearby',caption:'Bobby · off the battlefield',label:'AFTER HOURS'}
+    ]
   },
   {
-    id:'cackle-crew',
-    title:'Cackle Crew falls',
-    summary:'The Green Iguanas defeated Cackle Crew in Round One. Freed claimed King Cackle’s arm, Bobby struck hard with his axe, Owen fought as a tiger and Indigo won over the crowd.',
-    status:'confirmed'
+    id:'cackle-crew', title:'Cackle Crew Falls', kicker:'THE UNDERDOGS HAVE ENTERED THE STORY',
+    summary:'In their first Dragonbowl bout, the Green Iguanas defeated Cackle Crew. Freed severed King Cackle’s arm and held it high, Bobby delivered a devastating axe strike, Owen fought in tiger form under Globe of Twilight, and Indigo whipped the crowd into celebration. Their next known opponent is the Dandy War Dolls in the quarterfinal.',
+    status:'confirmed', mood:'victory',
+    hero:{src:'history/dragonbowl-victory.webp',alt:'The Green Iguanas celebrate a victorious pose beneath confetti and a tournament airship in the arena',caption:'Dragonbowl Round One · victory illustration',label:'THE VICTORY'},
+    gallery:[
+      {src:'history/dragonbowl-original.webp',alt:'The four adventurers pose together in a brightly lit tournament arena with banners and cheering crowds',caption:'Another view of the Dragonbowl arena',label:'THE FOUR'}
+    ]
   }
 ];
 
