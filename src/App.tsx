@@ -124,7 +124,7 @@ function HeroFellowship() {
           </a>)}
       </div>
     </div>
-    <div className="cinematic-links"><a href="#/party">MEET THE FELLOWSHIP <Icon name="arrow" size={16}/></a><span>✦</span><a href="#/dice">THE DICE CHRONICLE <Icon name="arrow" size={16}/></a></div>
+    
     <div className="cinematic-bottom-line" aria-hidden="true" />
   </section>;
 }
