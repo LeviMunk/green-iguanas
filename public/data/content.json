@@ -73,6 +73,12 @@
       "title": "The Crowd Goes Wild",
       "description": "Indigo celebrated the Green Iguanas’ victory over Cackle Crew with sunglasses, dancing and crowd hype.",
       "characterId": "indigo"
+    },
+    {
+      "id": "heilbrun-joins-dragonbowl",
+      "title": "The Fifth Iguana",
+      "description": "Heilbrun joined the Green Iguanas at Dragonbowl XLIX. The details of his arrival are still being documented.",
+      "characterId": "heilbrun"
     }
   ]
 }
