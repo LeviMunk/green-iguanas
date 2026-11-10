@@ -75,7 +75,7 @@
 .cinematic-hero.is-active .hero-nameplate strong{color:#f3dfaa}
 .hero-number{display:block;font:600 9px 'DM Sans',sans-serif;letter-spacing:.23em;color:#7c8a75;margin-bottom:9px}
 .hero-divider{display:block;width:35px;height:1px;background:rgba(190,162,98,.45);margin:10px auto 0}.cinematic-hero.is-active .hero-divider{width:70px;background:#d7b873;box-shadow:0 0 17px #e4c479aa}
-.cinematic-links{display:flex;justify-content:center;align-items:center;gap:33px;padding:27px 14px 34px;color:#ac9570;font-size:10px;letter-spacing:.17em}.cinematic-links a{display:flex;align-items:center;gap:10px;transition:color .2s}.cinematic-links a:hover{color:#efc878}.cinematic-links span{font-size:9px;opacity:.7}.cinematic-bottom-line{position:absolute;bottom:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,#9e7b43,transparent)}
+.cinematic-bottom-line{position:absolute;bottom:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,#9e7b43,transparent)}
 .party-preview .character-card .character-portrait-image,.party-grid .character-card .character-portrait-image{max-width:none;object-fit:contain;object-position:center bottom;padding:6px 0 0}
 .dossier-portrait .character-portrait-image{object-position:center bottom;padding:12px 0 0}
 .character-card:hover .character-portrait-image,.character-card:focus-visible .character-portrait-image{transform:scale(1.045)}
@@ -95,8 +95,6 @@
  .cinematic-hero>img{height:97%;width:118%;bottom:8%;transform:translateX(-50%) scale(.91)}
  .cinematic-hero.is-active{transform:none}.cinematic-hero.is-active>img{transform:translateX(-50%) scale(1.035)}
  .hero-nameplate{bottom:0}.hero-nameplate strong{font-size:22px}.ruin-arch{border-width:17px}
- .cinematic-links{gap:13px;flex-wrap:wrap;padding:20px 14px 31px;font-size:9px;letter-spacing:.08em}
- .cinematic-links span{display:none}
  .home-next-chapter{margin-top:24px}
  .hero h1{font-size:clamp(39px,11vw,60px)}.page-title{font-size:clamp(42px,11.5vw,77px)}.section-heading h2{font-size:clamp(39px,10.3vw,59px)}.dossier-copy h1{font-size:clamp(44px,12vw,79px)}
  .brand-copy small{font-size:9px}.bottom-nav a,.bottom-nav button{font-size:10px}.tab-row button{font-size:11px}
@@ -495,3 +493,6 @@
 @media(prefers-reduced-motion:reduce){
  .cinema-chapter-image,.cinema-memory,.cinema-memory-image img,.cinema-chapter-index button{transition:none!important;transform:none!important}
 }
+
+/* Compact home: cinematic character selection and campaign status only. */
+.home-simplified .campaign-pulse{margin-bottom:clamp(48px,7vw,104px)}
