@@ -43,6 +43,36 @@
       "id": "dragonbowl-first-victory",
       "title": "Arena Breakthrough",
       "description": "Party milestone: defeated Cackle Crew in the first Dragonbowl bout. Confirmed from actual play; session date not supplied."
+    },
+    {
+      "id": "bobby-axe-round-one",
+      "title": "Axe of the Arena",
+      "description": "Bobby Kills delivered a devastating axe strike against a gnoll in the first Dragonbowl match.",
+      "characterId": "bobby-kills"
+    },
+    {
+      "id": "freed-eye-of-freed",
+      "title": "The Price of Sight",
+      "description": "Freed sacrificed an eye for a Wish; a natural 100 on d100 granted the Eye of Freed.",
+      "characterId": "freed"
+    },
+    {
+      "id": "freed-king-cackle",
+      "title": "Armed and Victorious",
+      "description": "Freed severed King Cackle’s arm and held it aloft after the team's first arena victory.",
+      "characterId": "freed"
+    },
+    {
+      "id": "owen-tiger-twilight",
+      "title": "Tiger in the Twilight",
+      "description": "Owen defended the party in tiger wild shape under Globe of Twilight against a gnoll.",
+      "characterId": "owen"
+    },
+    {
+      "id": "indigo-crowd-favorite",
+      "title": "The Crowd Goes Wild",
+      "description": "Indigo celebrated the Green Iguanas’ victory over Cackle Crew with sunglasses, dancing and crowd hype.",
+      "characterId": "indigo"
     }
   ]
 }
