@@ -98,7 +98,45 @@ function SectionTitle({eyebrow,title,sub,href,link}:{eyebrow:string;title:React.
 const heroOrder=['owen','bobby-kills','indigo','freed','heilbrun'];
 function HeroFellowship() {
   const heroes=heroOrder.map(id=>characters.find(c=>c.id===id)).filter((c):c is Character=>!!c);
-  const [activeId,setActiveId]=useState('indigo');
+  // The first hero starts highlighted. On phones, the hero nearest the
+  // carousel's center becomes active without requiring an extra tap.
+  const [activeId,setActiveId]=useState(heroOrder[0]);
+  const stageRef=useRef<HTMLDivElement>(null);
+  useEffect(()=>{
+    const stage=stageRef.current;
+    if(!stage)return;
+    const mobile=window.matchMedia('(max-width:700px)');
+    let frame=0;
+    const update=()=>{
+      frame=0;
+      if(!mobile.matches)return;
+      const stageRect=stage.getBoundingClientRect();
+      const center=stageRect.left+stageRect.width/2;
+      const cards=stage.querySelectorAll<HTMLAnchorElement>('.cinematic-hero');
+      let nearestId:string|null=null;
+      let nearestDistance=Infinity;
+      cards.forEach(card=>{
+        const rect=card.getBoundingClientRect();
+        const distance=Math.abs(rect.left+rect.width/2-center);
+        if(distance<nearestDistance){nearestDistance=distance;nearestId=card.dataset.heroId??null;}
+      });
+      if(nearestId)setActiveId(current=>current===nearestId?current:nearestId!);
+    };
+    const schedule=()=>{
+      if(!frame)frame=window.requestAnimationFrame(update);
+    };
+    const onModeChange=()=>{if(mobile.matches)schedule();};
+    stage.addEventListener('scroll',schedule,{passive:true});
+    window.addEventListener('resize',schedule);
+    mobile.addEventListener('change',onModeChange);
+    schedule();
+    return ()=>{
+      stage.removeEventListener('scroll',schedule);
+      window.removeEventListener('resize',schedule);
+      mobile.removeEventListener('change',onModeChange);
+      if(frame)window.cancelAnimationFrame(frame);
+    };
+  },[]);
   return <section className="cinematic-home" aria-labelledby="cinematic-title">
     <div className="cinematic-scenery" aria-hidden="true"><span className="ruin-arch arch-one"/><span className="ruin-arch arch-two"/><span className="ruin-arch arch-three"/><span className="cinematic-stars"/></div>
     <div className="cinematic-title-wrap">
@@ -108,10 +146,11 @@ function HeroFellowship() {
       <p>Five adventurers. One unfolding legend.</p>
     </div>
     <div className="cinematic-stage-outer">
-      <div className="cinematic-stage" role="group" aria-label="Select a character to view their dossier">
+      <div ref={stageRef} className="cinematic-stage" role="group" aria-label="Scroll through characters; the centered character is highlighted. Tap to open a dossier.">
         {heroes.map((character,index)=><a
             href={`#/character/${character.id}`}
             id={`hero-${character.id}`}
+            data-hero-id={character.id}
             key={character.id}
             style={{'--character-accent':character.accent, '--hero-index':index} as React.CSSProperties}
             className={`cinematic-hero ${activeId===character.id?'is-active':''}`}
@@ -121,7 +160,7 @@ function HeroFellowship() {
           >
             <span className="hero-backglow" aria-hidden="true" />
             <img src={`${import.meta.env.BASE_URL}${character.portrait}`} alt="" loading={index===2?'eager':'lazy'} decoding="async"/>
-            <span className="hero-nameplate"><span className="hero-number">{character.index} / 05</span><strong>{character.name}</strong><span className="hero-role">{character.class ?? 'Adventurer'}</span><span className="hero-divider" /></span>
+            <span className="hero-nameplate"><strong>{character.name}</strong><span className="hero-role">{character.class ?? 'Adventurer'}</span><span className="hero-divider" /></span>
           </a>)}
       </div>
     </div>
