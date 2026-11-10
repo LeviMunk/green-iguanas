@@ -56,7 +56,7 @@ const nav = [
 function useRoute() {
   const [route,setRoute] = useState(() => window.location.hash.slice(1).split('?')[0] || '/');
   useEffect(() => {
-    const update = () => {setRoute(window.location.hash.slice(1) || '/');window.scrollTo({top:0,behavior:'instant'});};
+    const update = () => {setRoute(window.location.hash.slice(1).split('?')[0] || '/');window.scrollTo({top:0,behavior:'instant'});};
     window.addEventListener('hashchange',update);
     return () => window.removeEventListener('hashchange',update);
   }, []);
