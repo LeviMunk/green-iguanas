@@ -26,6 +26,8 @@ export type Character = {
   moments: CharacterMoment[];
   profileSections: CharacterSection[];
   sheetPdf: string | null; // Public, DM-reviewed PDF path under public/sheets/, or null.
+  sheetName: string; // Full name on the reviewed D&D Beyond export.
+  sheetHighlights?: string[]; // Concise, publicly shareable mechanical highlights.
   class: string | null;
   level: number | null;
   ancestry: string | null;
@@ -35,15 +37,16 @@ export type Character = {
   sheetSnapshot?: SheetSnapshot | null;
 };
 
-// The party's level is 6. The guest paladin's character-sheet level is still unverified.
-// Class / ancestry below come from the supplied campaign history; precise mechanics remain PDF-only.
+// Current mechanics are transcribed from five user-provided D&D Beyond PDF exports, reviewed Nov 10, 2026.
+// Heilbrun's Oath of Vengeance is explicitly player/DM-confirmed, although the export does not show it.
+// PDFs are intentionally not placed under public/sheets/; only direct live D&D Beyond links appear.
 export const characters: Character[] = [
   {
     id:'bobby-kills',name:'Bobby Kills',givenInitials:'BK',index:'01',
     accent:'#af805c',portrait:'art/bobby-kills.webp',
     descriptor:'Orc barbarian · Exiled axe-wielder',
     highlight:'From the Army of Tex-ass to the Green Iguanas. Nobody forgets his axe.',
-    class:'Barbarian',level:6,ancestry:'Orc',background:null,
+    class:'Barbarian',level:6,ancestry:'Orc',background:'Soldier',
     biography:'Bobby grew up in a small alley where his father was a celebrated smith of axes and axe accessories. After watching his best friend Joseph die on the front line, Bobby fled the Army of Tex-ass, was branded a deserter and was rejected by his father. With nowhere to go, he turned to crime before his adventures with the Green Iguanas.',
     profileSections:[
       {title:'The axe-maker’s son',text:'Bobby came from a small alley where his father was known as the mightiest maker of axes and axe accessories. That family legacy stood in sharp contrast to the path Bobby would eventually take.'},
@@ -52,14 +55,16 @@ export const characters: Character[] = [
       {title:'The warrior today',text:'A towering green orc with a backward black cap, a cigar, skull-and-spike armor and a huge double-headed axe. During the Green Iguanas’ first Dragonbowl fight, he landed a devastating axe strike against a gnoll.'}
     ],
     moments:[{title:'Dragonbowl · Round One',description:'Delivered a devastating axe strike during the victory over Cackle Crew.'}],
-    beyondUrl:null,sheetPdf:null
+    sheetName:'BOBBY KILLS',beyondUrl:'https://www.dndbeyond.com/characters/161599175',sheetPdf:null,
+    sheetSnapshot:{asOf:'2026-11-10',armorClass:13,maxHitPoints:59,speed:'40 ft.',initiative:'+1',passivePerception:12,abilityScores:{strength:17,dexterity:12,constitution:15,intelligence:10,wisdom:8,charisma:13}},
+    sheetHighlights:['Rage · 4 uses per long rest','Adrenaline Rush · 3 uses per short rest','+3 Greataxe · +9 attack']
   },
   {
     id:'indigo',name:'Indigo',givenInitials:'IN',index:'02',
     accent:'#7594aa',portrait:'art/indigo.webp',
     descriptor:'Human bard · A voice out of time',
     highlight:'Five centuries vanished while the world carried on without him.',
-    class:'Bard',level:6,ancestry:'Human',background:null,
+    class:'Bard',level:6,ancestry:'Human',background:'Artisan',
     biography:'Indigo is 536 years old, but has experienced only 36 years of conscious life. During a previous quest he fell asleep in a pool, remained there for 500 years without aging, and awoke to a world that had carried on without him. Everyone he once loved was gone. He now travels as a charismatic bard, musician and formidable negotiator.',
     profileSections:[
       {title:'Five centuries asleep',text:'During an earlier quest, Indigo fell asleep in a pool. He did not age during the 500 years that passed around him. Though 536 years have elapsed since his birth, he has lived only 36 conscious years.'},
@@ -68,14 +73,16 @@ export const characters: Character[] = [
       {title:'A new audience',text:'After the Green Iguanas beat Cackle Crew, Indigo hyped the arena crowd by dancing in sunglasses. He wants to celebrate the victory with a proper drinking party.'}
     ],
     moments:[{title:'The long sleep',description:'Spent 500 years asleep in a pool without aging; his previous life and loved ones were lost to time.'},{title:'Dragonbowl · Round One',description:'Celebrated the Cackle Crew victory with sunglasses, dancing and crowd hype.'}],
-    beyondUrl:null,sheetPdf:null
+    sheetName:'Indigo Matthews',beyondUrl:'https://www.dndbeyond.com/characters/150861638',sheetPdf:null,
+    sheetSnapshot:{asOf:'2026-11-10',armorClass:13,maxHitPoints:39,speed:'30 ft.',initiative:'+2',passivePerception:14,abilityScores:{strength:10,dexterity:15,constitution:12,intelligence:17,wisdom:12,charisma:20}},
+    sheetHighlights:['Bardic Inspiration · d8, 5 uses','Cutting Words','+11 Performance and Persuasion']
   },
   {
     id:'owen',name:'Owen',givenInitials:'OW',index:'03',
     accent:'#91a186',portrait:'art/owen.webp',
     descriptor:'Mendicant druid · Wanderer on a Walk',
     highlight:'A pacifist by conviction, learning how difficult peace can be.',
-    class:'Druid',level:6,ancestry:null,background:null,
+    class:'Druid',level:6,ancestry:'Human',background:'Emerald Enclave Caretaker',
     biography:'Owen was raised among the Mendicants, a community devoted to simplicity, mutual aid and harmony with the natural world. Six months ago he began a solitary Walk, an old Mendicant tradition of learning from the world and helping those in need. What began as a peaceful pilgrimage is testing his patience with cruelty and injustice.',
     profileSections:[
       {title:'The Mendicants',text:'The Mendicants are a community of women and men who seek simple lives in harmony with nature. Families and marriage are welcome, and newcomers may join. Some live at permanent hubs, including the one where Owen grew up; others travel in groups along nomadic routes to assist those in need.'},
@@ -85,14 +92,16 @@ export const characters: Character[] = [
       {title:'Friends and opposition',text:'He has no named allies recorded yet. Owen generally distrusts the rich and powerful, whose interests often clash with Mendicant ideals.'}
     ],
     moments:[{title:'Vhal Drakar’s Red Run',description:'Rode the Shadow Panther. Final race details have not yet been confirmed.'},{title:'Dragonbowl · Round One',description:'Fought in tiger wild shape, protected by Globe of Twilight, against a gnoll.'}],
-    beyondUrl:null,sheetPdf:null
+    sheetName:'Owen Shepherd',beyondUrl:'https://www.dndbeyond.com/characters/172723105',sheetPdf:null,
+    sheetSnapshot:{asOf:'2026-11-10',armorClass:15,maxHitPoints:57,speed:'30 ft.',initiative:'+3',passivePerception:21,abilityScores:{strength:8,dexterity:14,constitution:14,intelligence:12,wisdom:18,charisma:10}},
+    sheetHighlights:['Wild Shape · 3 uses per long rest','Staff of the Woodlands','Starry Wisp · +9 attack']
   },
   {
     id:'freed',name:'Freed',givenInitials:'FR',index:'04',
     accent:'#b56a62',portrait:'art/freed.webp',
-    descriptor:'Fighter · Wandering monster hunter',
+    descriptor:'Human fighter / ranger · Wandering monster hunter',
     highlight:'He once sought the glory of a hero. Now he carries the debt of Oakhaven.',
-    class:'Fighter',level:6,ancestry:null,background:null,
+    class:'Fighter 4 / Ranger 2',level:6,ancestry:'Human',background:'Custom Background',
     biography:'Freed grew up in Oakhaven, a farm boy eager to become a hero. His reckless confrontation with the Whispering Maw, a necrotic shambling mound, sent a burning monster into his home. Oakhaven was devastated, and Freed was banished. For eighteen years he has wandered as a monster hunter, dedicated to saving others rather than chasing glory.',
     profileSections:[
       {title:'The farm boy of Oakhaven',text:'In the quiet hamlet of Oakhaven, Freed dreamed of the horizon while his brothers tended the fields. The elders told stories of the Whispering Maw, a creature haunting the Deepwood, to keep children from wandering there. Freed saw the creature as the challenge that could make him a hero.'},
@@ -103,22 +112,26 @@ export const characters: Character[] = [
       {title:'Blood in the arena',text:'Against Cackle Crew, Freed severed Gnashhu / King Cackle’s arm, then held it aloft in celebration after the Green Iguanas’ victory.'}
     ],
     moments:[{title:'The fall of Oakhaven',description:'His reckless battle with the Whispering Maw destroyed his home; he was banished and chose a life of protecting others.'},{title:'The Wish',description:'Sacrificed an eye, rolled a natural 100 on d100, and received the Eye of Freed.'},{title:'Dragonbowl · Round One',description:'Severed King Cackle’s arm and raised it after the team won.'}],
-    beyondUrl:null,sheetPdf:null
+    sheetName:'Freed Gloomshine',beyondUrl:'https://www.dndbeyond.com/characters/159982298',sheetPdf:null,
+    sheetSnapshot:{asOf:'2026-11-10',armorClass:21,maxHitPoints:40,speed:'30 ft.',initiative:'+3',passivePerception:15,abilityScores:{strength:16,dexterity:17,constitution:11,intelligence:11,wisdom:14,charisma:8}},
+    sheetHighlights:['Action Surge · 1 use per short rest','Improved Critical · 19–20','Hunter’s Mark · 2 free uses per long rest']
   },
   {
     id:'heilbrun',name:'Heilbrun',givenInitials:'HE',index:'05',
     accent:'#c5aa69',portrait:'art/heilbrun.webp',
-    descriptor:'High elf paladin · Joined at Dragonbowl',
+    descriptor:'High elf paladin · Oath of Vengeance',
     highlight:'A golden-eyed paladin who joined the Green Iguanas at Dragonbowl XLIX.',
-    class:'Paladin',level:null,ancestry:'High elf',background:null,
-    biography:'Heilbrun is an elegant high elf paladin with long blond hair, regal blue-and-gold armor, an ornate warhammer and glowing golden eyes. His composed, reasonable demeanor contrasts with a proposed character direction of sudden, fierce intensity. He joined the Green Iguanas at Dragonbowl XLIX. The detailed circumstances of his introduction and sworn oath remain undocumented.',
+    class:'Paladin · Oath of Vengeance',level:6,ancestry:'High elf',background:'Haunted One',
+    biography:'Heilbrun is an elegant high elf paladin with long blond hair, regal blue-and-gold armor, an ornate warhammer and glowing golden eyes. He joined the Green Iguanas at Dragonbowl XLIX. His Oath of Vengeance is confirmed; the events that led him to swear it and the circumstances of his introduction remain undocumented.',
     profileSections:[
       {title:'The noble exterior',text:'Heilbrun’s established visual identity is a calm, stern high elf in intricate blue, ivory and gold armor, with long blond hair, a shimmering cloak and a heavy warhammer. His eyes glow gold.'},
-      {title:'A possible oath',text:'The concept under consideration is an Oath of Vengeance paladin with a Haunted One background: outwardly controlled and reasonable, but capable of unexpectedly intense action. This is a creative direction, not a locked-in oath, sheet background or played backstory.',status:'concept'},
+      {title:'An oath of vengeance',text:'Heilbrun has sworn an Oath of Vengeance and carries the Haunted One background. The personal events behind that oath and his earlier adventures are still to be documented.'},
       {title:'The fifth Iguana',text:'Heilbrun joined the Green Iguanas at Dragonbowl XLIX. His earlier company, relationships and the exact circumstances of that meeting still await the player’s history.'}
     ],
     moments:[{title:'Dragonbowl XLIX · Joined the Green Iguanas',description:'Heilbrun became the party’s fifth member at Dragonbowl. How the introduction unfolded has not yet been recorded.'}],
-    beyondUrl:null,sheetPdf:null
+    sheetName:'Heilbrun Onnedros',beyondUrl:'https://www.dndbeyond.com/characters/150651437',sheetPdf:null,
+    sheetSnapshot:{asOf:'2026-11-10',armorClass:18,maxHitPoints:46,speed:'30 ft.',initiative:'+1',passivePerception:18,abilityScores:{strength:18,dexterity:12,constitution:13,intelligence:8,wisdom:10,charisma:16}},
+    sheetHighlights:['Oath of Vengeance · player-confirmed','Aura of Protection','Warhammer +2 · +9 attack']
   }
 ];
 
