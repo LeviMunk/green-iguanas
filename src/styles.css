@@ -1019,3 +1019,115 @@
   .cinematic-home--immersive .hero-nameplate strong{transition:none!important}
   .cinematic-home--immersive .cinematic-stage{scroll-behavior:auto}
 }
+
+
+/* Campaign archive: seven distinct, linked adventure pages (Nov 2026).
+   Story So Far only lists clickable chapters. The artwork galleries and
+   full public story records live at #/adventure/<slug>. */
+.cinema-chronicle--index{background:linear-gradient(180deg,#0b1515,#111c18 44%,#090f0e);min-height:100svh}
+.cinema-chronicle--index .cinema-prologue{min-height:430px}
+.cinema-chronicle--index .cinema-prologue-content{padding-block:86px 80px}
+.cinema-chronicle--index .cinema-prologue h1{font-size:clamp(49px,6.3vw,94px)}
+.cinema-chronicle--index .cinema-scroll-link{text-decoration:none}
+.cinema-chronicle--index .cinema-scroll-link svg{transform:none}
+.cinema-adventure-collection{padding-top:67px;padding-bottom:112px}
+.cinema-collection-header{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:30px}
+.cinema-collection-header h2{font:400 clamp(41px,5.1vw,69px)/1.1 'Cinzel',Georgia,serif;margin:13px 0 0;color:#eee1c5;letter-spacing:-.04em}
+.cinema-collection-count{color:#bbac84;letter-spacing:.18em;font-weight:700;font-size:10px;white-space:nowrap;padding-bottom:8px}
+.cinema-adventure-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.cinema-adventure-card{
+ display:flex;flex-direction:column;min-width:0;overflow:hidden;
+ color:#efe4cd;background:linear-gradient(155deg,#1c2c26,#0b1413);
+ border:1px solid rgba(211,190,140,.2);
+ transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease;
+}
+.cinema-adventure-card:hover,.cinema-adventure-card:focus-visible{
+ transform:translateY(-7px);border-color:var(--scene-accent);
+ box-shadow:0 20px 66px #0008,0 0 29px color-mix(in srgb,var(--scene-accent),transparent 88%)
+}
+.cinema-adventure-image{display:block;position:relative;aspect-ratio:16/8.8;overflow:hidden;background:var(--scene-deep)}
+.cinema-adventure-image img{
+ width:100%;height:100%;display:block;object-fit:cover;
+ filter:saturate(.75) contrast(1.07);transform:scale(1.01);
+ transition:filter .6s ease,transform .9s cubic-bezier(.2,.8,.2,1);
+}
+.cinema-adventure-card:hover .cinema-adventure-image img,.cinema-adventure-card:focus-visible .cinema-adventure-image img{
+ filter:saturate(1.08) contrast(1.05);transform:scale(1.06)
+}
+.cinema-adventure-image-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,#0c1816db,transparent 70%),radial-gradient(ellipse at 75% 12%,transparent 20%,#070d0b22)}
+.cinema-adventure-chapter{position:absolute;top:17px;left:19px;color:#fbefd1;background:#0c1615bb;border:1px solid #d2af7048;padding:8px 10px;letter-spacing:.18em;font-size:9px;font-weight:700}
+.cinema-adventure-card-body{display:flex;flex:1;flex-direction:column;align-items:flex-start;gap:10px;padding:26px 29px 27px}
+.cinema-adventure-kicker{color:var(--scene-accent);font-size:9px;font-weight:700;letter-spacing:.18em;line-height:1.6}
+.cinema-adventure-card-body>strong{font:400 clamp(28px,3vw,43px)/1.15 'Cinzel',Georgia,serif;letter-spacing:-.04em;color:#f2e5c8}
+.cinema-adventure-summary{
+ color:#b6c2b8;font-size:12px;line-height:1.8;
+ display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.cinema-adventure-card-foot{display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;margin-top:auto;padding-top:16px;border-top:1px solid rgba(200,178,127,.2)}
+.cinema-adventure-status{color:#aeb8ac;font-size:9px;font-weight:600;line-height:1.5;letter-spacing:.1em}
+.cinema-adventure-status.is-confirmed{color:#b4d2a1}
+.cinema-adventure-cta{display:inline-flex;align-items:center;gap:8px;color:#dec293;font-size:9px;letter-spacing:.13em;font-weight:700;white-space:nowrap}
+.cinema-adventure-cta svg{transition:transform .25s}
+.cinema-adventure-card:hover .cinema-adventure-cta svg{transform:translateX(5px)}
+.cinema-adventure-detail{background:#090f10;min-height:100svh;overflow:hidden}
+.cinema-adventure-breadcrumb{display:flex;align-items:center;gap:14px;padding-top:25px;padding-bottom:25px;color:#bba980;font-size:10px;letter-spacing:.15em;font-weight:700}
+.cinema-adventure-breadcrumb a{display:inline-flex;gap:9px;align-items:center;color:#d8c394}
+.cinema-adventure-breadcrumb a:hover{color:#fff0c3}
+.cinema-adventure-breadcrumb a svg{transform:rotate(180deg)}
+.cinema-adventure-breadcrumb>span{color:#798d83}
+.cinema-adventure-detail .cinema-chapter{border-top:1px solid rgba(207,177,112,.18)}
+.cinema-adventure-detail .cinema-chapter-hero{min-height:600px}
+.cinema-adventure-detail .cinema-chapter-copy h1{
+ margin:11px 0 23px;font:400 clamp(43px,5.2vw,79px)/1.04 'Cinzel',Georgia,serif;
+ letter-spacing:-.035em;color:#fff1d8;text-shadow:0 4px 23px #000b;text-wrap:balance
+}
+.cinema-adventure-record{padding:86px 0 88px;background:linear-gradient(160deg,var(--scene-deep),#0d1816);border-top:1px solid rgba(228,199,139,.17)}
+.cinema-adventure-record-layout{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1fr);gap:8%;align-items:start}
+.cinema-adventure-record h2{font:400 clamp(37px,4.1vw,58px)/1.12 'Cinzel',Georgia,serif;color:#f1e4c9;margin:20px 0}
+.cinema-adventure-record-copy{max-width:750px}
+.cinema-adventure-record-entry{display:grid;grid-template-columns:40px 1fr;gap:20px;padding:22px 0;border-top:1px solid rgba(195,169,112,.25)}
+.cinema-adventure-record-entry>span{font:400 28px/1.2 'Italiana',Georgia,serif;color:var(--scene-accent)}
+.cinema-adventure-record-entry h3{font:400 clamp(23px,2.5vw,34px)/1.2 'Cinzel',Georgia,serif;color:#f0dfc1;margin:0 0 14px}
+.cinema-adventure-record-entry p{font-size:13px;line-height:1.93;color:#bac9bb;margin:0}
+.cinema-adventure-verification{font-size:11px;line-height:1.8;color:#c6b995;border-left:2px solid #bda46b;padding:10px 17px;background:#15241c;margin:25px 0 0}
+.cinema-adventure-art-note{color:#8e9f91;font-size:10px;line-height:1.7;margin:24px 0 0}
+.cinema-adventure-next{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;
+ padding-top:43px;padding-bottom:73px
+}
+.cinema-adventure-direction{display:flex;flex-direction:column;gap:13px;min-width:0;background:#15231d;border:1px solid rgba(201,173,119,.23);padding:23px 28px;transition:background .25s,border-color .25s}
+.cinema-adventure-direction:hover,.cinema-adventure-direction:focus-visible{background:#213629;border-color:#c9ad75}
+.cinema-adventure-direction small{display:flex;align-items:center;gap:10px;color:#c1ae79;font-size:9px;font-weight:700;letter-spacing:.15em}
+.cinema-adventure-direction strong{font:400 clamp(23px,2.8vw,35px)/1.2 'Cinzel',Georgia,serif;color:#f1dfc0}
+.cinema-adventure-direction--next{text-align:right;align-items:flex-end}
+.cinema-adventure-notfound{padding-block:100px 140px}
+@media(max-width:800px){
+ .cinema-adventure-grid{gap:12px}
+ .cinema-adventure-card-body{padding:20px}
+ .cinema-adventure-record-layout{grid-template-columns:1fr;gap:14px}
+}
+@media(max-width:640px){
+ .cinema-chronicle--index .cinema-prologue-content{padding:60px 0 58px}
+ .cinema-chronicle--index .cinema-prologue h1{font-size:clamp(38px,9.6vw,58px)}
+ .cinema-adventure-collection{padding-top:36px;padding-bottom:100px}
+ .cinema-collection-header{align-items:start;flex-direction:column;gap:6px}
+ .cinema-collection-header h2{font-size:clamp(32px,8vw,45px)}
+ .cinema-adventure-grid{grid-template-columns:1fr;gap:18px}
+ .cinema-adventure-image{aspect-ratio:16/9}
+ .cinema-adventure-card-body>strong{font-size:clamp(28px,7.3vw,39px)}
+ .cinema-adventure-card-foot{gap:8px;flex-wrap:wrap}
+ .cinema-adventure-breadcrumb{padding-top:18px;padding-bottom:20px;font-size:9px}
+ .cinema-adventure-detail .cinema-chapter-hero{min-height:0}
+ .cinema-adventure-detail .cinema-chapter-copy h1{font-size:clamp(34px,9vw,54px);letter-spacing:-.045em;margin:12px 0 20px}
+ .cinema-adventure-record{padding:52px 0 57px}
+ .cinema-adventure-record-entry{grid-template-columns:30px 1fr;gap:13px}
+ .cinema-adventure-record-entry h3{font-size:23px}
+ .cinema-adventure-next{gap:9px;padding-top:25px;padding-bottom:95px}
+ .cinema-adventure-direction{padding:16px 13px}
+ .cinema-adventure-direction strong{font-size:clamp(17px,4.7vw,25px)}
+ .cinema-adventure-direction small{font-size:8px;letter-spacing:.07em}
+}
+@media(prefers-reduced-motion:reduce){
+ .cinema-adventure-card,.cinema-adventure-image img,.cinema-adventure-cta svg,.cinema-adventure-direction{transition:none!important}
+ .cinema-adventure-card:hover,.cinema-adventure-card:focus-visible,.cinema-adventure-card:hover .cinema-adventure-image img{transform:none}
+}
