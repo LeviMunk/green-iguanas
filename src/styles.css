@@ -698,3 +698,27 @@
   .cinematic-hero.is-active,.cinematic-hero:focus-visible{z-index:8}
   .home-simplified{padding-bottom:calc(61px + env(safe-area-inset-bottom))}
 }
+
+
+/* Verified character dossiers: compact sheet highlights and six ability scores. */
+.sheet-link-card--live{background:linear-gradient(145deg,#253a28,#101c16)}
+.sheet-link-card--verified{background:linear-gradient(145deg,#242820,#101b15)}
+.sheet-highlights{padding:0;margin:19px 0 0;list-style:none;display:grid;gap:10px}
+.sheet-highlights li{font-size:12px;color:#d9dec8;line-height:1.55;padding-left:17px;position:relative}
+.sheet-highlights li:before{content:'✦';position:absolute;left:0;top:1px;font-size:9px;color:#c9ae75}
+.sheet-abilities{border:1px solid rgba(202,170,111,.28);background:rgba(16,31,24,.75);margin-top:20px;padding:25px}
+.sheet-abilities-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px}
+.sheet-abilities-heading span{font-size:10px;font-weight:700;letter-spacing:.18em;color:#dec48c}
+.sheet-abilities-heading small{font-size:10px;color:#a0b2a1}
+.sheet-ability-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.sheet-ability{padding:13px 9px 15px;border:1px solid rgba(190,174,121,.23);background:#15251c;text-align:center;min-width:0}
+.sheet-ability>span{font-size:11px;font-weight:700;letter-spacing:.12em;color:#a3b59d;display:block}
+.sheet-ability strong{display:block;font-family:var(--serif);font-size:clamp(25px,2.5vw,37px);font-weight:500;line-height:1.2;color:#f1e1bd;margin:7px 0 4px}
+.sheet-ability small{display:block;font-size:12px;color:#b9cbb5;font-variant-numeric:tabular-nums}
+@media(max-width:700px){
+  .sheet-ability-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .sheet-abilities{padding:16px}
+  .sheet-abilities-heading{flex-direction:column;gap:4px}
+  .sheet-link-card{padding:22px}
+  .sheet-link-card h3{overflow-wrap:anywhere}
+}
