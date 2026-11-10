@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { campaign, characters, storyChapters, dragonbowlOpeningOdds, type Character } from './data/campaign';
+import { campaign, characters, storyChapters, type Character } from './data/campaign';
+import { dragonbowlBracket, dragonbowlOddsByTeam, dragonbowlFacts, type BracketMatch, type BracketRound } from './data/dragonbowl';
 import { demoRolls } from './data/demo';
 import { summarize, validateEvents, type RollEvent } from './lib/dice';
 import { useCampaignContent } from './lib/content';
@@ -326,30 +327,92 @@ function StorySoFar(){
  </div>;
 }
 
+function DragonbowlMatch({match,round}:{match:BracketMatch;round:BracketRound['id']}) {
+ const known=match.status==='final';
+ const next=match.status==='upcoming';
+ const isParty=(name:string|null)=>name==='THE GREEN IGUANAS';
+ const names=[match.teamA,match.teamB];
+ return <article className={['dragon-bracket-match','dragon-bracket-match--'+match.status,(names.some(isParty)?'dragon-bracket-match--iguana':'')].join(' ')} aria-label={match.kicker+': '+(match.teamA??'To be determined')+' versus '+(match.teamB??'To be determined')}>
+   <div className="dragon-bracket-match-head">
+     <span className="dragon-match-state">{known?'FINAL':next?'UP NEXT':match.status==='unverified'?'RESULT PENDING':'TBD'}</span>
+     <span className="dragon-match-id">{match.id.replaceAll('-',' ').toUpperCase()}</span>
+   </div>
+   {names.map((name,i)=><div key={i} className={['dragon-match-team',name&&isParty(name)?'is-iguana':'',known&&name===match.winner?'is-winner':''].filter(Boolean).join(' ')}>
+     <span className="dragon-match-team-mark" aria-hidden="true">{name&&isParty(name)?'✦':name?'◈':'·'}</span>
+     <span className="dragon-match-team-name">{name??'To be determined'}</span>
+     {round==='round-of-16'&&name&&<span className="dragon-team-odds" title="Original whole-tournament winning odds">{dragonbowlOddsByTeam[name]??'—'}</span>}
+     {known&&name===match.winner&&<Icon name="check" size={15}/>}
+   </div>)}
+   {next&&<div className="dragon-match-bout">CONFIRMED QUARTERFINAL · 5 VS 5</div>}
+ </article>;
+}
+
 function DragonbowlOverview(){
- return <section className="container tournament-section">
-   <div className="tournament-head"><Label>DRAGONBOWL XLIX · MOUNT WATERDEEP</Label><h2>The arena <em>awaits.</em></h2><p>The Green Iguanas entered the tournament as 100:1 long shots. The figures below are the original tournament-winner odds, not updated live lines or single-bout prices.</p></div>
-   <div className="tournament-highlights">
-     <div><span>LAST PLAYED</span><strong>Cackle Crew defeated</strong><small>Round One · Confirmed</small></div>
-     <div><span>NEXT KNOWN MATCH</span><strong>Dandy War Dolls</strong><small>Quarterfinal · 5 vs 5 · Not yet played</small></div>
-     <div><span>CHAMPIONSHIP PRIZE</span><strong>500,000 gp</strong><small>Shared by surviving champions</small></div>
-   </div>
-   <div className="tournament-table-wrap">
-     <div className="tournament-table-head"><div><span>THE OPENING ODDS</span><h3>Dragonbowl leaderboard</h3></div><span>AS RECORDED AT ARRIVAL</span></div>
-     <table className="tournament-table"><caption>Original Dragonbowl XLIX tournament winner odds when the Green Iguanas arrived</caption><thead><tr><th scope="col">Rank</th><th scope="col">Team</th><th scope="col">Odds</th></tr></thead><tbody>
-      {dragonbowlOpeningOdds.map(team=><tr key={team.rank} className={team.isParty?'the-iguana-row':''}><td>{String(team.rank).padStart(2,'0')}</td><th scope="row">{team.isParty?'🦎 ':''}{team.team}</th><td>{team.odds}</td></tr>)}
-     </tbody></table>
-   </div>
-   <p className="tournament-disclaimer">The Ghostmakers were the opening favorites at 5:1. Green Iguanas tickets purchased at 100:1 retain their original ticket odds. No later repricing is shown until announced in play. Reaching the semifinals is the party’s next level-7 milestone, not an accomplished result.</p>
- </section>;
+ const [activeRound,setActiveRound]=useState<BracketRound['id']>('round-of-16');
+ const bracketView=useRef<HTMLDivElement>(null);
+ const openRound=(round:BracketRound['id'])=>{
+   setActiveRound(round);
+   const target=bracketView.current?.querySelector<HTMLElement>('[data-round="'+round+'"]');
+   if(target)target.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest',inline:'start'});
+ };
+ return <div className="dragon-tournament">
+   <section className="container tournament-section" aria-labelledby="dragon-tournament-heading">
+     <div className="tournament-head"><Label>DRAGONBOWL XLIX · BENEATH MOUNT WATERDEEP</Label>
+       <h2 id="dragon-tournament-heading">The road to <em>glory.</em></h2>
+       <p>Sixteen teams entered the Blood Games. One Green Iguanas victory is confirmed, and their next opponent is already on the board. Every other result stays open until the table establishes what happened.</p>
+     </div>
+     <div className="tournament-highlights">
+       <div><span>LAST CONFIRMED VICTORY</span><strong>Green Iguanas over Cackle Crew</strong><small>Round of 16 · Played</small></div>
+       <div><span>NEXT ESTABLISHED BOUT</span><strong>Dandy War Dolls</strong><small>Quarterfinal · 5 vs 5 · Not yet played</small></div>
+       <div><span>CHAMPION'S PRIZE</span><strong>{dragonbowlFacts.prize}</strong><small>Plus Platinum Dragonbowl Rings</small></div>
+     </div>
+     <div className="dragon-bracket-head">
+       <div><span className="dragon-bracket-kicker">SINGLE ELIMINATION · 16 TEAMS</span><h3>Championship Bracket</h3></div>
+       <div className="dragon-bracket-legend"><span><i className="dragon-legend-final"/>Played result</span><span><i className="dragon-legend-next"/>Known next bout</span><span><i className="dragon-legend-pending"/>Awaiting confirmation</span></div>
+     </div>
+     <div className="dragon-round-shortcuts" aria-label="Jump between tournament rounds">{dragonbowlBracket.map(round=>
+        <button type="button" key={round.id} onClick={()=>openRound(round.id)} className={activeRound===round.id?'active':''} aria-label={'Show '+round.title}>{round.title}</button>
+     )}</div>
+     <div className="dragon-bracket-viewport" ref={bracketView} role="region" tabIndex={0} aria-label="Dragonbowl tournament bracket. Scroll horizontally to see all rounds.">
+       <div className="dragon-bracket-board">
+         {dragonbowlBracket.map((round,index)=><section key={round.id} data-round={round.id} className={'dragon-bracket-round dragon-bracket-round--'+round.id} aria-labelledby={'dragon-round-'+round.id}>
+           <header className="dragon-bracket-round-head"><span>0{index+1} / 04</span><div><h4 id={'dragon-round-'+round.id}>{round.title}</h4><small>{round.subtitle}</small></div></header>
+           {round.matches.map((match,i)=>{const span=2**index;return <div className="dragon-bracket-slot" key={match.id} style={{gridRow:`${2+i*span} / span ${span}`}}>
+              <DragonbowlMatch match={match} round={round.id}/>
+           </div>})}
+         </section>)}
+       </div>
+     </div>
+     <div className="dragon-bracket-notes">
+       <div><Icon name="shield" size={19}/><p><strong>What is confirmed:</strong> the Green Iguanas defeated Cackle Crew, then drew a known quarterfinal against Dandy War Dolls. A listed opening pairing does not prove its fight has been played or won.</p></div>
+       <div><Icon name="coins" size={19}/><p><strong>About the odds:</strong> the small ratios beside Round One teams are their original <em>whole-tournament winner odds</em>, not single-bout prices. Green Iguanas opened at <strong>100:1</strong>; bets retain their purchase odds.</p></div>
+     </div>
+   </section>
+   <section className="dragon-history-section">
+     <div className="container">
+       <div className="dragon-history-heading"><Label>BEHIND THE BLOOD GAMES</Label><h2>Welcome to <em>Dragonbowl XLIX.</em></h2><p>Deep beneath Mount Waterdeep, the forty-ninth Dragonbowl brings together sixteen competing teams, festival spectacle and a dangerous path toward the championship.</p></div>
+       <div className="dragon-history-grid">
+         <article><span>01 / THE SPECTACLE</span><h3>Festival of Champions</h3><p>The Green Iguanas arrived to an arena festival of opening celebrations, the Gladiators' Salute and Blood Challenges. Events included Stirge Shooting, Lava Leaping, Halfling Tossing and Beast Chase. Individual results and prizes remain unrecorded.</p></article>
+         <article><span>02 / THE FACES</span><h3>Masters of Ceremony</h3><p>Osmois Tearlock handled the team's registration. Obi Dew Diva is the extravagant arena announcer; Peaborg is the blue dragonborn official associated with the tournament draw.</p></article>
+         <article><span>03 / THE STAKES</span><h3>One Surviving Champion Team</h3><p>The grand prize is {dragonbowlFacts.prize} shared by surviving winners, plus Platinum Dragonbowl Rings. The Green Iguanas entered as 100:1 long shots against favorites such as the Ghostmakers at 5:1.</p></article>
+       </div>
+       <div className="dragon-history-road" aria-label="Green Iguanas tournament journey">
+         <div className="dragon-history-road-item is-done"><small>ENTRY / PLAYED</small><strong>Under Mount Waterdeep</strong><p>The team registered and experienced the opening festivities.</p></div>
+         <div className="dragon-history-road-item is-done"><small>ROUND ONE / VICTORY</small><strong>Cackle Crew Defeated</strong><p>Bobby's axe, Owen's tiger form, Indigo's crowd work and Freed's severed-arm triumph marked the victory.</p></div>
+         <div className="dragon-history-road-item is-next"><small>QUARTERFINAL / UP NEXT</small><strong>The Dandy War Dolls</strong><p>The established five-on-five matchup has not yet been played. The party advances to level 7 if it reaches the semifinals.</p></div>
+       </div>
+     </div>
+   </section>
+ </div>;
 }
 
 function Collection({kind}:{kind:'journal'|'quests'|'dragonbowl'|'treasury'|'achievements'}){
  const {content}=useCampaignContent();
  if(kind==='journal') return <main id="main-content" tabIndex={-1}><StorySoFar/></main>;
- const entries = kind==='quests' ? content.quests.map(x=>({key:x.id,title:x.title,details:`${x.status} · ${x.summary}`})) : kind==='dragonbowl' ? content.dragonbowlMatches.map(x=>({key:x.id,title:x.title,details:x.summary})) : kind==='achievements' ? content.achievements.map(x=>({key:x.id,title:x.title,details:x.description})) : [];
+ if(kind==='dragonbowl') return <main id="main-content" tabIndex={-1}><PageIntro eyebrow="THE TOURNAMENT / XLIX" title={<>Dragon<em>bowl.</em></>} description="Sixteen teams. Eight opening bouts. One crown. Follow the Green Iguanas' progress through the Blood Games."/><DragonbowlOverview/></main>;
+ const entries = kind==='quests' ? content.quests.map(x=>({key:x.id,title:x.title,details:`${x.status} · ${x.summary}`})) : kind==='achievements' ? content.achievements.map(x=>({key:x.id,title:x.title,details:x.description})) : [];
  const cfg={journal:{overline:'CAMPAIGN RECORDS / IV',title:'Previously…',description:'The Green Iguanas’ story so far, gathered into broad chapters. No invented session dates or numbered recaps.',glyph:'book' as Glyph,empty:'The first entry awaits',detail:'No verified session recaps have been published yet. Entries will feature dates, illustrated moments, participants and linked discoveries.'},quests:{overline:'STORYLINES / V',title:'Quests & Mysteries',description:'Some threads are resolved. Others are waiting to be pulled.',glyph:'compass' as Glyph,empty:'No quests published',detail:'This record will track active, completed, failed and unresolved quests with their NPC, place and session backlinks.'},dragonbowl:{overline:'THE TOURNAMENT / VI',title:'Dragonbowl',description:'An arena for the names, matches, and outcomes that deserve to be remembered.',glyph:'trophy' as Glyph,empty:'The tournament records await',detail:'Opponents, matches, results and major Dragonbowl developments will appear after verified details are entered.'},treasury:{overline:'THE COMPANY / VII',title:'Party Treasury',description:'What we carry tells part of our story.',glyph:'coins' as Glyph,empty:'The treasury ledger is empty',detail:'Shared currency, meaningful discoveries and party assets will be tracked after an authorized DM entry.'},achievements:{overline:'THE COMPANY / VIII',title:'Achievements',description:'Not every victory is measured in gold.',glyph:'spark' as Glyph,empty:'No achievements certified',detail:'Achievements will be earned from verified campaign milestones and TableOS dice records, never invented.'}}[kind];
- return <main id="main-content" tabIndex={-1}><PageIntro eyebrow={cfg.overline} title={<>{cfg.title.split(' ').slice(0,-1).join(' ')} <em>{cfg.title.split(' ').slice(-1)}</em></>} description={cfg.description}/>{kind==='dragonbowl'&&<DragonbowlOverview/>}<section className="container collection-body"><div className="collection-section-label"><span>{kind==='dragonbowl'?'PLAYED MATCH RECORDS':'THE COMPLETE RECORD'}</span><span>{entries.length} PUBLISHED ENTRIES</span></div>{entries.length?<div className="record-grid">{entries.map(entry=><article className="record-entry" key={entry.key}><span className="record-star">✦</span><h3>{entry.title}</h3><p>{entry.details}</p></article>)}</div>:<EmptyState glyph={cfg.glyph} heading={cfg.empty} detail={cfg.detail}/>}<div className="centered"><Action href="#/archive" variant="outline">Return to World Archive</Action></div></section></main>
+ return <main id="main-content" tabIndex={-1}><PageIntro eyebrow={cfg.overline} title={<>{cfg.title.split(' ').slice(0,-1).join(' ')} <em>{cfg.title.split(' ').slice(-1)}</em></>} description={cfg.description}/><section className="container collection-body"><div className="collection-section-label"><span>{'THE COMPLETE RECORD'}</span><span>{entries.length} PUBLISHED ENTRIES</span></div>{entries.length?<div className="record-grid">{entries.map(entry=><article className="record-entry" key={entry.key}><span className="record-star">✦</span><h3>{entry.title}</h3><p>{entry.details}</p></article>)}</div>:<EmptyState glyph={cfg.glyph} heading={cfg.empty} detail={cfg.detail}/>}<div className="centered"><Action href="#/archive" variant="outline">Return to World Archive</Action></div></section></main>
 }
 function Restricted({mode}:{mode:'account'|'dm'}){return <main id="main-content" tabIndex={-1}><PageIntro eyebrow="THE VAULT / RESTRICTED" title={mode==='account'?<>Player <em>Access.</em></>:<>DM <em>Sanctum.</em></>} description="Private campaign information belongs behind actual authentication and database-level access controls."/><section className="container collection-body"><EmptyState glyph="lock" heading="Secure access is not yet enabled" detail="This first public release does not collect passwords or store personal notes. Player sign-in and DM publishing tools will appear only after secure backend configuration and permission tests."/></section></main>}
 export default function App(){const route=useRoute();let page:React.ReactNode;
