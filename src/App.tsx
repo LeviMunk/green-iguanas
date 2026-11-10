@@ -84,7 +84,7 @@ function SiteHeader({route}: {route:string}) {
   useEffect(()=>setOpen(false),[route]);
   useEffect(()=>{const key=(e:KeyboardEvent)=>{if(e.key==='Escape')setOpen(false)};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[]);
   return <><header className="site-header"><div className="header-inner container">
-    <a href="#/" className="brand" aria-label="Green Iguanas home"><Crest size={26}/><span className="brand-copy"><strong>GREEN IGUANAS</strong><small>THE LIVING CHRONICLE</small></span></a>
+    <a href="#/" className="brand" aria-label="Green Iguanas home"><Crest size={26}/><span className="brand-copy"><strong>GREEN IGUANAS</strong></span></a>
     <nav className="desktop-nav" aria-label="Main navigation">{nav.slice(0,6).map(item=><a key={item.href} href={item.href} className={route===item.href.slice(1)?'active':''} aria-current={route===item.href.slice(1)?'page':undefined}>{item.label}</a>)}</nav>
     <div className="header-right"><span className="header-status"><span className="status-dot"/> CAMPAIGN COMPANION</span><button type="button" className="menu-trigger" onClick={()=>setOpen(!open)} aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="mobile-navigation"><Icon name={open?'close':'menu'} size={24}/></button></div>
   </div></header>
@@ -139,7 +139,7 @@ function HeroFellowship() {
   return <section className="cinematic-home" aria-labelledby="cinematic-title">
     <div className="cinematic-scenery" aria-hidden="true"><span className="ruin-arch arch-one"/><span className="ruin-arch arch-two"/><span className="ruin-arch arch-three"/><span className="cinematic-stars"/></div>
     <div className="cinematic-title-wrap">
-      <div className="cinematic-overline"><span/>THE LIVING CHRONICLE<span/></div>
+      
       <img src={`${import.meta.env.BASE_URL}art/crest.webp`} className="cinematic-crest" alt="The Green Iguanas crest" width="114" height="114" />
       <h1 id="cinematic-title"><span>THE</span> GREEN IGUANAS</h1>
     </div>
@@ -170,11 +170,6 @@ function HeroFellowship() {
 function Home() {
   return <main id="main-content" tabIndex={-1} className="home-simplified">
     <HeroFellowship/>
-    <section className="campaign-pulse container" aria-label="Campaign status">
-      <div><span>NOW PLAYING</span><strong>{campaign.tournament}</strong><small>{campaign.location}</small></div>
-      <div><span>PARTY LEVEL</span><strong>{campaign.currentLevel}</strong><small>{campaign.nextMilestone}</small></div>
-      <div><span>LAST RESULT</span><strong>Cackle Crew defeated</strong><small>Next: Dandy War Dolls · Quarterfinal</small></div>
-    </section>
   </main>;
 }
 function DetailBox({label,value}:{label:string;value:string|null|number}) {return <div className="detail-box"><span>{label}</span><strong>{value ?? 'Awaiting records'}</strong></div>}
