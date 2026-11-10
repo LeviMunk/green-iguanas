@@ -294,14 +294,61 @@ const archiveSections = [
 function WorldArchive(){const [search,setSearch]=useState('');const {content}=useCampaignContent();const items=archiveSections.filter(x=>`${x.name} ${x.description}`.toLowerCase().includes(search.toLowerCase()));return <main id="main-content" tabIndex={-1}><PageIntro eyebrow="THE ARCHIVE / III" title={<>World <em>Archive.</em></>} description="A growing encyclopedia of the people, places, pursuits, and legends that shape our world."/><section className="container directory-section"><div className="directory-toolbar"><span className="directory-count">EXPLORE THE INDEX <span>06 COLLECTIONS</span></span><label className="search-field"><Icon name="search" size={18}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search collections" aria-label="Search archive collections"/></label></div><div className="archive-cards">{items.map((section,i)=><a href={section.href} key={section.name} className="archive-tile"><span className="archive-number">{String(i+1).padStart(2,'0')}</span><Icon name={section.glyph} size={32}/><h3>{section.name}</h3><p>{section.description}</p><span>EXPLORE COLLECTION <Icon name="arrow" size={17}/></span></a>)}</div>{content.npcs.length>0&&<div className="world-npcs"><SectionTitle eyebrow="KNOWN TO THE PARTY" title={<>People <em>we’ve met.</em></>}/><div className="record-grid">{content.npcs.map(n=><article className="record-entry" key={n.id}><span className="record-star">✦</span><h3>{n.name}</h3><p>{n.description}</p></article>)}</div></div>}{!items.length&&<EmptyState glyph="search" heading="No matching collection" detail="Try a broader search."/>}<div className="directory-note"><Icon name="lock" size={17}/>This public archive contains only player-known material. Keep unrevealed DM notes outside the public repository.</div></section></main>}
 
 function StorySoFar(){
- return <section className="container lore-section">
-   <div className="lore-section-head"><Label>THE ROAD TO DRAGONBOWL</Label><h2>Previously, in the <em>Green Iguanas…</em></h2><p>The party was already an established team. These are broad campaign chapters, not fabricated session numbers. Entries marked “Details to verify” are leads from earlier notes, not locked-in canon.</p></div>
-   <div className="lore-chapter-grid">{storyChapters.map((chapter,i)=><article className="lore-chapter" key={chapter.id}>
-     <div className="lore-chapter-top"><span>CHAPTER {String(i+1).padStart(2,'0')}</span><span className={chapter.status==='confirmed'?'lore-status is-confirmed':'lore-status'}>{chapter.status==='confirmed'?'CONFIRMED':'DETAILS TO VERIFY'}</span></div>
-     <h3>{chapter.title}</h3><p>{chapter.summary}</p>
-   </article>)}</div>
-   <p className="lore-footnote">Recap numbering and dates will be added only after approved session transcriptions are reviewed. The party’s original formation and name origin remain unspecified.</p>
- </section>;
+ const artUrl=(src:string)=>import.meta.env.BASE_URL+src;
+ return <div className="cinema-chronicle">
+   <header className="cinema-prologue" id="story-top">
+     <div className="cinema-prologue-light" aria-hidden="true"/>
+     <div className="cinema-prologue-content container">
+       <span className="cinema-kicker">THE GREEN IGUANAS / A LIVING CAMPAIGN</span>
+       <h1>Previously, in the <em>Green Iguanas…</em></h1>
+       <p>From a midnight museum caper to the roaring arena beneath Mount Waterdeep. Seven chapters of adventures, legends and unfinished business.</p>
+       <div className="cinema-prologue-utility">
+         <a href="#story-chapters" className="cinema-scroll-link">Enter the story <Icon name="chevron" size={17}/></a>
+         <span>SCROLL TO REVISIT THE CAMPAIGN</span>
+       </div>
+     </div>
+   </header>
+   <div className="cinema-chapter-index container" aria-label="Chapter navigation">
+     {storyChapters.map((chapter,i)=><a key={chapter.id} href={'#chapter-'+chapter.id} title={chapter.title}><span>{String(i+1).padStart(2,'0')}</span><strong>{chapter.title}</strong></a>)}
+   </div>
+   <div className="cinema-chapters" id="story-chapters">{storyChapters.map((chapter,i)=>
+      <article key={chapter.id} className={'cinema-chapter cinema-chapter--'+chapter.mood+(i%2?' cinema-chapter--right':'')} id={'chapter-'+chapter.id} aria-labelledby={'chapter-title-'+chapter.id}>
+       <div className="cinema-chapter-hero">
+         <img src={artUrl(chapter.hero.src)} alt={chapter.hero.alt} className="cinema-chapter-image" loading={i<2?'eager':'lazy'} decoding="async" onError={e=>{e.currentTarget.style.display='none'}}/>
+         <div className="cinema-chapter-shade" aria-hidden="true"/>
+         <div className="cinema-chapter-glow" aria-hidden="true"/>
+         <div className="cinema-chapter-caption"><span>THE GREEN IGUANAS</span><span>{chapter.hero.caption}</span></div>
+         <div className="cinema-chapter-content container">
+           <div className="cinema-chapter-copy">
+             <div className="cinema-chapter-topline"><span>CHAPTER {String(i+1).padStart(2,'0')} / {String(storyChapters.length).padStart(2,'0')}</span><span className={chapter.status==='confirmed'?'cinema-confirmed':'cinema-pending'}>{chapter.status==='confirmed'?'RECORDED HISTORY':'DETAILS TO VERIFY'}</span></div>
+             <span className="cinema-chapter-kicker">{chapter.kicker}</span>
+             <h2 id={'chapter-title-'+chapter.id}>{chapter.title}</h2>
+             <p className="cinema-chapter-description">{chapter.summary}</p>
+             <span className="cinema-chapter-signature">THE GREEN IGUANAS <i aria-hidden="true">✦</i> {chapter.hero.label}</span>
+           </div>
+         </div>
+       </div>
+       {chapter.gallery.length>0&&<div className="cinema-gallery-wrap">
+         <div className="container cinema-gallery">
+           <div className="cinema-gallery-label"><span>SCENES FROM THE CHAPTER</span><small>ORIGINAL ARTWORK & OTHER PERSPECTIVES</small></div>
+           <div className="cinema-gallery-grid">{chapter.gallery.map((art,index)=>
+             <a key={art.src} href={artUrl(art.src)} className="cinema-memory" target="_blank" rel="noopener noreferrer" aria-label={'Open illustration: '+art.caption}>
+               <span className="cinema-memory-image"><img src={artUrl(art.src)} loading="lazy" decoding="async" alt={art.alt} onError={e=>{e.currentTarget.style.display='none'}}/></span>
+               <span className="cinema-memory-meta"><small>{String(index+1).padStart(2,'0')} · {art.label}</small><strong>{art.caption}</strong><Icon name="external" size={16}/></span>
+             </a>
+           )}</div>
+         </div>
+       </div>}
+      </article>
+   )}</div>
+   <footer className="cinema-epilogue">
+     <span className="cinema-kicker">OUR STORY IS STILL BEING WRITTEN</span>
+     <h2>Next stop: <em>The Dandy War Dolls.</em></h2>
+     <p>The Green Iguanas' first Dragonbowl victory is on the record. What happens in the quarterfinal will only become history after it is played.</p>
+     <div className="cinema-end-links"><Action href="#/dragonbowl" variant="outline">The Dragonbowl</Action><Action href="#/party" variant="outline">Meet the Party</Action></div>
+     <small>ARTISTIC RENDITIONS OF CAMPAIGN EVENTS · ILLUSTRATIONS DO NOT VERIFY UNRECORDED DETAILS</small>
+   </footer>
+ </div>;
 }
 
 function DragonbowlOverview(){
@@ -324,9 +371,10 @@ function DragonbowlOverview(){
 
 function Collection({kind}:{kind:'journal'|'quests'|'dragonbowl'|'treasury'|'achievements'}){
  const {content}=useCampaignContent();
- const entries = kind==='journal' ? [] : kind==='quests' ? content.quests.map(x=>({key:x.id,title:x.title,details:`${x.status} · ${x.summary}`})) : kind==='dragonbowl' ? content.dragonbowlMatches.map(x=>({key:x.id,title:x.title,details:x.summary})) : kind==='achievements' ? content.achievements.map(x=>({key:x.id,title:x.title,details:x.description})) : [];
+ if(kind==='journal') return <main id="main-content" tabIndex={-1}><StorySoFar/></main>;
+ const entries = kind==='quests' ? content.quests.map(x=>({key:x.id,title:x.title,details:`${x.status} · ${x.summary}`})) : kind==='dragonbowl' ? content.dragonbowlMatches.map(x=>({key:x.id,title:x.title,details:x.summary})) : kind==='achievements' ? content.achievements.map(x=>({key:x.id,title:x.title,details:x.description})) : [];
  const cfg={journal:{overline:'CAMPAIGN RECORDS / IV',title:'Previously…',description:'The Green Iguanas’ story so far, gathered into broad chapters. No invented session dates or numbered recaps.',glyph:'book' as Glyph,empty:'The first entry awaits',detail:'No verified session recaps have been published yet. Entries will feature dates, illustrated moments, participants and linked discoveries.'},quests:{overline:'STORYLINES / V',title:'Quests & Mysteries',description:'Some threads are resolved. Others are waiting to be pulled.',glyph:'compass' as Glyph,empty:'No quests published',detail:'This record will track active, completed, failed and unresolved quests with their NPC, place and session backlinks.'},dragonbowl:{overline:'THE TOURNAMENT / VI',title:'Dragonbowl',description:'An arena for the names, matches, and outcomes that deserve to be remembered.',glyph:'trophy' as Glyph,empty:'The tournament records await',detail:'Opponents, matches, results and major Dragonbowl developments will appear after verified details are entered.'},treasury:{overline:'THE COMPANY / VII',title:'Party Treasury',description:'What we carry tells part of our story.',glyph:'coins' as Glyph,empty:'The treasury ledger is empty',detail:'Shared currency, meaningful discoveries and party assets will be tracked after an authorized DM entry.'},achievements:{overline:'THE COMPANY / VIII',title:'Achievements',description:'Not every victory is measured in gold.',glyph:'spark' as Glyph,empty:'No achievements certified',detail:'Achievements will be earned from verified campaign milestones and TableOS dice records, never invented.'}}[kind];
- return <main id="main-content" tabIndex={-1}><PageIntro eyebrow={cfg.overline} title={<>{cfg.title.split(' ').slice(0,-1).join(' ')} <em>{cfg.title.split(' ').slice(-1)}</em></>} description={cfg.description}/>{kind==='journal'&&<StorySoFar/>}{kind==='dragonbowl'&&<DragonbowlOverview/>}{kind!=='journal'&&<section className="container collection-body"><div className="collection-section-label"><span>{kind==='dragonbowl'?'PLAYED MATCH RECORDS':'THE COMPLETE RECORD'}</span><span>{entries.length} PUBLISHED ENTRIES</span></div>{entries.length?<div className="record-grid">{entries.map(entry=><article className="record-entry" key={entry.key}><span className="record-star">✦</span><h3>{entry.title}</h3><p>{entry.details}</p></article>)}</div>:<EmptyState glyph={cfg.glyph} heading={cfg.empty} detail={cfg.detail}/>}<div className="centered"><Action href="#/archive" variant="outline">Return to World Archive</Action></div></section>}</main>
+ return <main id="main-content" tabIndex={-1}><PageIntro eyebrow={cfg.overline} title={<>{cfg.title.split(' ').slice(0,-1).join(' ')} <em>{cfg.title.split(' ').slice(-1)}</em></>} description={cfg.description}/>{kind==='dragonbowl'&&<DragonbowlOverview/>}<section className="container collection-body"><div className="collection-section-label"><span>{kind==='dragonbowl'?'PLAYED MATCH RECORDS':'THE COMPLETE RECORD'}</span><span>{entries.length} PUBLISHED ENTRIES</span></div>{entries.length?<div className="record-grid">{entries.map(entry=><article className="record-entry" key={entry.key}><span className="record-star">✦</span><h3>{entry.title}</h3><p>{entry.details}</p></article>)}</div>:<EmptyState glyph={cfg.glyph} heading={cfg.empty} detail={cfg.detail}/>}<div className="centered"><Action href="#/archive" variant="outline">Return to World Archive</Action></div></section></main>
 }
 function Restricted({mode}:{mode:'account'|'dm'}){return <main id="main-content" tabIndex={-1}><PageIntro eyebrow="THE VAULT / RESTRICTED" title={mode==='account'?<>Player <em>Access.</em></>:<>DM <em>Sanctum.</em></>} description="Private campaign information belongs behind actual authentication and database-level access controls."/><section className="container collection-body"><EmptyState glyph="lock" heading="Secure access is not yet enabled" detail="This first public release does not collect passwords or store personal notes. Player sign-in and DM publishing tools will appear only after secure backend configuration and permission tests."/></section></main>}
 function Footer(){return <footer className="footer"><div className="container footer-inner"><div className="footer-brand"><Crest size={28}/><div><strong>THE GREEN IGUANAS</strong><span>THE LIVING CHRONICLE</span></div></div><div className="footer-quote">{campaign.tagline}</div><div className="footer-links"><a href="#/archive">ARCHIVE</a><a href="#/achievements">ACHIEVEMENTS</a><a href="#/dragonbowl">DRAGONBOWL</a></div></div><div className="container footer-bottom"><span>A CAMPAIGN COMPANION BUILT FOR OUR TABLE</span><span>EST. IN ADVENTURE · PHASE I</span></div></footer>}
