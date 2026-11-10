@@ -115,7 +115,7 @@ export const characters: Character[] = [
     profileSections:[
       {title:'The noble exterior',text:'Heilbrun’s established visual identity is a calm, stern high elf in intricate blue, ivory and gold armor, with long blond hair, a shimmering cloak and a heavy warhammer. His eyes glow gold.'},
       {title:'A possible oath',text:'The concept under consideration is an Oath of Vengeance paladin with a Haunted One background: outwardly controlled and reasonable, but capable of unexpectedly intense action. This is a creative direction, not a locked-in oath, sheet background or played backstory.',status:'concept'},
-      {title:'The unwritten chapter',text:'Heilbrun joined the Green Iguanas at Dragonbowl XLIX. His earlier company, relationships and the exact circumstances of that meeting still await the player’s history.',status:'concept'}
+      {title:'The fifth Iguana',text:'Heilbrun joined the Green Iguanas at Dragonbowl XLIX. His earlier company, relationships and the exact circumstances of that meeting still await the player’s history.'}
     ],
     moments:[{title:'Dragonbowl XLIX · Joined the Green Iguanas',description:'Heilbrun became the party’s fifth member at Dragonbowl. How the introduction unfolded has not yet been recorded.'}],
     beyondUrl:null,sheetPdf:null
