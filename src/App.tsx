@@ -130,25 +130,13 @@ function HeroFellowship() {
 }
 
 function Home() {
-  return <main id="main-content" tabIndex={-1}>
+  return <main id="main-content" tabIndex={-1} className="home-simplified">
     <HeroFellowship/>
     <section className="campaign-pulse container" aria-label="Campaign status">
       <div><span>NOW PLAYING</span><strong>{campaign.tournament}</strong><small>{campaign.location}</small></div>
       <div><span>PARTY LEVEL</span><strong>{campaign.currentLevel}</strong><small>{campaign.nextMilestone}</small></div>
       <div><span>LAST RESULT</span><strong>Cackle Crew defeated</strong><small>Next: Dandy War Dolls · Quarterfinal</small></div>
     </section>
-    <section className="home-next-chapter container"><div><Label>THE LATEST CHAPTER</Label><h2>{'Victory at Dragonbowl: Round One'}</h2><p>{'The Green Iguanas defeated Cackle Crew. Their next known opponent is the Dandy War Dolls in the quarterfinals. Continue the story in Previously, in the Green Iguanas.'}</p></div><Action href="#/journal" variant="outline">Previously, in the Green Iguanas</Action></section>
-    <section className="verse-bar"><div className="container verse-inner"><span>✦</span><p>THE STORIES WE TELL. THE CHOICES WE MAKE. THE LEGENDS WE LEAVE BEHIND.</p><span>✦</span></div></section>
-    <section className="section party-preview container"><SectionTitle eyebrow="I / THE FELLOWSHIP" title={<>Bound by <em>adventure.</em></>} sub="Five characters. Five perspectives. One extraordinary tale." href="#/party" link="View all characters"/>
-      <div className="characters-grid">{characters.map(c=><CharacterCard key={c.id} character={c}/>)}</div><div className="section-caption"><span>01 — 05</span><span>Select a hero to explore their journey.</span></div>
-    </section>
-    <section className="section archive-preview"><div className="container"><SectionTitle eyebrow="II / THE LIVING RECORD" title={<>The adventure, <em>remembered.</em></>} sub="A place for every turning point, improbable triumph, and story still unfolding."/>
-    <div className="feature-grid">
-      <a href="#/dice" className="feature-card feature-dice"><div className="feature-graphic"><Icon name="dice" size={76}/></div><div className="feature-top"><span>01 / THE ODDS</span><Icon name="arrow-up" size={18}/></div><div className="feature-bottom"><span className="feature-marker">✦ FEATURE COLLECTION</span><h3>Dice<br/><i>Chronicle</i></h3><p>Every roll tells a story. Explore the numbers behind the legend.</p><span className="feature-link">Explore the chronicle <Icon name="arrow" size={17}/></span></div></a>
-      <a href="#/journal" className="feature-card feature-journal"><div className="feature-graphic"><Icon name="book" size={76}/></div><div className="feature-top"><span>02 / THE TALE</span><Icon name="arrow-up" size={18}/></div><div className="feature-bottom"><span className="feature-marker">✦ CAMPAIGN RECORDS</span><h3>Adventure<br/><i>Journal</i></h3><p>Sessions, discoveries, and memories preserved beyond the table.</p><span className="feature-link">Read the journal <Icon name="arrow" size={17}/></span></div></a>
-      <a href="#/dragonbowl" className="feature-card feature-arena"><div className="feature-graphic"><Icon name="trophy" size={76}/></div><div className="feature-top"><span>03 / THE ARENA</span><Icon name="arrow-up" size={18}/></div><div className="feature-bottom"><span className="feature-marker">✦ TOURNAMENT ARCHIVE</span><h3>The<br/><i>Dragonbowl</i></h3><p>Every match. Every opponent. Every moment worth revisiting.</p><span className="feature-link">Enter the arena <Icon name="arrow" size={17}/></span></div></a>
-    </div></div></section>
-    <section className="closing-section container"><div className="closing-ornament">✦</div><Label>THE STORY IS STILL BEING WRITTEN</Label><p>“The best stories aren't found in books. They're made together.”</p><Action href="#/party" variant="outline">Explore the fellowship</Action></section>
   </main>;
 }
 function Party() {
