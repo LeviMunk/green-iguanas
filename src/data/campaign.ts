@@ -121,11 +121,11 @@ export const characters: Character[] = [
     accent:'#c5aa69',portrait:'art/heilbrun.webp',
     descriptor:'High elf paladin · Oath of Vengeance',
     highlight:'A golden-eyed paladin who joined the Green Iguanas at Dragonbowl XLIX.',
-    class:'Paladin · Oath of Vengeance',level:6,ancestry:'Elf',background:'Haunted One',
-    biography:'Heilbrun is an elegant high elf paladin with long blond hair, regal blue-and-gold armor, an ornate warhammer and glowing golden eyes. His composed, reasonable demeanor contrasts with a proposed character direction of sudden, fierce intensity. He joined the Green Iguanas at Dragonbowl XLIX. His Oath of Vengeance is confirmed; the events that led him to swear it and the circumstances of his introduction remain undocumented.',
+    class:'Paladin · Oath of Vengeance',level:6,ancestry:'High elf',background:'Haunted One',
+    biography:'Heilbrun is an elegant high elf paladin with long blond hair, regal blue-and-gold armor, an ornate warhammer and glowing golden eyes. He joined the Green Iguanas at Dragonbowl XLIX. His Oath of Vengeance is confirmed; the events that led him to swear it and the circumstances of his introduction remain undocumented.',
     profileSections:[
       {title:'The noble exterior',text:'Heilbrun’s established visual identity is a calm, stern high elf in intricate blue, ivory and gold armor, with long blond hair, a shimmering cloak and a heavy warhammer. His eyes glow gold.'},
-      {title:'An oath of vengeance',text:'Heilbrun is an Oath of Vengeance paladin with the Haunted One background. He presents himself with restraint, but carries a fierce sense of purpose. The precise cause of his oath and his earlier adventures are still to be documented.'},
+      {title:'An oath of vengeance',text:'Heilbrun has sworn an Oath of Vengeance and carries the Haunted One background. The personal events behind that oath and his earlier adventures are still to be documented.'},
       {title:'The fifth Iguana',text:'Heilbrun joined the Green Iguanas at Dragonbowl XLIX. His earlier company, relationships and the exact circumstances of that meeting still await the player’s history.'}
     ],
     moments:[{title:'Dragonbowl XLIX · Joined the Green Iguanas',description:'Heilbrun became the party’s fifth member at Dragonbowl. How the introduction unfolded has not yet been recorded.'}],
