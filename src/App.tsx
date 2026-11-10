@@ -3,6 +3,7 @@ import { campaign, characters, storyChapters, dragonbowlOpeningOdds, type Charac
 import { demoRolls } from './data/demo';
 import { summarize, validateEvents, type RollEvent } from './lib/dice';
 import { useCampaignContent } from './lib/content';
+import { characterRolls, diceTrophies, rollNights, usePublishedRolls } from './lib/chronicle';
 
 type Glyph = 'arrow'|'arrow-up'|'chevron'|'compass'|'book'|'dice'|'shield'|'users'|'spark'|'crown'|'hourglass'|'lock'|'menu'|'close'|'search'|'plus'|'scroll'|'download'|'upload'|'feather'|'trophy'|'external'|'moon'|'check'|'filter'|'swords'|'user'|'coins';
 function Icon({name, size=20}: {name:Glyph; size?:number}) {
@@ -48,14 +49,14 @@ const nav = [
   {href:'#/',label:'Home',glyph:'compass' as Glyph},
   {href:'#/party',label:'The Party',glyph:'users' as Glyph},
   {href:'#/dice',label:'Dice Chronicle',glyph:'dice' as Glyph},
-  {href:'#/journal',label:'Journal',glyph:'book' as Glyph},
+  {href:'#/journal',label:'Story So Far',glyph:'book' as Glyph},
   {href:'#/archive',label:'World Archive',glyph:'scroll' as Glyph},
   {href:'#/dragonbowl',label:'Dragonbowl',glyph:'trophy' as Glyph},
 ];
 function useRoute() {
-  const [route,setRoute] = useState(() => window.location.hash.slice(1) || '/');
+  const [route,setRoute] = useState(() => window.location.hash.slice(1).split('?')[0] || '/');
   useEffect(() => {
-    const update = () => {setRoute(window.location.hash.slice(1) || '/');window.scrollTo({top:0,behavior:'instant'});};
+    const update = () => {setRoute(window.location.hash.slice(1).split('?')[0] || '/');window.scrollTo({top:0,behavior:'instant'});};
     window.addEventListener('hashchange',update);
     return () => window.removeEventListener('hashchange',update);
   }, []);
@@ -88,7 +89,7 @@ function SiteHeader({route}: {route:string}) {
     <div className="header-right"><span className="header-status"><span className="status-dot"/> CAMPAIGN COMPANION</span><button type="button" className="menu-trigger" onClick={()=>setOpen(!open)} aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="mobile-navigation"><Icon name={open?'close':'menu'} size={24}/></button></div>
   </div></header>
   {open && <nav id="mobile-navigation" className="mobile-menu" aria-label="Expanded navigation">{nav.map(n=><a href={n.href} key={n.href}><Icon name={n.glyph}/>{n.label}<Icon name="arrow" size={15}/></a>)}</nav>}
-  <nav className="bottom-nav" aria-label="Mobile navigation">{[nav[0],nav[1],nav[2],nav[3]].map(n=><a key={n.href} href={n.href} className={route===n.href.slice(1)?'active':''}><Icon name={n.glyph} size={21}/><span>{n.label==='Dice Chronicle'?'Dice':n.label==='The Party'?'Party':n.label}</span></a>)}<button type="button" onClick={()=>setOpen(!open)} aria-label="More navigation"><Icon name="menu" size={21}/><span>More</span></button></nav></>;
+  <nav className="bottom-nav" aria-label="Mobile navigation">{[nav[0],nav[1],nav[2],nav[3]].map(n=><a key={n.href} href={n.href} className={route===n.href.slice(1)?'active':''}><Icon name={n.glyph} size={21}/><span>{n.label==='Dice Chronicle'?'Dice':n.label==='The Party'?'Party':n.label==='Story So Far'?'Story':n.label}</span></a>)}<button type="button" onClick={()=>setOpen(!open)} aria-label="More navigation"><Icon name="menu" size={21}/><span>More</span></button></nav></>;
 }
 function SectionTitle({eyebrow,title,sub,href,link}:{eyebrow:string;title:React.ReactNode;sub?:string;href?:string;link?:string}) {return <div className="section-heading"><div><Label>{eyebrow}</Label><h2>{title}</h2>{sub&&<p>{sub}</p>}</div>{href&&<Action href={href} variant="text">{link||'Explore'}</Action>}</div>}
 
@@ -142,8 +143,6 @@ function HeroFellowship() {
 }
 
 function Home() {
-  const { content } = useCampaignContent();
-  const latest = [...content.sessions].sort((a,b)=>b.number-a.number)[0];
   return <main id="main-content" tabIndex={-1}>
     <HeroFellowship/>
     <section className="campaign-pulse container" aria-label="Campaign status">
@@ -151,7 +150,7 @@ function Home() {
       <div><span>PARTY LEVEL</span><strong>{campaign.currentLevel}</strong><small>{campaign.nextMilestone}</small></div>
       <div><span>LAST RESULT</span><strong>Cackle Crew defeated</strong><small>Next: Dandy War Dolls · Quarterfinal</small></div>
     </section>
-    <section className="home-next-chapter container"><div><Label>THE LATEST CHAPTER</Label><h2>{latest ? `Session ${latest.number}: ${latest.title}` : 'Victory at Dragonbowl: Round One'}</h2><p>{latest ? latest.summary : 'The Green Iguanas defeated Cackle Crew. Their next known opponent is the Dandy War Dolls in the quarterfinals. Numbered session recaps will follow after transcript review.'}</p></div><Action href="#/journal" variant="outline">Read the adventure journal</Action></section>
+    <section className="home-next-chapter container"><div><Label>THE LATEST CHAPTER</Label><h2>{'Victory at Dragonbowl: Round One'}</h2><p>{'The Green Iguanas defeated Cackle Crew. Their next known opponent is the Dandy War Dolls in the quarterfinals. Continue the story in Previously, in the Green Iguanas.'}</p></div><Action href="#/journal" variant="outline">Previously, in the Green Iguanas</Action></section>
     <section className="verse-bar"><div className="container verse-inner"><span>✦</span><p>THE STORIES WE TELL. THE CHOICES WE MAKE. THE LEGENDS WE LEAVE BEHIND.</p><span>✦</span></div></section>
     <section className="section party-preview container"><SectionTitle eyebrow="I / THE FELLOWSHIP" title={<>Bound by <em>adventure.</em></>} sub="Five characters. Five perspectives. One extraordinary tale." href="#/party" link="View all characters"/>
       <div className="characters-grid">{characters.map(c=><CharacterCard key={c.id} character={c}/>)}</div><div className="section-caption"><span>01 — 05</span><span>Select a hero to explore their journey.</span></div>
@@ -176,27 +175,88 @@ function Party() {
 }
 function DetailBox({label,value}:{label:string;value:string|null|number}) {return <div className="detail-box"><span>{label}</span><strong>{value ?? 'Awaiting records'}</strong></div>}
 function EmptyState({glyph='scroll',heading,detail}:{glyph?:Glyph;heading:string;detail:string}) {return <div className="empty-state"><div className="empty-icon"><Icon name={glyph} size={30}/></div><h3>{heading}</h3><p>{detail}</p></div>}
+
+function CharacterSheetPanel({character}:{character:Character}) {
+  const pdf=character.sheetPdf ? import.meta.env.BASE_URL+(character.sheetPdf.startsWith('/')?character.sheetPdf.slice(1):character.sheetPdf) : null;
+  return <div className="sheet-panel">
+    <Label>D&D BEYOND · CHARACTER RECORD</Label>
+    <h2>The character <em>sheet.</em></h2>
+    <p className="body-muted">Two complementary views: the current D&D Beyond character sheet and the last DM-reviewed PDF snapshot. A static PDF will not update automatically.</p>
+    <div className="sheet-link-grid">
+      <article className="sheet-link-card"><Icon name="external" size={26}/><span>LIVE CHARACTER</span><h3>D&D Beyond</h3>
+        <p>{character.beyondUrl?'Visit this character in D&D Beyond.':'A direct D&D Beyond character URL has not been supplied yet.'}</p>
+        {character.beyondUrl?<a className="btn btn-outline" href={character.beyondUrl} target="_blank" rel="noopener noreferrer">Open character sheet <Icon name="external" size={16}/></a>:<small className="sheet-awaiting">LINK NOT YET ATTACHED</small>}
+      </article>
+      <article className="sheet-link-card"><Icon name="scroll" size={26}/><span>APPROVED EXPORT</span><h3>PDF snapshot</h3>
+        <p>{pdf?'View the most recent DM-reviewed exported character sheet.':'No approved PDF export has been added to this character yet.'}</p>
+        {pdf?<a className="btn btn-outline" href={pdf} target="_blank" rel="noopener noreferrer">View PDF snapshot <Icon name="external" size={16}/></a>:<small className="sheet-awaiting">PDF NOT YET ATTACHED</small>}
+      </article>
+    </div>
+    <p className="sheet-footnote">Character links may require D&D Beyond login or sharing permissions. Every PDF committed to GitHub Pages is publicly accessible; approve each export before publishing it.</p>
+  </div>;
+}
+function CharacterDicePanel({character}:{character:Character}) {
+  const {events,loading,error}=usePublishedRolls();
+  const {content}=useCampaignContent();
+  const rolls=useMemo(()=>characterRolls(events,character.id),[events,character.id]);
+  const stats=useMemo(()=>summarize(rolls),[rolls]);
+  const trophies=useMemo(()=>diceTrophies(rolls),[rolls]);
+  const days=useMemo(()=>rollNights(rolls),[rolls]);
+  const played=content.achievements.filter(a=>a.characterId===character.id);
+  return <div className="character-chronicle">
+    <Label>GAME LOG · CHARACTER RECORD</Label><h2>Dice & <em>achievements.</em></h2>
+    <p className="body-muted">RollWarden-inspired personal history: raw die faces, modifiers, totals, memorable rolls and trophies. Only published, validated game events count. No unverified luck ratings or fabricated statistics.</p>
+    <div className="character-dice-stats">{[
+      ['D20 FACES',stats.d20s],['NATURAL 20S',stats.natural20s],
+      ['NATURAL 1S',stats.natural1s],['AVG RAW D20',stats.average===null?'—':stats.average.toFixed(2)],
+      ['CONFIRMED CRITS',stats.confirmedCrits]
+    ].map(([label,value])=><div key={label}><span>{label}</span><strong>{loading?'…':value}</strong></div>)}</div>
+    {error&&<p role="alert" className="dice-import-notice">Published roll feed unavailable: {error}</p>}
+    {!loading&&rolls.length===0&&<p className="dice-import-notice">No verified dice events have been published for {character.name} yet. These counters describe the published archive, not everything rolled at the table.</p>}
+    <div className="record-heading"><h3>The trophy case</h3><span>{played.length+trophies.filter(t=>t.unlocked).length} UNLOCKED</span></div>
+    <div className="character-award-grid">
+      {played.map(a=><article className="character-award is-unlocked" key={a.id}><span>✦ PLAYED STORY MILESTONE</span><h4>{a.title}</h4><p>{a.description}</p><small>CONFIRMED IN PLAY</small></article>)}
+      {trophies.map(t=><article className={'character-award '+(t.unlocked?'is-unlocked':'is-locked')} key={t.id}><span>{t.unlocked?'✦ DICE TROPHY':'◇ LOCKED DICE TROPHY'}</span><h4>{t.title}</h4><p>{t.description}</p><small>{t.unlocked?'UNLOCKED · '+new Date(t.unlockedAt as string).toLocaleDateString():Math.min(t.current,t.target)+' / '+t.target+' VERIFIED'}</small></article>)}
+    </div>
+    <div className="record-heading"><h3>Personal Game Log</h3><span>{rolls.length} VERIFIED EVENTS</span></div>
+    {rolls.length?<div className="character-roll-list">{rolls.slice(0,12).map(e=>{
+      const raw=e.dice.filter(d=>d.sides===20&&d.kept).map(d=>d.face);
+      return <div className="character-roll-row" key={e.event_id}><div><strong>{e.roll_type.replaceAll('_',' ')}</strong><small>{new Date(e.occurred_at).toLocaleString()}</small></div><span>RAW {raw.join('/')||'—'} · MOD {e.modifier_total>=0?'+':''}{e.modifier_total}</span><strong>{e.total}</strong></div>;
+    })}</div>:<p className="body-muted">Game Log entries will appear here when an approved event export is published.</p>}
+    {days.length>0&&<div className="night-summary"><h3>Recorded play dates</h3>{days.slice(0,8).map(day=><p key={day.date}><span>{day.date} UTC</span><span>{day.rolls} events · {day.natural20s} nat 20 · {day.natural1s} nat 1</span></p>)}</div>}
+    <div className="centered"><Action href={'#/dice?character='+encodeURIComponent(character.id)} variant="outline">Open full Dice Chronicle</Action></div>
+  </div>;
+}
 function CharacterPage({id}:{id:string}) {
  const character=characters.find(c=>c.id===id);
- const [tab,setTab]=useState<'overview'|'timeline'|'chronicle'>('overview');
+ const [tab,setTab]=useState<'overview'|'timeline'|'chronicle'|'sheet'>('overview');
  useEffect(()=>setTab('overview'),[id]);
- if(!character) return <main id="main-content" tabIndex={-1} className="container"><EmptyState heading="The name is not in our records" detail="This character could not be found in the Green Iguanas roster."/><Action href="#/party" variant="outline">Return to the party</Action></main>;
+ if(!character)return <main id="main-content" tabIndex={-1} className="container"><EmptyState heading="The name is not in our records" detail="This character could not be found in the Green Iguanas roster."/><Action href="#/party" variant="outline">Return to the party</Action></main>;
  return <main id="main-content" tabIndex={-1} style={{'--character-accent':character.accent} as React.CSSProperties}>
-   <section className="container dossier-top"><a className="breadcrumb" href="#/party">THE FELLOWSHIP <Icon name="chevron" size={12}/> DOSSIER {character.index}</a><div className="dossier-layout"><div className="dossier-portrait"><PlaceholderArt character={character} large/></div><div className="dossier-copy"><Label>CHARACTER FILE {character.index} / 05</Label><h1>{character.name}</h1><p className="dossier-kicker">{character.descriptor}</p><div className="accent-line"/><p className="dossier-description">{character.highlight}</p>
-     <div className="dossier-details"><DetailBox label="CLASS" value={character.class}/><DetailBox label="LEVEL" value={character.level}/><DetailBox label="ANCESTRY" value={character.ancestry}/><DetailBox label="BACKGROUND" value={character.background}/></div>
-     {character.sheetSnapshot?<div className="sheet-stat-group"><div className="sheet-stat-head">VERIFIED SHEET SNAPSHOT <span>UPDATED {character.sheetSnapshot.asOf}</span></div><div className="dossier-details"><DetailBox label="ARMOR CLASS" value={character.sheetSnapshot.armorClass??null}/><DetailBox label="MAXIMUM HP" value={character.sheetSnapshot.maxHitPoints??null}/><DetailBox label="MOVEMENT" value={character.sheetSnapshot.speed??null}/><DetailBox label="INITIATIVE" value={character.sheetSnapshot.initiative??null}/></div></div>:<div className="sheet-pending">D&D Beyond PDF snapshot not uploaded yet. Character mechanics are intentionally blank.</div>}
-     <div className="dossier-actions">{character.beyondUrl?<a className="btn btn-primary" href={character.beyondUrl} target="_blank" rel="noopener noreferrer">Open D&D Beyond <Icon name="external" size={16}/></a>:<span className="muted-action"><Icon name="external" size={16}/>D&D Beyond link not supplied</span>}</div>
-   </div></div></section>
-   <div className="tab-wrapper"><div className="container tab-row" role="group" aria-label={`${character.name} sections`}>{(['overview','timeline','chronicle'] as const).map(item=><button key={item} type="button" aria-pressed={tab===item} className={tab===item?'selected':''} onClick={()=>setTab(item)}>{item==='overview'?'Profile & Story':item==='timeline'?'The Journey':'Dice & Moments'}</button>)}</div></div>
-   <section className="container dossier-body">{tab==='overview'?<div className="dossier-columns"><div><Label>THE STORY SO FAR</Label><h2>Deeds behind <em>the name.</em></h2><p className="body-muted">{character.biography ?? 'Personal history has not yet been verified.'}</p></div><div className="dossier-side"><div className="small-panel"><Icon name="feather" size={23}/><h3>Personal journal</h3><p>Player-submitted notes can be added as approved campaign content in a later release.</p><span>PLANNED / STORY FEATURE</span></div><div className="small-panel"><Icon name="shield" size={23}/><h3>People & possessions</h3><p>Relationships, significant items, and discoveries will appear here after verified entry.</p><span>AWAITING RECORDS</span></div></div></div>:tab==='timeline'?(character.moments.length?<div className="moments-list"><Label>RECORDED MOMENTS</Label><h2>On their <em>journey.</em></h2>{character.moments.map((moment,index)=><article className="moment-entry" key={`${character.id}-${index}`}><span>{String(index+1).padStart(2,'0')}</span><div><h3>{moment.title}</h3><p>{moment.description}</p></div></article>)}</div>:<EmptyState glyph="hourglass" heading="The introduction awaits" detail="No played milestones have been recorded for this character yet. Artwork and planned guest details are not counted as history."/>):<div className="centered"><EmptyState glyph="dice" heading="No verified dice events yet" detail="Once approved TableOS events are imported, this section will reveal the character's dice history and remarkable moments."/><Action href="#/dice" variant="outline">Open Dice Chronicle</Action></div>}</section>
-   <div className="container dossier-next"><span>CONTINUE THE STORY</span><a href={`#/character/${characters[(characters.indexOf(character)+1)%characters.length].id}`}>NEXT DOSSIER <strong>{characters[(characters.indexOf(character)+1)%characters.length].name}</strong> <Icon name="arrow" size={22}/></a></div>
+   <section className="container dossier-top"><a className="breadcrumb" href="#/party">THE FELLOWSHIP <Icon name="chevron" size={12}/> DOSSIER {character.index}</a>
+    <div className="dossier-layout"><div className="dossier-portrait"><PlaceholderArt character={character} large/></div>
+     <div className="dossier-copy"><Label>CHARACTER FILE {character.index} / 05</Label><h1>{character.name}</h1><p className="dossier-kicker">{character.descriptor}</p><div className="accent-line"/><p className="dossier-description">{character.highlight}</p>
+      <div className="dossier-details"><DetailBox label="CLASS" value={character.class}/><DetailBox label="LEVEL" value={character.level}/><DetailBox label="ANCESTRY" value={character.ancestry}/><DetailBox label="SHEET BACKGROUND" value={character.background}/></div>
+      {character.sheetSnapshot?<div className="sheet-stat-group"><div className="sheet-stat-head">VERIFIED PDF SNAPSHOT <span>UPDATED {character.sheetSnapshot.asOf}</span></div><div className="dossier-details"><DetailBox label="ARMOR CLASS" value={character.sheetSnapshot.armorClass??null}/><DetailBox label="MAXIMUM HP" value={character.sheetSnapshot.maxHitPoints??null}/><DetailBox label="MOVEMENT" value={character.sheetSnapshot.speed??null}/><DetailBox label="INITIATIVE" value={character.sheetSnapshot.initiative??null}/></div></div>:<div className="sheet-pending">Current sheet mechanics await a verified D&D Beyond PDF export.</div>}
+      <div className="dossier-actions"><a className="btn btn-outline" href={'#/dice?character='+character.id}><Icon name="dice" size={16}/> Character Dice Log</a><span className="muted-action"><Icon name="scroll" size={16}/>{character.sheetPdf||character.beyondUrl?'Character sheet available':'Sheet PDF / link not attached'}</span></div>
+     </div>
+    </div>
+   </section>
+   <div className="tab-wrapper"><div className="container tab-row" role="group" aria-label={character.name+' sections'}>{(['overview','timeline','chronicle','sheet'] as const).map(item=><button type="button" key={item} aria-pressed={tab===item} className={tab===item?'selected':''} onClick={()=>setTab(item)}>{item==='overview'?'Background & Story':item==='timeline'?'The Journey':item==='chronicle'?'Dice & Achievements':'D&D Beyond Sheet'}</button>)}</div></div>
+   <section className="container dossier-body">
+    {tab==='overview'?<div className="dossier-columns character-story-layout"><div><Label>THE CHARACTER'S ORIGIN</Label><h2>Deeds behind <em>the name.</em></h2><p className="body-muted">{character.biography??'Character history is still being documented.'}</p>
+      <div className="character-story-sections">{character.profileSections.map((section,i)=><article className="character-story-chapter" key={i}><span>{String(i+1).padStart(2,'0')}{section.status==='concept'?' / CHARACTER CONCEPT, NOT CANON':' / CHARACTER HISTORY'}</span><h3>{section.title}</h3><p>{section.text}</p></article>)}</div>
+      </div><div className="dossier-side"><div className="small-panel"><Icon name="scroll" size={23}/><h3>Character sheet</h3><p>See the living D&D Beyond sheet or a reviewed PDF snapshot when attached.</p><span>SHEET TAB</span></div><div className="small-panel"><Icon name="trophy" size={23}/><h3>Dice & achievements</h3><p>See the character's story achievements, verified rolls and trophy unlocks.</p><span>CHRONICLE TAB</span></div></div>
+    </div>:tab==='timeline'?(character.moments.length?<div className="moments-list"><Label>RECORDED CHARACTER MOMENTS</Label><h2>The path <em>so far.</em></h2>{character.moments.map((moment,i)=><article className="moment-entry" key={i}><span>{String(i+1).padStart(2,'0')}</span><div><h3>{moment.title}</h3><p>{moment.description}</p></div></article>)}</div>:<EmptyState glyph="hourglass" heading="The introduction awaits" detail="No played moments are confirmed for this character yet."/>):tab==='chronicle'?<CharacterDicePanel character={character}/>:<CharacterSheetPanel character={character}/>}
+   </section>
+   <div className="container dossier-next"><span>CONTINUE THE STORY</span><a href={'#/character/'+characters[(characters.indexOf(character)+1)%characters.length].id}>NEXT DOSSIER <strong>{characters[(characters.indexOf(character)+1)%characters.length].name}</strong><Icon name="arrow" size={22}/></a></div>
  </main>;
 }
 
 function DiceChronicle() {
  const [bundle,setBundle]=useState<{events:RollEvent[];label:string;mode:'demo'|'import'|'published'}|null>(null);
  useEffect(()=>{let cancelled=false;fetch(`${import.meta.env.BASE_URL}data/rolls.json`,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('Public roll feed unavailable');return r.json()}).then(raw=>{const events=validateEvents(raw);if(events.some(e=>e.visibility!=='public'))throw new Error('Public feed contains restricted events');if(!cancelled&&events.length) setBundle(prev=>prev??{events,label:'published campaign export',mode:'published'});}).catch(()=>{/* Missing feed leaves the honest empty state. */});return()=>{cancelled=true}},[]);
- const [character,setCharacter]=useState('all');
+ const [character,setCharacter]=useState(()=>{const chosen=new URLSearchParams(window.location.hash.split('?')[1]??'').get('character');return characters.some(c=>c.id===chosen)?chosen as string:'all'});
  const [kind,setKind]=useState('all');
  const [query,setQuery]=useState('');
  const [error,setError]=useState('');
@@ -264,15 +324,15 @@ function DragonbowlOverview(){
 
 function Collection({kind}:{kind:'journal'|'quests'|'dragonbowl'|'treasury'|'achievements'}){
  const {content}=useCampaignContent();
- const entries = kind==='journal' ? content.sessions.map(x=>({key:x.id,title:`Session ${x.number}: ${x.title}`,details:[x.date,x.summary].filter(Boolean).join(' · ')})) : kind==='quests' ? content.quests.map(x=>({key:x.id,title:x.title,details:`${x.status} · ${x.summary}`})) : kind==='dragonbowl' ? content.dragonbowlMatches.map(x=>({key:x.id,title:x.title,details:x.summary})) : kind==='achievements' ? content.achievements.map(x=>({key:x.id,title:x.title,details:x.description})) : [];
- const cfg={journal:{overline:'CAMPAIGN RECORDS / IV',title:'Adventure Journal',description:'The record of roads traveled, choices made, and moments we refuse to forget.',glyph:'book' as Glyph,empty:'The first entry awaits',detail:'No verified session recaps have been published yet. Entries will feature dates, illustrated moments, participants and linked discoveries.'},quests:{overline:'STORYLINES / V',title:'Quests & Mysteries',description:'Some threads are resolved. Others are waiting to be pulled.',glyph:'compass' as Glyph,empty:'No quests published',detail:'This record will track active, completed, failed and unresolved quests with their NPC, place and session backlinks.'},dragonbowl:{overline:'THE TOURNAMENT / VI',title:'Dragonbowl',description:'An arena for the names, matches, and outcomes that deserve to be remembered.',glyph:'trophy' as Glyph,empty:'The tournament records await',detail:'Opponents, matches, results and major Dragonbowl developments will appear after verified details are entered.'},treasury:{overline:'THE COMPANY / VII',title:'Party Treasury',description:'What we carry tells part of our story.',glyph:'coins' as Glyph,empty:'The treasury ledger is empty',detail:'Shared currency, meaningful discoveries and party assets will be tracked after an authorized DM entry.'},achievements:{overline:'THE COMPANY / VIII',title:'Achievements',description:'Not every victory is measured in gold.',glyph:'spark' as Glyph,empty:'No achievements certified',detail:'Achievements will be earned from verified campaign milestones and TableOS dice records, never invented.'}}[kind];
- return <main id="main-content" tabIndex={-1}><PageIntro eyebrow={cfg.overline} title={<>{cfg.title.split(' ').slice(0,-1).join(' ')} <em>{cfg.title.split(' ').slice(-1)}</em></>} description={cfg.description}/>{kind==='journal'&&<StorySoFar/>}{kind==='dragonbowl'&&<DragonbowlOverview/>}<section className="container collection-body"><div className="collection-section-label"><span>{kind==='journal'?'NUMBERED SESSION RECAPS':kind==='dragonbowl'?'PLAYED MATCH RECORDS':'THE COMPLETE RECORD'}</span><span>{entries.length} PUBLISHED ENTRIES</span></div>{entries.length?<div className="record-grid">{entries.map(entry=><article className="record-entry" key={entry.key}><span className="record-star">✦</span><h3>{entry.title}</h3><p>{entry.details}</p></article>)}</div>:<EmptyState glyph={cfg.glyph} heading={cfg.empty} detail={cfg.detail}/>}<div className="centered"><Action href="#/archive" variant="outline">Return to World Archive</Action></div></section></main>
+ const entries = kind==='journal' ? [] : kind==='quests' ? content.quests.map(x=>({key:x.id,title:x.title,details:`${x.status} · ${x.summary}`})) : kind==='dragonbowl' ? content.dragonbowlMatches.map(x=>({key:x.id,title:x.title,details:x.summary})) : kind==='achievements' ? content.achievements.map(x=>({key:x.id,title:x.title,details:x.description})) : [];
+ const cfg={journal:{overline:'CAMPAIGN RECORDS / IV',title:'Previously…',description:'The Green Iguanas’ story so far, gathered into broad chapters. No invented session dates or numbered recaps.',glyph:'book' as Glyph,empty:'The first entry awaits',detail:'No verified session recaps have been published yet. Entries will feature dates, illustrated moments, participants and linked discoveries.'},quests:{overline:'STORYLINES / V',title:'Quests & Mysteries',description:'Some threads are resolved. Others are waiting to be pulled.',glyph:'compass' as Glyph,empty:'No quests published',detail:'This record will track active, completed, failed and unresolved quests with their NPC, place and session backlinks.'},dragonbowl:{overline:'THE TOURNAMENT / VI',title:'Dragonbowl',description:'An arena for the names, matches, and outcomes that deserve to be remembered.',glyph:'trophy' as Glyph,empty:'The tournament records await',detail:'Opponents, matches, results and major Dragonbowl developments will appear after verified details are entered.'},treasury:{overline:'THE COMPANY / VII',title:'Party Treasury',description:'What we carry tells part of our story.',glyph:'coins' as Glyph,empty:'The treasury ledger is empty',detail:'Shared currency, meaningful discoveries and party assets will be tracked after an authorized DM entry.'},achievements:{overline:'THE COMPANY / VIII',title:'Achievements',description:'Not every victory is measured in gold.',glyph:'spark' as Glyph,empty:'No achievements certified',detail:'Achievements will be earned from verified campaign milestones and TableOS dice records, never invented.'}}[kind];
+ return <main id="main-content" tabIndex={-1}><PageIntro eyebrow={cfg.overline} title={<>{cfg.title.split(' ').slice(0,-1).join(' ')} <em>{cfg.title.split(' ').slice(-1)}</em></>} description={cfg.description}/>{kind==='journal'&&<StorySoFar/>}{kind==='dragonbowl'&&<DragonbowlOverview/>}{kind!=='journal'&&<section className="container collection-body"><div className="collection-section-label"><span>{kind==='dragonbowl'?'PLAYED MATCH RECORDS':'THE COMPLETE RECORD'}</span><span>{entries.length} PUBLISHED ENTRIES</span></div>{entries.length?<div className="record-grid">{entries.map(entry=><article className="record-entry" key={entry.key}><span className="record-star">✦</span><h3>{entry.title}</h3><p>{entry.details}</p></article>)}</div>:<EmptyState glyph={cfg.glyph} heading={cfg.empty} detail={cfg.detail}/>}<div className="centered"><Action href="#/archive" variant="outline">Return to World Archive</Action></div></section>}</main>
 }
 function Restricted({mode}:{mode:'account'|'dm'}){return <main id="main-content" tabIndex={-1}><PageIntro eyebrow="THE VAULT / RESTRICTED" title={mode==='account'?<>Player <em>Access.</em></>:<>DM <em>Sanctum.</em></>} description="Private campaign information belongs behind actual authentication and database-level access controls."/><section className="container collection-body"><EmptyState glyph="lock" heading="Secure access is not yet enabled" detail="This first public release does not collect passwords or store personal notes. Player sign-in and DM publishing tools will appear only after secure backend configuration and permission tests."/></section></main>}
 function Footer(){return <footer className="footer"><div className="container footer-inner"><div className="footer-brand"><Crest size={28}/><div><strong>THE GREEN IGUANAS</strong><span>THE LIVING CHRONICLE</span></div></div><div className="footer-quote">{campaign.tagline}</div><div className="footer-links"><a href="#/archive">ARCHIVE</a><a href="#/achievements">ACHIEVEMENTS</a><a href="#/dragonbowl">DRAGONBOWL</a></div></div><div className="container footer-bottom"><span>A CAMPAIGN COMPANION BUILT FOR OUR TABLE</span><span>EST. IN ADVENTURE · PHASE I</span></div></footer>}
 export default function App(){const route=useRoute();let page:React.ReactNode;
  useEffect(()=>{
-    const names:Record<string,string>={'/':'The Living Chronicle','/party':'The Fellowship','/dice':'Dice Chronicle','/journal':'Adventure Journal','/archive':'World Archive','/dragonbowl':'Dragonbowl','/quests':'Quests','/treasury':'Party Treasury','/achievements':'Achievements'};
+    const names:Record<string,string>={'/':'The Living Chronicle','/party':'The Fellowship','/dice':'Dice Chronicle','/journal':'Previously in the Green Iguanas','/archive':'World Archive','/dragonbowl':'Dragonbowl','/quests':'Quests','/treasury':'Party Treasury','/achievements':'Achievements'};
     const member=route.startsWith('/character/')?characters.find(c=>c.id===route.split('/')[2]):null;
     document.title=`${member?.name ?? names[route] ?? 'Green Iguanas'} | The Green Iguanas`;
  },[route]);
