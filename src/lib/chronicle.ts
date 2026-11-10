@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { summarize, validateEvents, type RollEvent } from './dice';
+import { useEffect, useState } from 'react';
+import { summarize, validateEvents, type RollEvent } from './dice.ts';
 
 export type DiceTrophy = {
   id: string;
