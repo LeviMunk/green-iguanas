@@ -187,7 +187,7 @@ export const storyChapters: StoryChapter[] = [
   },
   {
     id:'dragonbowl-arrival', title:'Under Mount Waterdeep', kicker:'THE WORLD’S BIGGEST ARENA AWAITS',
-    summary:'After freeing the captive wizard, the party gained access to an already-paid tournament entry and reached Dragonbowl XLIX beneath Mount Waterdeep. They toured the festival and entered the competition. **Heilbrun joined the Green Iguanas at Dragonbowl**, becoming the party’s fifth member. The precise circumstances of his arrival and earlier history remain to be documented.',
+    summary:'After freeing the captive wizard, the party gained access to an already-paid tournament entry and reached Dragonbowl XLIX beneath Mount Waterdeep. They toured the festival and entered the competition. Heilbrun joined the Green Iguanas at Dragonbowl, becoming the party’s fifth member. The precise circumstances of his arrival and earlier history remain to be documented.',
     status:'confirmed', mood:'dragonbowl',
     hero:{src:'history/dragonbowl-arrival.webp',alt:'Bobby, Freed, Owen and Indigo stand together at sunset overlooking the city and sea before Dragonbowl',caption:'Arrival at the tournament · chapter illustration',label:'A NEW ARENA'},
     gallery:[
