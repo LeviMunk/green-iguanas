@@ -25,13 +25,13 @@ export type Character = {
 };
 
 // This is the complete verified Phase 1 roster. Null = not supplied/verified.
-// No mechanical stats, portraits or backstories are synthesized.
+// Character artwork is approved. Mechanical stats and backstories remain unverified and blank.
 export const characters: Character[] = [
-  { id: 'bobby-kills', name: 'Bobby Kills', givenInitials: 'BK', index: '01', accent: '#af805c', portrait: null, class: null, level: null, ancestry: null, background: null, biography: null, beyondUrl: null },
-  { id: 'indigo', name: 'Indigo', givenInitials: 'IN', index: '02', accent: '#7594aa', portrait: null, class: null, level: null, ancestry: null, background: null, biography: null, beyondUrl: null },
-  { id: 'owen', name: 'Owen', givenInitials: 'OW', index: '03', accent: '#91a186', portrait: null, class: null, level: null, ancestry: null, background: null, biography: null, beyondUrl: null },
-  { id: 'freed', name: 'Freed', givenInitials: 'FR', index: '04', accent: '#a88caa', portrait: null, class: null, level: null, ancestry: null, background: null, biography: null, beyondUrl: null },
-  { id: 'heilbrun', name: 'Heilbrun', givenInitials: 'HE', index: '05', accent: '#c5aa69', portrait: null, class: null, level: null, ancestry: null, background: null, biography: null, beyondUrl: null },
+  { id: 'bobby-kills', name: 'Bobby Kills', givenInitials: 'BK', index: '01', accent: '#af805c', portrait: 'art/bobby-kills.webp', class: null, level: null, ancestry: null, background: null, biography: null, beyondUrl: null },
+  { id: 'indigo', name: 'Indigo', givenInitials: 'IN', index: '02', accent: '#7594aa', portrait: 'art/indigo.webp', class: null, level: null, ancestry: null, background: null, biography: null, beyondUrl: null },
+  { id: 'owen', name: 'Owen', givenInitials: 'OW', index: '03', accent: '#91a186', portrait: 'art/owen.webp', class: null, level: null, ancestry: null, background: null, biography: null, beyondUrl: null },
+  { id: 'freed', name: 'Freed', givenInitials: 'FR', index: '04', accent: '#a88caa', portrait: 'art/freed.webp', class: null, level: null, ancestry: null, background: null, biography: null, beyondUrl: null },
+  { id: 'heilbrun', name: 'Heilbrun', givenInitials: 'HE', index: '05', accent: '#c5aa69', portrait: 'art/heilbrun.webp', class: null, level: null, ancestry: null, background: null, biography: null, beyondUrl: null },
 ];
 
 export const campaign = {

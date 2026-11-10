@@ -41,14 +41,7 @@ function Icon({name, size=20}: {name:Glyph; size?:number}) {
 }
 
 function Crest({size=56}: {size?:number}) {
-  return <svg width={size} height={size} viewBox="0 0 80 90" fill="none" aria-hidden="true" className="crest-svg">
-    <path d="M40 3 70 14v29c0 19-14 32-30 43C24 75 10 62 10 43V14L40 3Z" stroke="currentColor" strokeWidth="1.25"/>
-    <path d="M40 10 64 19v23c0 15-10 27-24 36-14-9-24-21-24-36V19l24-9Z" stroke="currentColor" strokeOpacity=".36"/>
-    <path d="M48 24c-6-3-17 1-18 11-1 7 6 10 12 13 5 3 6 7 2 11-3 3-10 3-15-2" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"/>
-    <path d="m29 21 4 7m19-5-6 8m-18 22-6 4m25 0 7 3m-20 6 6 6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-    <circle cx="49" cy="35" r="1.8" fill="currentColor"/>
-    <path d="M30 35c-6 1-9 6-8 11M43 49l10-2-6 6" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
-  </svg>;
+  return <img width={size} height={size} src={`${import.meta.env.BASE_URL}art/crest.webp`} className="crest-svg" alt="" aria-hidden="true" loading="eager" />;
 }
 
 const nav = [
@@ -74,7 +67,7 @@ function PageIntro({eyebrow,title,description}: {eyebrow:string;title:React.Reac
 function PlaceholderArt({character,large=false}: {character:Character;large?:boolean}) {
   const artworkSrc = character.portrait ? (character.portrait.startsWith("https://") ? character.portrait : `${import.meta.env.BASE_URL}${character.portrait.replace(/^\/+/, "")}`) : null;
   return <div className={`portrait-stage ${large?'portrait-large':''}`} style={{'--character-accent':character.accent} as React.CSSProperties}>
-    <div className="portrait-radial"/><div className="portrait-ring portrait-ring-one"/><div className="portrait-ring portrait-ring-two"/>{artworkSrc&&<img className="character-portrait-image" src={artworkSrc} alt={`Approved artwork of ${character.name}`} loading="lazy"/>}
+    <div className="portrait-radial"/><div className="portrait-ring portrait-ring-one"/><div className="portrait-ring portrait-ring-two"/>{artworkSrc&&<img className="character-portrait-image" src={artworkSrc} alt={`${character.name}, illustrated in heroic fantasy attire`} loading="lazy"/>}
     {!character.portrait&&<div className="portrait-sigil"><span className="sigil-ornament">✦</span><span className="sigil-initials">{character.givenInitials}</span><span className="sigil-decoration">✧</span></div>}
     {!character.portrait&&<div className="portrait-footnote">ILLUSTRATION PENDING</div>}
   </div>;
@@ -86,51 +79,77 @@ function CharacterCard({character,position}:{character:Character;position?:'full
   </a>;
 }
 function SiteHeader({route}: {route:string}) {
-  const [open, setOpen] = useState(false);
-  const lastTrigger = useRef<HTMLButtonElement | null>(null);
-  const isActive = (href: string) => route === href.slice(1) || (href === '#/party' && route.startsWith('/character/'));
-  useEffect(() => setOpen(false), [route]);
-  useEffect(() => {
-    const onEscape = (event: KeyboardEvent) => {
-      if (open && event.key === 'Escape') {
-        setOpen(false);
-        lastTrigger.current?.focus();
-      }
-    };
-    window.addEventListener('keydown', onEscape);
-    return () => window.removeEventListener('keydown', onEscape);
-  }, [open]);
-  const toggleMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    lastTrigger.current = event.currentTarget;
-    setOpen(current => !current);
-  };
-  return <>
-    <header className="site-header"><div className="header-inner container">
-      <a href="#/" className="brand" aria-label="Green Iguanas home"><Crest size={45}/><span className="brand-copy"><strong>GREEN IGUANAS</strong><small>THE LIVING CHRONICLE</small></span></a>
-      <nav className="desktop-nav" aria-label="Main navigation">{nav.map(item => <a key={item.href} href={item.href} className={isActive(item.href) ? 'active' : ''} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>)}</nav>
-      <div className="header-right"><span className="header-status"><span className="status-dot"/> CAMPAIGN COMPANION</span><button type="button" className="menu-trigger" onClick={toggleMenu} aria-label={open ? 'Close navigation' : 'Open navigation'} aria-expanded={open} aria-controls="mobile-navigation-menu"><Icon name={open ? 'close' : 'menu'} size={24}/></button></div>
-    </div></header>
-    {open && <nav id="mobile-navigation-menu" className="mobile-menu" aria-label="Expanded navigation">{nav.map(n => <a href={n.href} key={n.href} className={isActive(n.href) ? 'active' : ''} aria-current={isActive(n.href) ? 'page' : undefined}><Icon name={n.glyph}/>{n.label}<Icon name="arrow" size={15}/></a>)}</nav>}
-    <nav className="bottom-nav" aria-label="Mobile navigation">{[nav[0], nav[1], nav[2], nav[3]].map(n => <a key={n.href} href={n.href} className={isActive(n.href) ? 'active' : ''} aria-current={isActive(n.href) ? 'page' : undefined}><Icon name={n.glyph} size={21}/><span>{n.label === 'Dice Chronicle' ? 'Dice' : n.label === 'The Party' ? 'Party' : n.label}</span></a>)}<button type="button" onClick={toggleMenu} aria-controls="mobile-navigation-menu" aria-expanded={open} aria-label={open ? 'Close more navigation' : 'Open more navigation'}><Icon name={open ? 'close' : 'menu'} size={21}/><span>More</span></button></nav>
-  </>;
+  const [open,setOpen]=useState(false);
+  useEffect(()=>setOpen(false),[route]);
+  useEffect(()=>{const key=(e:KeyboardEvent)=>{if(e.key==='Escape')setOpen(false)};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[]);
+  return <><header className="site-header"><div className="header-inner container">
+    <a href="#/" className="brand" aria-label="Green Iguanas home"><Crest size={45}/><span className="brand-copy"><strong>GREEN IGUANAS</strong><small>THE LIVING CHRONICLE</small></span></a>
+    <nav className="desktop-nav" aria-label="Main navigation">{nav.slice(0,6).map(item=><a key={item.href} href={item.href} className={route===item.href.slice(1)?'active':''} aria-current={route===item.href.slice(1)?'page':undefined}>{item.label}</a>)}</nav>
+    <div className="header-right"><span className="header-status"><span className="status-dot"/> CAMPAIGN COMPANION</span><button type="button" className="menu-trigger" onClick={()=>setOpen(!open)} aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="mobile-navigation"><Icon name={open?'close':'menu'} size={24}/></button></div>
+  </div></header>
+  {open && <nav id="mobile-navigation" className="mobile-menu" aria-label="Expanded navigation">{nav.map(n=><a href={n.href} key={n.href}><Icon name={n.glyph}/>{n.label}<Icon name="arrow" size={15}/></a>)}</nav>}
+  <nav className="bottom-nav" aria-label="Mobile navigation">{[nav[0],nav[1],nav[2],nav[3]].map(n=><a key={n.href} href={n.href} className={route===n.href.slice(1)?'active':''}><Icon name={n.glyph} size={21}/><span>{n.label==='Dice Chronicle'?'Dice':n.label==='The Party'?'Party':n.label}</span></a>)}<button type="button" onClick={()=>setOpen(!open)} aria-label="More navigation"><Icon name="menu" size={21}/><span>More</span></button></nav></>;
 }
 function SectionTitle({eyebrow,title,sub,href,link}:{eyebrow:string;title:React.ReactNode;sub?:string;href?:string;link?:string}) {return <div className="section-heading"><div><Label>{eyebrow}</Label><h2>{title}</h2>{sub&&<p>{sub}</p>}</div>{href&&<Action href={href} variant="text">{link||'Explore'}</Action>}</div>}
+
+
+const heroOrder=['owen','bobby-kills','indigo','freed','heilbrun'];
+function HeroFellowship() {
+  const heroes=heroOrder.map(id=>characters.find(c=>c.id===id)).filter((c):c is Character=>!!c);
+  const [activeId,setActiveId]=useState('indigo');
+  const active=heroes.find(c=>c.id===activeId) ?? heroes[0];
+  function shiftHero(direction:number){
+    const next=heroes[(heroes.findIndex(c=>c.id===activeId)+direction+heroes.length)%heroes.length];
+    setActiveId(next.id);
+    document.getElementById(`hero-${next.id}`)?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  }
+  return <section className="cinematic-home" aria-labelledby="cinematic-title">
+    <div className="cinematic-scenery" aria-hidden="true"><span className="ruin-arch arch-one"/><span className="ruin-arch arch-two"/><span className="ruin-arch arch-three"/><span className="cinematic-stars"/></div>
+    <div className="cinematic-title-wrap">
+      <div className="cinematic-overline"><span/>THE LIVING CHRONICLE<span/></div>
+      <img src={`${import.meta.env.BASE_URL}art/crest.webp`} className="cinematic-crest" alt="The Green Iguanas crest" width="114" height="114" />
+      <h1 id="cinematic-title"><span>THE</span> GREEN IGUANAS</h1>
+      <p>Five adventurers. One unfolding legend.</p>
+    </div>
+    <div className="cinematic-stage-outer">
+      <div className="cinematic-stage" role="group" aria-label="Choose a hero to spotlight">
+        {heroes.map((character,index)=><button
+            id={`hero-${character.id}`}
+            key={character.id}
+            type="button"
+            style={{'--character-accent':character.accent, '--hero-index':index} as React.CSSProperties}
+            className={`cinematic-hero ${activeId===character.id?'is-active':''}`}
+            onMouseEnter={()=>setActiveId(character.id)}
+            onFocus={()=>setActiveId(character.id)}
+            onClick={()=>setActiveId(character.id)}
+            aria-pressed={activeId===character.id}
+            aria-label={`Spotlight ${character.name}`}
+          >
+            <span className="hero-backglow" aria-hidden="true" />
+            <img src={`${import.meta.env.BASE_URL}${character.portrait}`} alt="" loading={index===2?'eager':'lazy'} decoding="async"/>
+            <span className="hero-nameplate"><span className="hero-number">{character.index} / 05</span><strong>{character.name}</strong><span className="hero-divider" /></span>
+          </button>)}
+      </div>
+    </div>
+    <div className="hero-selection-bar" aria-live="polite">
+      <div className="hero-selection-copy"><span>NOW IN THE SPOTLIGHT</span><strong>{active.name}</strong><small>Discover the character dossier</small></div>
+      <div className="hero-selection-controls"><button type="button" onClick={()=>shiftHero(-1)} aria-label="Previous hero"><Icon name="chevron" size={19}/></button><span>{active.index} / 05</span><button type="button" onClick={()=>shiftHero(1)} aria-label="Next hero"><Icon name="chevron" size={19}/></button></div>
+      <a className="cinematic-enter" href={`#/character/${active.id}`}>Explore {active.name}<Icon name="arrow" size={19}/></a>
+    </div>
+    <div className="cinematic-links"><a href="#/party">MEET THE FELLOWSHIP <Icon name="arrow" size={16}/></a><span>✦</span><a href="#/dice">THE DICE CHRONICLE <Icon name="arrow" size={16}/></a></div>
+    <div className="cinematic-bottom-line" aria-hidden="true" />
+  </section>;
+}
 
 function Home() {
   const { content } = useCampaignContent();
   const latest = [...content.sessions].sort((a,b)=>b.number-a.number)[0];
   return <main id="main-content" tabIndex={-1}>
-    <section className="hero container"><div className="hero-content"><Label>THE CHRONICLE OF OUR ADVENTURES</Label><div className="hero-chapter">AN ONGOING STORY <span>✦</span> FIVE ADVENTURERS</div>
-      <h1>Every legend<br/>begins with a<br/><em>fellowship.</em></h1><p>A home for the moments that become legends. Five companions, countless rolls of the dice, and a story that belongs to us.</p>
-      <div className="hero-actions"><Action href="#/party">Meet the fellowship</Action><Action href="#/journal" variant="outline">Enter the archive</Action></div>
-      <div className="hero-meta"><span className="meta-line"/><span><strong>05</strong> HEROES</span><span className="meta-dot">✦</span><span>ONE SHARED STORY</span></div>
-    </div>
-    <div className="hero-art" aria-label="Decorative Green Iguanas campaign emblem"><div className="hero-atmosphere"/><div className="hero-inner-ring"/><div className="hero-outer-ring"/><div className="hero-crosshair crosshair-top">✧</div><div className="hero-crosshair crosshair-bottom">✧</div><div className="hero-symbol"><Crest size={205}/></div><div className="hero-art-caption"><span>THE GREEN IGUANAS</span><span>EST. IN ADVENTURE</span></div><span className="hero-orbit-label">A • CHRONICLE • UNFOLDING</span></div>
-    </section>
+    <HeroFellowship/>
     <section className="home-next-chapter container"><div><Label>THE LATEST CHAPTER</Label><h2>{latest ? `Session ${latest.number}: ${latest.title}` : 'The next chapter awaits.'}</h2><p>{latest ? latest.summary : 'Our adventure journal will come alive as approved session recaps are published.'}</p></div><Action href="#/journal" variant="outline">Read the adventure journal</Action></section>
     <section className="verse-bar"><div className="container verse-inner"><span>✦</span><p>THE STORIES WE TELL. THE CHOICES WE MAKE. THE LEGENDS WE LEAVE BEHIND.</p><span>✦</span></div></section>
     <section className="section party-preview container"><SectionTitle eyebrow="I / THE FELLOWSHIP" title={<>Bound by <em>adventure.</em></>} sub="Five characters. Five perspectives. One extraordinary tale." href="#/party" link="View all characters"/>
-      <div className="characters-grid">{characters.map(c=><CharacterCard key={c.id} character={c}/>)}</div><div className="section-caption"><span>01 — 05</span><span>Individual portraits will be added from campaign artwork.</span></div>
+      <div className="characters-grid">{characters.map(c=><CharacterCard key={c.id} character={c}/>)}</div><div className="section-caption"><span>01 — 05</span><span>Select a hero to explore their journey.</span></div>
     </section>
     <section className="section archive-preview"><div className="container"><SectionTitle eyebrow="II / THE LIVING RECORD" title={<>The adventure, <em>remembered.</em></>} sub="A place for every turning point, improbable triumph, and story still unfolding."/>
     <div className="feature-grid">
@@ -147,7 +166,7 @@ function Party() {
   return <main id="main-content" tabIndex={-1}><PageIntro eyebrow="THE COMPANY / I" title={<>The <em>Fellowship.</em></>} description="Five companions at the heart of this story. Step into their dossiers, revisit their journeys, and discover the people behind the legend."/>
     <section className="container directory-section"><div className="directory-toolbar"><div className="directory-count">THE PARTY <span>{String(filtered.length).padStart(2,'0')} / 05</span></div><label className="search-field"><Icon name="search" size={18}/><input aria-label="Search characters" placeholder="Find a character" value={query} onChange={e=>setQuery(e.target.value)}/></label></div>
       {filtered.length?<div className="characters-grid party-grid">{filtered.map(c=><CharacterCard key={c.id} character={c}/>)}</div>:<div className="empty-mini">No characters match “{query}”.</div>}
-      <div className="directory-note"><Icon name="lock" size={17}/>Character details will be updated from reviewed D&D Beyond PDF exports; artwork is added only when approved.</div>
+      <div className="directory-note"><Icon name="lock" size={17}/>Artwork is published. Character-sheet statistics will be updated from reviewed D&D Beyond PDF exports.</div>
     </section></main>;
 }
 function DetailBox({label,value}:{label:string;value:string|null|number}) {return <div className="detail-box"><span>{label}</span><strong>{value ?? 'Awaiting records'}</strong></div>}
@@ -217,19 +236,11 @@ function Collection({kind}:{kind:'journal'|'quests'|'dragonbowl'|'treasury'|'ach
 function Restricted({mode}:{mode:'account'|'dm'}){return <main id="main-content" tabIndex={-1}><PageIntro eyebrow="THE VAULT / RESTRICTED" title={mode==='account'?<>Player <em>Access.</em></>:<>DM <em>Sanctum.</em></>} description="Private campaign information belongs behind actual authentication and database-level access controls."/><section className="container collection-body"><EmptyState glyph="lock" heading="Secure access is not yet enabled" detail="This first public release does not collect passwords or store personal notes. Player sign-in and DM publishing tools will appear only after secure backend configuration and permission tests."/></section></main>}
 function Footer(){return <footer className="footer"><div className="container footer-inner"><div className="footer-brand"><Crest size={48}/><div><strong>THE GREEN IGUANAS</strong><span>THE LIVING CHRONICLE</span></div></div><div className="footer-quote">{campaign.tagline}</div><div className="footer-links"><a href="#/archive">ARCHIVE</a><a href="#/achievements">ACHIEVEMENTS</a><a href="#/dragonbowl">DRAGONBOWL</a></div></div><div className="container footer-bottom"><span>A CAMPAIGN COMPANION BUILT FOR OUR TABLE</span><span>EST. IN ADVENTURE · PHASE I</span></div></footer>}
 export default function App(){const route=useRoute();let page:React.ReactNode;
- useEffect(() => {
-   const titles: Record<string, string> = {
-     '/': 'The Living Chronicle', '/party': 'The Party', '/dice': 'Dice Chronicle',
-     '/journal': 'Adventure Journal', '/archive': 'World Archive',
-     '/dragonbowl': 'Dragonbowl', '/quests': 'Quests & Mysteries',
-     '/treasury': 'Party Treasury', '/achievements': 'Achievements',
-     '/account': 'Player Access', '/dm': 'DM Sanctum'
-   };
-   const foundCharacter = route.startsWith('/character/')
-     ? characters.find(c => c.id === route.split('/')[2]) : null;
-   const title = foundCharacter?.name ?? titles[route] ?? 'World Archive';
-   document.title = `${title} | The Green Iguanas`;
- }, [route]);
+ useEffect(()=>{
+    const names:Record<string,string>={'/':'The Living Chronicle','/party':'The Fellowship','/dice':'Dice Chronicle','/journal':'Adventure Journal','/archive':'World Archive','/dragonbowl':'Dragonbowl','/quests':'Quests','/treasury':'Party Treasury','/achievements':'Achievements'};
+    const member=route.startsWith('/character/')?characters.find(c=>c.id===route.split('/')[2]):null;
+    document.title=`${member?.name ?? names[route] ?? 'Green Iguanas'} | The Green Iguanas`;
+ },[route]);
  if(route==='/'||route==='')page=<Home/>;
  else if(route==='/party')page=<Party/>;
  else if(route.startsWith('/character/'))page=<CharacterPage id={route.split('/')[2]}/>;
@@ -238,5 +249,5 @@ export default function App(){const route=useRoute();let page:React.ReactNode;
  else if(['journal','quests','dragonbowl','treasury','achievements'].includes(route.replace('/','')))page=<Collection kind={route.slice(1) as 'journal'|'quests'|'dragonbowl'|'treasury'|'achievements'}/>;
  else if(route==='/account'||route==='/dm')page=<Restricted mode={route==='/dm'?'dm':'account'}/>;
  else page=<WorldArchive/>;
- return <div className="site-shell"><a href="#main-content" className="skip-link" onClick={event => {event.preventDefault();document.getElementById('main-content')?.focus();}}>Skip to main content</a><div className="ambient ambient-a"/><div className="ambient ambient-b"/><SiteHeader route={route}/>{page}<Footer/></div>
+ return <div className="site-shell"><a href="#main-content" className="skip-link" onClick={e=>{e.preventDefault();document.getElementById('main-content')?.focus();}}>Skip to content</a><div className="ambient ambient-a"/><div className="ambient ambient-b"/><SiteHeader route={route}/>{page}<Footer/></div>
 }
