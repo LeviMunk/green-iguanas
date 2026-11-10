@@ -1,8 +1,48 @@
 {
   "version": 1,
   "sessions": [],
-  "npcs": [],
-  "quests": [],
-  "dragonbowlMatches": [],
-  "achievements": []
+  "npcs": [
+    {
+      "id": "osmois-tearlock",
+      "name": "Osmois Tearlock",
+      "description": "Pale-purple tiefling registration official with a single horn and octagonal spectacles. Registered the Green Iguanas at Dragonbowl."
+    },
+    {
+      "id": "obi-dew-diva",
+      "name": "Obi Dew Diva",
+      "description": "Flamboyant djinni announcer and master of ceremonies for Dragonbowl."
+    },
+    {
+      "id": "gnashhu",
+      "name": "Gnashhu / King Cackle",
+      "description": "One-eyed gnoll leader of the Cackle Crew. Freed severed his arm during the Green Iguanas’ Round One victory; his ultimate fate has not been separately confirmed."
+    },
+    {
+      "id": "freed-wizard",
+      "name": "The freed wizard",
+      "description": "An unnamed captive forced to manufacture the red dragon’s counterfeit treasure. The Green Iguanas freed him; his former party’s paid entry helped them reach Dragonbowl."
+    }
+  ],
+  "quests": [
+    {
+      "id": "dragonbowl-championship",
+      "title": "The Dragonbowl Championship",
+      "status": "active",
+      "summary": "The Green Iguanas won their opening bout against Cackle Crew. Their known next opponent is the Dandy War Dolls in the quarterfinals; further results depend on play."
+    }
+  ],
+  "dragonbowlMatches": [
+    {
+      "id": "round-one-cackle-crew",
+      "title": "Round One · Green Iguanas vs Cackle Crew",
+      "summary": "RESULT: Green Iguanas victory. Highlights: Freed severed King Cackle’s arm, Bobby Kills struck a gnoll with his axe, Owen fought as a tiger within Globe of Twilight, and Indigo energized the crowd."
+    }
+  ],
+  "achievements": [
+    {
+      "id": "dragonbowl-first-victory",
+      "title": "Arena Breakthrough",
+      "description": "Party milestone: defeated Cackle Crew in the first Dragonbowl bout. Confirmed from actual play; session date not supplied."
+    }
+  ]
 }
