@@ -367,5 +367,5 @@ export default function App(){const route=useRoute();let page:React.ReactNode;
  else if(['journal','quests','dragonbowl','treasury','achievements'].includes(route.replace('/','')))page=<Collection kind={route.slice(1) as 'journal'|'quests'|'dragonbowl'|'treasury'|'achievements'}/>;
  else if(route==='/account'||route==='/dm')page=<Restricted mode={route==='/dm'?'dm':'account'}/>;
  else page=<WorldArchive/>;
- return <div className="site-shell"><a href="#main-content" className="skip-link" onClick={e=>{e.preventDefault();document.getElementById('main-content')?.focus();}}>Skip to content</a><div className="ambient ambient-a"/><div className="ambient ambient-b"/><SiteHeader route={route}/>{page}<Footer/></div>
+ return <div className="site-shell"><a href="#main-content" className="skip-link" onClick={e=>{e.preventDefault();document.getElementById('main-content')?.focus();}}>Skip to content</a><div className="ambient ambient-a"/><div className="ambient ambient-b"/><SiteHeader route={route}/>{page}{route !== '/' && <Footer/>}</div>
 }
