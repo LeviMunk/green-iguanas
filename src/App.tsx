@@ -73,8 +73,8 @@ function Action({href,children,variant='primary',icon='arrow'}:{href:string;chil
 function PageIntro({eyebrow,title,description}: {eyebrow:string;title:React.ReactNode;description:string}) {return <header className="page-intro container"><Label>{eyebrow}</Label><h1 className="page-title">{title}</h1><p className="lead">{description}</p><span className="thin-divider"/></header>;}
 function PlaceholderArt({character,large=false}: {character:Character;large?:boolean}) {
   const artworkSrc = character.portrait ? (character.portrait.startsWith("https://") ? character.portrait : `${import.meta.env.BASE_URL}${character.portrait.replace(/^\/+/, "")}`) : null;
-  return <div className={`portrait-stage ${large?'portrait-large':''}`} style={{'--character-accent':character.accent} as React.CSSProperties}>
-    <div className="portrait-radial"/><div className="portrait-ring portrait-ring-one"/><div className="portrait-ring portrait-ring-two"/>{artworkSrc&&<img className="character-portrait-image" src={artworkSrc} alt={`${character.name}, illustrated in heroic fantasy attire`} loading="lazy"/>}
+  return <div className={`portrait-stage ${large?'portrait-large portrait-stage--dossier':''}`} style={{'--character-accent':character.accent} as React.CSSProperties}>
+    <div className="portrait-radial"/>{!large&&<><div className="portrait-ring portrait-ring-one"/><div className="portrait-ring portrait-ring-two"/></>}{artworkSrc&&<img className="character-portrait-image" src={artworkSrc} alt={`${character.name}, illustrated in heroic fantasy attire`} loading={large?'eager':'lazy'} decoding="async"/>}
     {!character.portrait&&<div className="portrait-sigil"><span className="sigil-ornament">✦</span><span className="sigil-initials">{character.givenInitials}</span><span className="sigil-decoration">✧</span></div>}
     {!character.portrait&&<div className="portrait-footnote">ILLUSTRATION PENDING</div>}
   </div>;
@@ -332,7 +332,7 @@ function CharacterPage({id}:{id:string}) {
    </div></section>
    <div className="tab-wrapper"><div className="container tab-row" role="group" aria-label={character.name+' sections'}>{(['overview','timeline','chronicle','sheet'] as const).map(item=><button type="button" key={item} aria-pressed={tab===item} className={tab===item?'selected':''} onClick={()=>setTab(item)}>{item==='overview'?'Background & Story':item==='timeline'?'The Journey':item==='chronicle'?'Dice & Achievements':'D&D Beyond Sheet'}</button>)}</div></div>
    <section className="container dossier-body">
-    {tab==='overview'?<div className="dossier-columns character-story-layout"><div><Label>THE CHARACTER'S ORIGIN</Label><h2>Deeds behind <em>the name.</em></h2><p className="body-muted">{character.biography??'Character history is still being documented.'}</p><p className="character-story-art-disclaimer">Story illustrations are artistic interpretations. Unverified details remain unconfirmed in the written record.</p>
+    {tab==='overview'?<div className="dossier-columns character-story-layout"><div><Label>THE CHARACTER'S ORIGIN</Label><h2>The story of <em>{character.name}.</em></h2><p className="body-muted">{character.biography??'Character history is still being documented.'}</p><p className="character-story-art-disclaimer">Story illustrations are artistic interpretations. Unverified details remain unconfirmed in the written record.</p>
       <div className="character-story-sections">{character.profileSections.map((section,i)=><article className="character-story-chapter character-story-chapter--illustrated" key={i}>
         <div className="character-story-image">
           <div className="character-story-art-fallback" aria-hidden="true">
