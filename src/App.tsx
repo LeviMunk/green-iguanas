@@ -303,13 +303,13 @@ function StorySoFar(){
        <h1>Previously, in the <em>Green Iguanas…</em></h1>
        <p>From a midnight museum caper to the roaring arena beneath Mount Waterdeep. Seven chapters of adventures, legends and unfinished business.</p>
        <div className="cinema-prologue-utility">
-         <a href="#story-chapters" className="cinema-scroll-link">Enter the story <Icon name="chevron" size={17}/></a>
+         <button type="button" className="cinema-scroll-link" onClick={()=>document.getElementById("story-chapters")?.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})}>Enter the story <Icon name="chevron" size={17}/></button>
          <span>SCROLL TO REVISIT THE CAMPAIGN</span>
        </div>
      </div>
    </header>
    <div className="cinema-chapter-index container" aria-label="Chapter navigation">
-     {storyChapters.map((chapter,i)=><a key={chapter.id} href={'#chapter-'+chapter.id} title={chapter.title}><span>{String(i+1).padStart(2,'0')}</span><strong>{chapter.title}</strong></a>)}
+     {storyChapters.map((chapter,i)=><button type="button" key={chapter.id} onClick={()=>document.getElementById("chapter-"+chapter.id)?.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})} aria-label={"Jump to "+chapter.title}><span>{String(i+1).padStart(2,'0')}</span><strong>{chapter.title}</strong></button>)}
    </div>
    <div className="cinema-chapters" id="story-chapters">{storyChapters.map((chapter,i)=>
       <article key={chapter.id} className={'cinema-chapter cinema-chapter--'+chapter.mood+(i%2?' cinema-chapter--right':'')} id={'chapter-'+chapter.id} aria-labelledby={'chapter-title-'+chapter.id}>
