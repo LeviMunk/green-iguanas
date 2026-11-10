@@ -25,7 +25,7 @@ test('trophies require real kept d20 faces and explicit crits',()=>{
 });
 test('discarded advantage die does not count',()=>{
  const advantage={...a,event_id:'adv',critical_hit:false,dice:[{sides:20,face:20,kept:false},{sides:20,face:6,kept:true}],total:8};
- assert.equal(diceTrophies([adv]).find(x=>x.id==='first-natural-20').unlocked,false);
+ assert.equal(diceTrophies([advantage]).find(x=>x.id==='first-natural-20').unlocked,false);
 });
 test('character roll history ignores other characters and sorts newest first',()=>{
  const found=characterRolls([a,c,b],'freed');
