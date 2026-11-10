@@ -208,7 +208,7 @@ function CharacterSheetPanel({character}:{character:Character}) {
       })}</div>
     </div>:null}
     {pdf&&<a className="btn btn-outline" href={pdf} target="_blank" rel="noopener noreferrer">View approved PDF export <Icon name="external" size={16}/></a>}
-    <p className="sheet-footnote">D&D Beyond may require the player's sharing permissions or login. The reviewed PDF is summarized here but is not publicly hosted. Heilbrun's Oath of Vengeance is confirmed by the player/DM although his current D&D Beyond export does not show that subclass.</p>
+    <p className="sheet-footnote">D&D Beyond may require the player's sharing permissions or login. The reviewed PDF is summarized here but is not publicly hosted.{character.id==='heilbrun'&&<> His Oath of Vengeance is confirmed by the player/DM although the current export does not show that subclass.</>}</p>
   </div>;
 }
 function CharacterDicePanel({character}:{character:Character}) {
