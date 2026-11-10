@@ -1131,3 +1131,227 @@
  .cinema-adventure-card,.cinema-adventure-image img,.cinema-adventure-cta svg,.cinema-adventure-direction{transition:none!important}
  .cinema-adventure-card:hover,.cinema-adventure-card:focus-visible,.cinema-adventure-card:hover .cinema-adventure-image img{transform:none}
 }
+
+
+/* CHARACTER-SPECIFIC DOSSIERS · NOV 2026
+   Different fantasy atmosphere for each character, original likeness retained.
+   Environmental backdrops and scene illustrations are optional standalone assets.
+   Until assets are published, CSS gradient and existing portrait are the fallbacks.
+*/
+.site-shell:has(.character-dossier--bobby-kills){--profile-shell:#20120e;--profile-shell-accent:#d8a26d}
+.site-shell:has(.character-dossier--indigo){--profile-shell:#15112d;--profile-shell-accent:#e2b86c}
+.site-shell:has(.character-dossier--owen){--profile-shell:#0e251f;--profile-shell-accent:#a1d1ac}
+.site-shell:has(.character-dossier--freed){--profile-shell:#20151c;--profile-shell-accent:#e49a88}
+.site-shell:has(.character-dossier--heilbrun){--profile-shell:#15233d;--profile-shell-accent:#efcf87}
+.site-shell:has(.character-dossier){background:var(--profile-shell,#111b16)}
+.site-shell:has(.character-dossier) .site-header{
+ background:linear-gradient(180deg,color-mix(in srgb,var(--profile-shell),#060b0b 30%),var(--profile-shell));
+ border-bottom-color:color-mix(in srgb,var(--profile-shell-accent),transparent 70%);
+}
+.site-shell:has(.character-dossier) .brand-copy strong{color:var(--profile-shell-accent)}
+.site-shell:has(.character-dossier) .desktop-nav a.active{color:var(--profile-shell-accent)}
+.site-shell:has(.character-dossier) .bottom-nav{background:var(--profile-shell)}
+.site-shell:has(.character-dossier) .bottom-nav a.active{color:var(--profile-shell-accent)}
+.character-dossier{
+ --dossier-deep:#101a16;--dossier-mid:#27372a;--dossier-ink:#102218;
+ --dossier-highlight:#e9cf90;
+ position:relative;isolation:isolate;
+ min-height:100svh;color:#ede5d5;
+ background:var(--dossier-deep);
+}
+.character-dossier .dossier-top{
+ position:relative;isolation:isolate;overflow:hidden;
+ padding:44px 0 96px;min-height:670px;
+ background:
+   radial-gradient(ellipse 67% 72% at 11% 46%,color-mix(in srgb,var(--character-accent),transparent 75%),transparent 77%),
+   radial-gradient(ellipse 55% 90% at 89% 25%,color-mix(in srgb,var(--dossier-mid),transparent 12%),transparent 80%),
+   linear-gradient(120deg,var(--dossier-deep),var(--dossier-mid) 63%,var(--dossier-deep));
+}
+.character-dossier .dossier-backdrop{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.character-dossier .dossier-backdrop>img{
+ position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 48%;
+ opacity:.58;filter:blur(5px) saturate(1.1);transform:scale(1.05);
+}
+.character-dossier .dossier-backdrop:after{
+ content:'';position:absolute;inset:0;
+ background:linear-gradient(90deg,color-mix(in srgb,var(--dossier-deep),transparent 48%),color-mix(in srgb,var(--dossier-deep),transparent 24%) 48%,var(--dossier-deep) 100%),
+ linear-gradient(0deg,var(--dossier-deep),transparent 35%,#050a0d55 100%);
+}
+.character-dossier .dossier-top-inner{position:relative;z-index:1}
+.character-dossier .breadcrumb{
+ color:var(--dossier-highlight);opacity:.89;font-size:10px;
+ text-shadow:0 2px 10px #050506ac;
+}
+.character-dossier .dossier-layout{gap:5%;grid-template-columns:minmax(290px,.88fr) minmax(0,1fr);align-items:center}
+.character-dossier .dossier-portrait{
+ width:100%;max-width:610px;height:clamp(425px,42vw,630px);
+ padding:0;border:0;box-shadow:none;position:relative;
+}
+.character-dossier .dossier-portrait .portrait-stage{
+ background:radial-gradient(ellipse 55% 56% at 50% 68%,color-mix(in srgb,var(--character-accent),transparent 75%),transparent 80%);
+ overflow:visible;
+}
+.character-dossier .dossier-portrait .portrait-stage:before,
+.character-dossier .dossier-portrait .portrait-ring{opacity:.06}
+.character-dossier .dossier-portrait .portrait-radial{
+ background:radial-gradient(circle,color-mix(in srgb,var(--character-accent),transparent 79%),transparent 70%);
+ filter:blur(24px);
+}
+.character-dossier .dossier-portrait .character-portrait-image{
+ filter:drop-shadow(0 23px 26px #020508ae);
+ object-fit:contain;object-position:center bottom;
+}
+.character-dossier .dossier-copy{padding:20px 0}
+.character-dossier .dossier-copy h1{
+ color:#fcf1d7;font:400 clamp(55px,7.5vw,113px)/.96 'Cinzel',Georgia,serif;
+ letter-spacing:-.055em;text-shadow:0 10px 45px #050707bf;overflow-wrap:anywhere;
+}
+.character-dossier .dossier-kicker{color:var(--dossier-highlight);letter-spacing:.13em;line-height:1.7}
+.character-dossier .dossier-description{color:#e0dccf;font-size:14px;line-height:1.85}
+.character-dossier .eyebrow{color:var(--dossier-highlight)}
+.character-dossier .eyebrow-rule{background:var(--dossier-highlight)}
+.character-dossier .accent-line{background:var(--dossier-highlight)}
+.character-dossier .dossier-details{border-top-color:color-mix(in srgb,var(--character-accent),transparent 75%)}
+.character-dossier .detail-box{border-bottom-color:color-mix(in srgb,var(--character-accent),transparent 78%)}
+.character-dossier .detail-box span{color:color-mix(in srgb,var(--dossier-highlight),#a8aba5 40%)}
+.character-dossier .detail-box strong{color:#eee6d6}
+.character-dossier .sheet-stat-head{color:var(--dossier-highlight)}
+.character-dossier .sheet-stat-head span{color:#c0bcb4}
+.character-dossier .btn-primary{
+ background:linear-gradient(110deg,var(--dossier-highlight),var(--character-accent));
+ color:var(--dossier-deep);border-color:var(--dossier-highlight);
+}
+.character-dossier .btn-outline{border-color:color-mix(in srgb,var(--dossier-highlight),transparent 54%);color:var(--dossier-highlight)}
+.character-dossier .btn-outline:hover{background:color-mix(in srgb,var(--character-accent),transparent 82%)}
+.character-dossier .tab-wrapper{
+ background:linear-gradient(90deg,var(--dossier-ink),var(--dossier-deep));
+ border-block-color:color-mix(in srgb,var(--dossier-highlight),transparent 78%);
+}
+.character-dossier .tab-row button{color:color-mix(in srgb,var(--dossier-highlight),#9e9b9a 62%)}
+.character-dossier .tab-row button.selected{color:var(--dossier-highlight)}
+.character-dossier .tab-row button.selected:after{background:var(--dossier-highlight)}
+.character-dossier .dossier-body{
+ min-height:0;
+ padding-top:85px;padding-bottom:120px;
+ background:
+ radial-gradient(ellipse 55% 25% at 20% 5%,color-mix(in srgb,var(--dossier-mid),transparent 36%),transparent 84%),
+ radial-gradient(ellipse 45% 45% at 92% 72%,color-mix(in srgb,var(--character-accent),transparent 94%),transparent 83%),
+ linear-gradient(180deg,var(--dossier-deep),var(--dossier-ink) 58%,var(--dossier-deep));
+}
+.character-dossier .dossier-body h2{color:#fff0d6}
+.character-dossier .dossier-body h2 em{color:var(--dossier-highlight)}
+.character-dossier .body-muted{max-width:840px;color:#c5c6ba;font-size:15px}
+.character-dossier .character-story-layout{display:flex;flex-direction:column;gap:55px;align-items:stretch}
+.character-dossier .character-story-layout>div:first-child{min-width:0;width:100%}
+.character-dossier .character-story-layout .dossier-side{
+ position:static;width:100%;
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;
+}
+.character-dossier .character-story-sections{
+ display:flex;flex-direction:column;gap:34px;margin-top:46px;
+}
+.character-dossier .character-story-chapter--illustrated{
+ position:relative;display:grid;grid-template-columns:minmax(0,.96fr) minmax(0,1fr);
+ gap:clamp(24px,4vw,76px);align-items:center;
+ border-top:1px solid color-mix(in srgb,var(--character-accent),transparent 72%);
+ padding:36px 0 3px;min-height:310px;
+}
+.character-dossier .character-story-chapter--illustrated:nth-child(even) .character-story-image{order:2}
+.character-dossier .character-story-chapter--illustrated:nth-child(even) .character-story-text{order:1}
+.character-dossier .character-story-text{max-width:650px;min-width:0}
+.character-dossier .character-story-text>span{
+ display:block;color:var(--dossier-highlight);
+ font-size:10px;letter-spacing:.2em;font-weight:700;margin:0 0 18px;
+}
+.character-dossier .character-story-text h3{
+ font-family:'Cinzel',Georgia,serif;font-size:clamp(26px,3vw,44px);
+ color:#f4e6c9;line-height:1.17;letter-spacing:-.035em;margin-bottom:15px;
+}
+.character-dossier .character-story-text p{
+ color:#c5d0c5;font-size:14px;line-height:1.95;max-width:64ch;
+}
+.character-dossier .character-story-image{
+ position:relative;min-width:0;aspect-ratio:5/3;
+ border:1px solid color-mix(in srgb,var(--dossier-highlight),transparent 67%);
+ overflow:hidden;
+ background:
+ radial-gradient(ellipse at 40% 52%,color-mix(in srgb,var(--character-accent),transparent 55%),transparent 85%),
+ linear-gradient(128deg,var(--dossier-mid),var(--dossier-deep));
+ box-shadow:0 28px 70px #0007;
+}
+.character-dossier .character-story-image:before{
+ content:'';position:absolute;inset:9px;z-index:4;pointer-events:none;
+ border:1px solid color-mix(in srgb,var(--dossier-highlight),transparent 83%);
+}
+.character-dossier .character-story-image>img.character-story-artwork{
+ display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;
+ transition:transform .75s ease,filter .6s ease;
+}
+.character-dossier .character-story-chapter:hover .character-story-artwork{transform:scale(1.04)}
+.character-dossier .character-story-art-fallback{
+ position:absolute;inset:0;z-index:1;overflow:hidden;
+ background:
+ radial-gradient(ellipse at 50% 47%,color-mix(in srgb,var(--dossier-highlight),transparent 72%),transparent 75%),
+ linear-gradient(135deg,var(--dossier-mid),var(--dossier-deep));
+}
+.character-dossier .character-story-art-fallback img{
+ position:absolute;right:3%;height:135%;width:62%;object-fit:contain;object-position:center bottom;bottom:-15%;
+ opacity:.68;filter:drop-shadow(0 10px 28px #030404c8)
+}
+.character-dossier .character-story-image:after{
+ content:'';position:absolute;inset:0;z-index:3;pointer-events:none;
+ background:linear-gradient(0deg,rgba(4,8,11,.55),transparent 32%),
+ linear-gradient(90deg,color-mix(in srgb,var(--dossier-deep),transparent 62%),transparent 38%);
+}
+.character-dossier .character-story-image-mark{
+ position:absolute;left:21px;bottom:17px;z-index:5;font-size:20px;
+ color:var(--dossier-highlight);text-shadow:0 0 17px var(--character-accent);
+}
+.character-dossier .character-story-art-disclaimer{
+ color:color-mix(in srgb,var(--dossier-highlight),#9da99c 52%);
+ letter-spacing:.02em;font-size:11px;line-height:1.8;max-width:760px;
+ margin-top:17px;padding-left:16px;border-left:2px solid var(--character-accent)
+}
+.character-dossier .small-panel{
+ background:linear-gradient(120deg,var(--dossier-mid),var(--dossier-deep));
+ border-color:color-mix(in srgb,var(--dossier-highlight),transparent 74%);
+}
+.character-dossier .small-panel svg,.character-dossier .small-panel>span{color:var(--dossier-highlight)}
+.character-dossier .dossier-next{border-top-color:color-mix(in srgb,var(--dossier-highlight),transparent 74%)}
+.character-dossier .dossier-next a strong{color:var(--dossier-highlight)}
+.character-dossier .sheet-link-card{background:linear-gradient(125deg,var(--dossier-mid),var(--dossier-deep));border-color:color-mix(in srgb,var(--dossier-highlight),transparent 73%)}
+.character-dossier .sheet-link-card>span,.character-dossier .sheet-link-card>svg{color:var(--dossier-highlight)}
+.character-dossier .sheet-ability{background:var(--dossier-ink)}
+.character-dossier .sheet-abilities{background:var(--dossier-mid)}
+.character-dossier .sheet-ability strong{color:var(--dossier-highlight)}
+@media(max-width:1000px){
+ .character-dossier .dossier-layout{grid-template-columns:minmax(0,.85fr) minmax(0,1fr);gap:3%}
+ .character-dossier .dossier-copy h1{font-size:clamp(50px,6.5vw,82px)}
+ .character-dossier .character-story-chapter--illustrated{gap:26px}
+}
+@media(max-width:700px){
+ .character-dossier .dossier-top{padding:21px 0 50px;min-height:0}
+ .character-dossier .dossier-backdrop img{opacity:.36}
+ .character-dossier .dossier-backdrop:after{background:linear-gradient(0deg,var(--dossier-deep),transparent 60%),linear-gradient(90deg,#0006,#0004)}
+ .character-dossier .dossier-layout{display:flex;flex-direction:column;gap:25px;align-items:stretch}
+ .character-dossier .dossier-portrait{height:clamp(330px,101vw,490px);max-width:100%}
+ .character-dossier .dossier-copy{padding:0}
+ .character-dossier .dossier-copy h1{font-size:clamp(42px,11vw,75px);margin-top:14px}
+ .character-dossier .dossier-body{padding-top:45px;padding-bottom:66px}
+ .character-dossier .character-story-layout{gap:32px}
+ .character-dossier .character-story-sections{margin-top:26px;gap:15px}
+ .character-dossier .character-story-chapter--illustrated{display:flex;flex-direction:column;gap:0;align-items:stretch;padding:24px 0 3px;min-height:0}
+ .character-dossier .character-story-chapter--illustrated:nth-child(even) .character-story-image{order:0}
+ .character-dossier .character-story-chapter--illustrated:nth-child(even) .character-story-text{order:1}
+ .character-dossier .character-story-image{width:100%;aspect-ratio:16/10}
+ .character-dossier .character-story-text{padding:23px 1px 13px}
+ .character-dossier .character-story-text>span{font-size:9px;margin-bottom:11px}
+ .character-dossier .character-story-text h3{font-size:clamp(25px,7.5vw,34px);margin-bottom:12px}
+ .character-dossier .character-story-text p{font-size:13px;line-height:1.82}
+ .character-dossier .character-story-layout .dossier-side{grid-template-columns:1fr;gap:12px}
+ .character-dossier .dossier-next{padding-bottom:calc(87px + env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){
+ .character-dossier .character-story-image>img.character-story-artwork{transition:none}
+ .character-dossier .character-story-chapter:hover .character-story-artwork{transform:none}
+}
