@@ -48,11 +48,16 @@ function Crest({size=56}: {size?:number}) {
 
 const nav = [
   {href:'#/',label:'Home',glyph:'compass' as Glyph},
-  {href:'#/party',label:'The Party',glyph:'users' as Glyph},
   {href:'#/dice',label:'Dice Chronicle',glyph:'dice' as Glyph},
   {href:'#/journal',label:'Story So Far',glyph:'book' as Glyph},
   {href:'#/archive',label:'World Archive',glyph:'scroll' as Glyph},
   {href:'#/dragonbowl',label:'Dragonbowl',glyph:'trophy' as Glyph},
+];
+const moreNav = [
+  {href:'#/archive',label:'World Archive',glyph:'scroll' as Glyph},
+  {href:'#/quests',label:'Quests',glyph:'compass' as Glyph},
+  {href:'#/treasury',label:'Party Treasury',glyph:'coins' as Glyph},
+  {href:'#/achievements',label:'Achievements',glyph:'spark' as Glyph}
 ];
 function useRoute() {
   const [route,setRoute] = useState(() => window.location.hash.slice(1).split('?')[0] || '/');
@@ -74,12 +79,6 @@ function PlaceholderArt({character,large=false}: {character:Character;large?:boo
     {!character.portrait&&<div className="portrait-footnote">ILLUSTRATION PENDING</div>}
   </div>;
 }
-function CharacterCard({character,position}:{character:Character;position?:'full'|'mini'}) {
-  return <a href={`#/character/${character.id}`} className={`character-card ${position==='mini'?'character-mini':''}`} style={{'--character-accent':character.accent} as React.CSSProperties}>
-    <PlaceholderArt character={character}/>
-    <div className="character-info"><div className="character-topline"><span>THE FELLOWSHIP / {character.index}</span><Icon name="arrow-up" size={15}/></div><div className="character-name">{character.name}</div><div className="character-descriptor">{character.descriptor}</div><div className="character-subline">Character dossier <span>↗</span></div></div>
-  </a>;
-}
 function SiteHeader({route}: {route:string}) {
   const [open,setOpen]=useState(false);
   useEffect(()=>setOpen(false),[route]);
@@ -89,8 +88,8 @@ function SiteHeader({route}: {route:string}) {
     <nav className="desktop-nav" aria-label="Main navigation">{nav.slice(0,6).map(item=><a key={item.href} href={item.href} className={route===item.href.slice(1)?'active':''} aria-current={route===item.href.slice(1)?'page':undefined}>{item.label}</a>)}</nav>
     <div className="header-right"><span className="header-status"><span className="status-dot"/> CAMPAIGN COMPANION</span><button type="button" className="menu-trigger" onClick={()=>setOpen(!open)} aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="mobile-navigation"><Icon name={open?'close':'menu'} size={24}/></button></div>
   </div></header>
-  {open && <nav id="mobile-navigation" className="mobile-menu" aria-label="Expanded navigation">{nav.map(n=><a href={n.href} key={n.href}><Icon name={n.glyph}/>{n.label}<Icon name="arrow" size={15}/></a>)}</nav>}
-  <nav className="bottom-nav" aria-label="Mobile navigation">{[nav[0],nav[1],nav[2],nav[3]].map(n=><a key={n.href} href={n.href} className={route===n.href.slice(1)?'active':''}><Icon name={n.glyph} size={21}/><span>{n.label==='Dice Chronicle'?'Dice':n.label==='The Party'?'Party':n.label==='Story So Far'?'Story':n.label}</span></a>)}<button type="button" onClick={()=>setOpen(!open)} aria-label="More navigation"><Icon name="menu" size={21}/><span>More</span></button></nav></>;
+  {open && <nav id="mobile-navigation" className="mobile-menu" aria-label="Additional navigation">{nav.filter(n=>n.href!=='#/archive').map(n=><a className="mobile-menu-main" href={n.href} key={n.href} aria-current={route===n.href.slice(1)?'page':undefined}><Icon name={n.glyph}/>{n.label}<Icon name="arrow" size={15}/></a>)}{moreNav.map(n=><a href={n.href} key={n.href} aria-current={route===n.href.slice(1)?'page':undefined}><Icon name={n.glyph}/>{n.label}<Icon name="arrow" size={15}/></a>)}</nav>}
+  <nav className="bottom-nav" aria-label="Mobile navigation">{[nav[0],nav[1],nav[2],nav[4]].map(n=><a key={n.href} href={n.href} aria-current={route===n.href.slice(1)?'page':undefined} className={route===n.href.slice(1)?'active':''}><Icon name={n.glyph} size={21}/><span>{n.label==='Dice Chronicle'?'Dice':n.label==='Story So Far'?'Story':n.label}</span></a>)}<button type="button" className={moreNav.some(n=>n.href.slice(1)===route)?'active':''} onClick={()=>setOpen(current=>!current)} aria-controls="mobile-navigation" aria-expanded={open} aria-label={open?'Close additional navigation':'More navigation'}><Icon name={open?'close':'menu'} size={21}/><span>More</span></button></nav></>;
 }
 function SectionTitle({eyebrow,title,sub,href,link}:{eyebrow:string;title:React.ReactNode;sub?:string;href?:string;link?:string}) {return <div className="section-heading"><div><Label>{eyebrow}</Label><h2>{title}</h2>{sub&&<p>{sub}</p>}</div>{href&&<Action href={href} variant="text">{link||'Explore'}</Action>}</div>}
 
@@ -143,7 +142,6 @@ function HeroFellowship() {
       <div className="cinematic-overline"><span/>THE LIVING CHRONICLE<span/></div>
       <img src={`${import.meta.env.BASE_URL}art/crest.webp`} className="cinematic-crest" alt="The Green Iguanas crest" width="114" height="114" />
       <h1 id="cinematic-title"><span>THE</span> GREEN IGUANAS</h1>
-      <p>Five adventurers. One unfolding legend.</p>
     </div>
     <div className="cinematic-stage-outer">
       <div ref={stageRef} className="cinematic-stage" role="group" aria-label="Scroll through characters; the centered character is highlighted. Tap to open a dossier.">
@@ -178,15 +176,6 @@ function Home() {
       <div><span>LAST RESULT</span><strong>Cackle Crew defeated</strong><small>Next: Dandy War Dolls · Quarterfinal</small></div>
     </section>
   </main>;
-}
-function Party() {
-  const [query,setQuery]=useState('');
-  const filtered=characters.filter(c=>c.name.toLowerCase().includes(query.trim().toLowerCase()));
-  return <main id="main-content" tabIndex={-1}><PageIntro eyebrow="THE COMPANY / I" title={<>The <em>Fellowship.</em></>} description="Five companions at the heart of this story. Step into their dossiers, revisit their journeys, and discover the people behind the legend."/>
-    <section className="container directory-section"><div className="directory-toolbar"><div className="directory-count">THE PARTY <span>{String(filtered.length).padStart(2,'0')} / 05</span></div><label className="search-field"><Icon name="search" size={18}/><input aria-label="Search characters" placeholder="Find a character" value={query} onChange={e=>setQuery(e.target.value)}/></label></div>
-      {filtered.length?<div className="characters-grid party-grid">{filtered.map(c=><CharacterCard key={c.id} character={c}/>)}</div>:<div className="empty-mini">No characters match “{query}”.</div>}
-      <div className="directory-note"><Icon name="lock" size={17}/>Artwork is published. Character-sheet statistics will be updated from reviewed D&D Beyond PDF exports.</div>
-    </section></main>;
 }
 function DetailBox({label,value}:{label:string;value:string|null|number}) {return <div className="detail-box"><span>{label}</span><strong>{value ?? 'Awaiting records'}</strong></div>}
 function EmptyState({glyph='scroll',heading,detail}:{glyph?:Glyph;heading:string;detail:string}) {return <div className="empty-state"><div className="empty-icon"><Icon name={glyph} size={30}/></div><h3>{heading}</h3><p>{detail}</p></div>}
@@ -246,9 +235,9 @@ function CharacterPage({id}:{id:string}) {
  const character=characters.find(c=>c.id===id);
  const [tab,setTab]=useState<'overview'|'timeline'|'chronicle'|'sheet'>('overview');
  useEffect(()=>setTab('overview'),[id]);
- if(!character)return <main id="main-content" tabIndex={-1} className="container"><EmptyState heading="The name is not in our records" detail="This character could not be found in the Green Iguanas roster."/><Action href="#/party" variant="outline">Return to the party</Action></main>;
+ if(!character)return <main id="main-content" tabIndex={-1} className="container"><EmptyState heading="The name is not in our records" detail="This character could not be found in the Green Iguanas roster."/><Action href="#/" variant="outline">Return to the homepage</Action></main>;
  return <main id="main-content" tabIndex={-1} style={{'--character-accent':character.accent} as React.CSSProperties}>
-   <section className="container dossier-top"><a className="breadcrumb" href="#/party">THE FELLOWSHIP <Icon name="chevron" size={12}/> DOSSIER {character.index}</a>
+   <section className="container dossier-top"><a className="breadcrumb" href="#/">THE GREEN IGUANAS <Icon name="chevron" size={12}/> DOSSIER {character.index}</a>
     <div className="dossier-layout"><div className="dossier-portrait"><PlaceholderArt character={character} large/></div>
      <div className="dossier-copy"><Label>CHARACTER FILE {character.index} / 05</Label><h1>{character.name}</h1><p className="dossier-kicker">{character.descriptor}</p><div className="accent-line"/><p className="dossier-description">{character.highlight}</p>
       <div className="dossier-details"><DetailBox label="CLASS" value={character.class}/><DetailBox label="LEVEL" value={character.level}/><DetailBox label="ANCESTRY" value={character.ancestry}/><DetailBox label="SHEET BACKGROUND" value={character.background}/></div>
@@ -360,7 +349,7 @@ function StorySoFar(){
      <span className="cinema-kicker">OUR STORY IS STILL BEING WRITTEN</span>
      <h2>Next stop: <em>The Dandy War Dolls.</em></h2>
      <p>The Green Iguanas' first Dragonbowl victory is on the record. What happens in the quarterfinal will only become history after it is played.</p>
-     <div className="cinema-end-links"><Action href="#/dragonbowl" variant="outline">The Dragonbowl</Action><Action href="#/party" variant="outline">Meet the Party</Action></div>
+     <div className="cinema-end-links"><Action href="#/dragonbowl" variant="outline">The Dragonbowl</Action><Action href="#/" variant="outline">Return to the Heroes</Action></div>
      <small>ARTISTIC RENDITIONS OF CAMPAIGN EVENTS · ILLUSTRATIONS DO NOT VERIFY UNRECORDED DETAILS</small>
    </footer>
  </div>;
@@ -456,17 +445,17 @@ function Collection({kind}:{kind:'journal'|'quests'|'dragonbowl'|'treasury'|'ach
 function Restricted({mode}:{mode:'account'|'dm'}){return <main id="main-content" tabIndex={-1}><PageIntro eyebrow="THE VAULT / RESTRICTED" title={mode==='account'?<>Player <em>Access.</em></>:<>DM <em>Sanctum.</em></>} description="Private campaign information belongs behind actual authentication and database-level access controls."/><section className="container collection-body"><EmptyState glyph="lock" heading="Secure access is not yet enabled" detail="This first public release does not collect passwords or store personal notes. Player sign-in and DM publishing tools will appear only after secure backend configuration and permission tests."/></section></main>}
 export default function App(){const route=useRoute();let page:React.ReactNode;
  useEffect(()=>{
-    const names:Record<string,string>={'/':'The Living Chronicle','/party':'The Fellowship','/dice':'Dice Chronicle','/journal':'Previously in the Green Iguanas','/archive':'World Archive','/dragonbowl':'Dragonbowl','/quests':'Quests','/treasury':'Party Treasury','/achievements':'Achievements'};
+    const names:Record<string,string>={'/':'The Living Chronicle','/party':'The Living Chronicle','/dice':'Dice Chronicle','/journal':'Previously in the Green Iguanas','/archive':'World Archive','/dragonbowl':'Dragonbowl','/quests':'Quests','/treasury':'Party Treasury','/achievements':'Achievements'};
     const member=route.startsWith('/character/')?characters.find(c=>c.id===route.split('/')[2]):null;
     document.title=`${member?.name ?? names[route] ?? 'Green Iguanas'} | The Green Iguanas`;
  },[route]);
  if(route==='/'||route==='')page=<Home/>;
- else if(route==='/party')page=<Party/>;
+ else if(route==='/party')page=<Home/>;
  else if(route.startsWith('/character/'))page=<CharacterPage id={route.split('/')[2]}/>;
  else if(route==='/dice')page=<DiceChronicle/>;
  else if(route==='/archive')page=<WorldArchive/>;
  else if(['journal','quests','dragonbowl','treasury','achievements'].includes(route.replace('/','')))page=<Collection kind={route.slice(1) as 'journal'|'quests'|'dragonbowl'|'treasury'|'achievements'}/>;
  else if(route==='/account'||route==='/dm')page=<Restricted mode={route==='/dm'?'dm':'account'}/>;
  else page=<WorldArchive/>;
- return <div className={route==='/' ? 'site-shell site-shell--home' : 'site-shell'}><a href="#main-content" className="skip-link" onClick={e=>{e.preventDefault();document.getElementById('main-content')?.focus();}}>Skip to content</a><div className="ambient ambient-a"/><div className="ambient ambient-b"/><SiteHeader route={route}/>{page}</div>
+ return <div className={(route==='/'||route==='/party') ? 'site-shell site-shell--home' : 'site-shell'}><a href="#main-content" className="skip-link" onClick={e=>{e.preventDefault();document.getElementById('main-content')?.focus();}}>Skip to content</a><div className="ambient ambient-a"/><div className="ambient ambient-b"/><SiteHeader route={route}/>{page}</div>
 }
