@@ -318,7 +318,7 @@ const characterArchetypes:Record<string,{title:string;glyph:Glyph;description:st
 };
 function CharacterPage({id}:{id:string}){
  const character=characters.find(c=>c.id===id);
- const [tab,setTab]=useState<'overview'|'timeline'|'chronicle'|'sheet'>('overview');
+ const [tab,setTab]=useState<'overview'|'chronicle'|'sheet'>('overview');
  useEffect(()=>setTab('overview'),[id]);
  const theme=dossierThemes[id]??dossierThemes.owen;
  const archetype=characterArchetypes[id]??characterArchetypes.owen;
@@ -359,9 +359,9 @@ function CharacterPage({id}:{id:string}){
    </div>
   </section>
   <div className="tab-wrapper character-codex-tabbar"><div className="container tab-row" role="group" aria-label={character.name+' sections'}>
-   {(['overview','timeline','chronicle','sheet'] as const).map(item=><button type="button" key={item} aria-pressed={tab===item} className={tab===item?'selected':''} onClick={()=>setTab(item)}>
-    <Icon name={item==='overview'?'book':item==='timeline'?'compass':item==='chronicle'?'dice':'scroll'} size={16}/>
-    {item==='overview'?'His Story':item==='timeline'?'The Journey':item==='chronicle'?'Dice & Achievements':'Character Sheet'}
+   {(['overview','chronicle','sheet'] as const).map(item=><button type="button" key={item} aria-pressed={tab===item} className={tab===item?'selected':''} onClick={()=>setTab(item)}>
+    <Icon name={item==='overview'?'book':item==='chronicle'?'dice':'scroll'} size={16}/>
+    {item==='overview'?'His Story':item==='chronicle'?'Dice & Achievements':'Character Sheet'}
    </button>)}
   </div></div>
   <section className="container dossier-body character-codex-content">
@@ -404,7 +404,7 @@ function CharacterPage({id}:{id:string}){
      </div>
      <p className="character-story-art-disclaimer">Illustrations are artistic interpretations; undocumented events remain unconfirmed.</p>
     </div>
-   </div>:tab==='timeline'?(character.moments.length?<div className="moments-list"><Label>RECORDED CHARACTER MOMENTS</Label><h2>The path <em>so far.</em></h2>{character.moments.map((moment,i)=><article className="moment-entry" key={i}><span>{String(i+1).padStart(2,'0')}</span><div><h3>{moment.title}</h3><p>{moment.description}</p></div></article>)}</div>:<EmptyState glyph="hourglass" heading="The introduction awaits" detail="No played moments are confirmed for this character yet."/>):tab==='chronicle'?<CharacterDicePanel character={character}/>:<CharacterSheetPanel character={character}/>}
+   </div>:tab==='chronicle'?<CharacterDicePanel character={character}/>:<CharacterSheetPanel character={character}/>}
   </section>
   <div className="container dossier-next"><span>CONTINUE THE STORY</span><a href={'#/character/'+characters[(characters.indexOf(character)+1)%characters.length].id}>NEXT HERO <strong>{characters[(characters.indexOf(character)+1)%characters.length].name}</strong><Icon name="arrow" size={22}/></a></div>
  </main>;
