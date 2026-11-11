@@ -211,7 +211,7 @@ function HeroFellowship() {
           onFocus={()=>setActiveId(character.id)}
           aria-label={`View ${character.name}'s character profile`}>
           <span className="hero-backglow" aria-hidden="true"/>
-          <img src={`${import.meta.env.BASE_URL}${character.portrait}`}
+          <img src={`${import.meta.env.BASE_URL}${character.id==='heilbrun'?'art/heilbrun-lineup.webp':character.portrait}`}
             alt="" loading="eager" decoding="async"/>
           <span className="hero-nameplate">
             <strong>{character.name}</strong>
