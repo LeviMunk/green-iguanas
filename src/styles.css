@@ -2061,3 +2061,25 @@
 @media(prefers-reduced-motion:reduce){
  .character-profile-codex:is(.character-dossier--bobby-kills,.character-dossier--owen,.character-dossier--freed,.character-dossier--heilbrun) .character-codex-story-main .character-story-chapter--illustrated{transition:none}
 }
+
+
+/* Keep even-numbered scenes on the same character-specific surface without
+   changing the established left-art / right-copy order. */
+.character-profile-codex:is(
+ .character-dossier--bobby-kills,
+ .character-dossier--owen,
+ .character-dossier--freed,
+ .character-dossier--heilbrun
+) .character-codex-story-main .character-story-chapter--illustrated:nth-child(even) .character-story-image{
+  background:
+    radial-gradient(ellipse 70% 78% at 50% 52%,var(--codex-light-a),transparent 83%),
+    linear-gradient(136deg,var(--codex-core),var(--codex-bottom));
+}
+.character-profile-codex:is(
+ .character-dossier--bobby-kills,
+ .character-dossier--owen,
+ .character-dossier--freed,
+ .character-dossier--heilbrun
+) .character-codex-story-main .character-story-chapter--illustrated:nth-child(even) .character-story-text{
+  background:linear-gradient(95deg,var(--codex-core),var(--codex-bottom) 88%);
+}
