@@ -2083,3 +2083,46 @@
 ) .character-codex-story-main .character-story-chapter--illustrated:nth-child(even) .character-story-text{
   background:linear-gradient(95deg,var(--codex-core),var(--codex-bottom) 88%);
 }
+
+
+/* Mobile Safari stability: keep character selection and imagery while avoiding
+   expensive continuously repainted blur/filter layers on small touch screens.
+   This is an isolated mitigation, not a confirmed diagnosis of the crash. */
+@media (max-width:700px) and (pointer:coarse) {
+  .cinematic-home--immersive .cinematic-scenery:before,
+  .cinematic-home--immersive .cinematic-moonlight,
+  .cinematic-home--immersive .cinematic-grain,
+  .cinematic-home--immersive .cinematic-crest,
+  .cinematic-floor-mist,
+  .cinematic-ember-field>span {
+    animation:none !important;
+  }
+  .cinematic-ember-field { display:none; }
+  .cinematic-home--immersive .cinematic-moonlight,
+  .cinematic-home--immersive .cinematic-distant-hills,
+  .cinematic-home--immersive .cinematic-scene-glow,
+  .cinematic-home--immersive .cinematic-hero:before,
+  .cinematic-floor-mist {
+    filter:none !important;
+  }
+  .cinematic-home--immersive .cinematic-scene-glow {
+    opacity:.35;
+    transition:none;
+  }
+  .cinematic-home--immersive .cinematic-hero>img,
+  .cinematic-home--immersive .cinematic-hero.is-active>img,
+  .cinematic-home--immersive .cinematic-hero:focus-visible>img {
+    filter:none !important;
+    transition:opacity .2s ease,transform .2s ease;
+  }
+  .cinematic-home--immersive .cinematic-hero>img { opacity:.72; }
+  .cinematic-home--immersive .cinematic-hero.is-active>img,
+  .cinematic-home--immersive .cinematic-hero:focus-visible>img { opacity:1; }
+  .cinematic-home--immersive .hero-nameplate { filter:none; }
+  .bottom-nav,.mobile-menu { backdrop-filter:none !important; }
+  .character-card .character-portrait-image,
+  .character-card:is(:hover,:focus-visible) .character-portrait-image {
+    filter:none !important;
+    transition:opacity .2s ease,transform .2s ease;
+  }
+}
