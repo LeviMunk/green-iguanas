@@ -104,7 +104,7 @@ function HeroFellowship() {
   const sceneRef=useRef<HTMLElement>(null);
 
   // Mobile selection follows the centered scroll-snap item, including the
-  // first one on initial load. One tap still opens the character dossier.
+  // first one on initial load. One tap still opens the character profile.
   useEffect(()=>{
     const stage=stageRef.current;
     if(!stage)return;
@@ -199,7 +199,7 @@ function HeroFellowship() {
     </div>
     <div className="cinematic-stage-outer">
       <div ref={stageRef} className="cinematic-stage" role="group"
-        aria-label="Scroll through the Green Iguanas. The centered character lights up; tap to open their dossier.">
+        aria-label="Scroll through the Green Iguanas. The centered character lights up; tap to open their profile.">
         {heroes.map((character,index)=><a
           href={`#/character/${character.id}`}
           id={`hero-${character.id}`}
@@ -209,7 +209,7 @@ function HeroFellowship() {
           className={`cinematic-hero ${activeId===character.id?'is-active':''}`}
           onMouseEnter={()=>setActiveId(character.id)}
           onFocus={()=>setActiveId(character.id)}
-          aria-label={`View ${character.name}'s character dossier`}>
+          aria-label={`View ${character.name}'s character profile`}>
           <span className="hero-backglow" aria-hidden="true"/>
           <img src={`${import.meta.env.BASE_URL}${character.portrait}`}
             alt="" loading="eager" decoding="async"/>
@@ -309,47 +309,104 @@ const dossierThemes:Record<string,{accent:string;highlight:string;deep:string;mi
  freed:{accent:'#dd8b82',highlight:'#f8b8a1',deep:'#17141a',mid:'#462731',ink:'#261a21'},
  heilbrun:{accent:'#e7cb82',highlight:'#fff0ba',deep:'#101b2d',mid:'#304b76',ink:'#15233b'}
 };
-function CharacterPage({id}:{id:string}) {
+const characterArchetypes:Record<string,{title:string;glyph:Glyph;description:string}>={
+ 'bobby-kills':{title:'The Axe-Wielder',glyph:'swords',description:'A warrior shaped by exile, loss, and a legacy of axes.'},
+ indigo:{title:'The Performer',glyph:'feather',description:'A bard making music in a world five centuries older than he remembers.'},
+ owen:{title:'The Mendicant',glyph:'moon',description:'A wanderer whose devotion to peace is tested by injustice.'},
+ freed:{title:'The Monster Hunter',glyph:'shield',description:'A protector haunted by Oakhaven, dedicated to saving others.'},
+ heilbrun:{title:'The Avenger',glyph:'swords',description:'A golden-eyed paladin who has sworn an Oath of Vengeance.'}
+};
+function CharacterPage({id}:{id:string}){
  const character=characters.find(c=>c.id===id);
  const [tab,setTab]=useState<'overview'|'timeline'|'chronicle'|'sheet'>('overview');
  useEffect(()=>setTab('overview'),[id]);
  const theme=dossierThemes[id]??dossierThemes.owen;
+ const archetype=characterArchetypes[id]??characterArchetypes.owen;
  const sceneBase=import.meta.env.BASE_URL+'character-art/'+id+'/';
- if(!character)return <main id="main-content" tabIndex={-1} className="container"><EmptyState heading="The name is not in our records" detail="This character could not be found in the Green Iguanas roster."/><Action href="#/" variant="outline">Return to the homepage</Action></main>;
+ if(!character)return <main id="main-content" tabIndex={-1} className="container"><EmptyState heading="The name is not in our records" detail="This character could not be found in the Green Iguanas roster."/><Action href="#/" variant="outline">Return to the heroes</Action></main>;
+ const snapshot=character.sheetSnapshot;
+ const stats=[
+  {label:'LEVEL',value:character.level??'—',glyph:'crown' as Glyph},
+  {label:'MAX HP',value:snapshot?.maxHitPoints??'—',glyph:'spark' as Glyph},
+  {label:'ARMOR CLASS',value:snapshot?.armorClass??'—',glyph:'shield' as Glyph},
+  {label:'SPEED',value:snapshot?.speed??'—',glyph:'arrow' as Glyph}
+ ];
  return <main id="main-content" tabIndex={-1}
-   className={`character-dossier character-dossier--${character.id}`}
-   style={{'--character-accent':theme.accent,'--dossier-highlight':theme.highlight,'--dossier-deep':theme.deep,'--dossier-mid':theme.mid,'--dossier-ink':theme.ink} as React.CSSProperties}>
-   <section className="dossier-top">
-     <div className="dossier-backdrop" aria-hidden="true"><img src={sceneBase+'backdrop.webp'} alt="" decoding="async" onError={e=>{e.currentTarget.style.display='none'}}/></div>
-     <div className="container dossier-top-inner"><a className="breadcrumb" href="#/">THE GREEN IGUANAS <Icon name="chevron" size={12}/> DOSSIER {character.index}</a>
-    <div className="dossier-layout"><div className="dossier-portrait"><PlaceholderArt character={character} large/></div>
-     <div className="dossier-copy"><Label>CHARACTER FILE {character.index} / 05</Label><h1>{character.name}</h1><p className="dossier-kicker">{character.descriptor}</p><div className="accent-line"/><p className="dossier-description">{character.highlight}</p>
-      <div className="dossier-details"><DetailBox label="CLASS" value={character.class}/><DetailBox label="LEVEL" value={character.level}/><DetailBox label="ANCESTRY" value={character.ancestry}/><DetailBox label="SHEET BACKGROUND" value={character.background}/></div>
-      {character.sheetSnapshot?<div className="sheet-stat-group"><div className="sheet-stat-head">REVIEWED PDF SNAPSHOT <span>REVIEWED {character.sheetSnapshot.asOf}</span></div><div className="dossier-details"><DetailBox label="ARMOR CLASS" value={character.sheetSnapshot.armorClass??null}/><DetailBox label="MAXIMUM HP" value={character.sheetSnapshot.maxHitPoints??null}/><DetailBox label="MOVEMENT" value={character.sheetSnapshot.speed??null}/><DetailBox label="INITIATIVE" value={character.sheetSnapshot.initiative??null}/></div></div>:<div className="sheet-pending">Current sheet mechanics await a verified D&D Beyond PDF export.</div>}
-      <div className="dossier-actions">{character.beyondUrl&&<a className="btn btn-primary" href={character.beyondUrl} target="_blank" rel="noopener noreferrer"><Icon name="external" size={16}/> View on D&D Beyond</a>}<a className="btn btn-outline" href={'#/dice?character='+character.id}><Icon name="dice" size={16}/> Character Dice Log</a></div>
+  className={'character-dossier character-dossier--'+character.id+' character-profile-codex'}
+  style={{'--character-accent':theme.accent,'--dossier-highlight':theme.highlight,'--dossier-deep':theme.deep,'--dossier-mid':theme.mid,'--dossier-ink':theme.ink} as React.CSSProperties}>
+  <section className="dossier-top character-codex-hero" aria-labelledby="character-profile-title">
+   <div className="dossier-backdrop" aria-hidden="true"><img src={sceneBase+'backdrop.webp'} alt="" decoding="async" onError={e=>{e.currentTarget.style.display='none'}}/></div>
+   <div className="container dossier-top-inner">
+    <a className="breadcrumb character-profile-breadcrumb" href="#/"><Icon name="chevron" size={14}/> BACK TO HEROES <span aria-hidden="true">/</span> {character.name.toUpperCase()}</a>
+    <div className="dossier-layout character-codex-hero-grid">
+     <div className="dossier-portrait character-codex-portrait"><PlaceholderArt character={character} large/></div>
+     <div className="dossier-copy character-codex-intro">
+      <span className="character-codex-kicker">THE GREEN IGUANAS <i aria-hidden="true">✦</i> HERO PROFILE</span>
+      <h1 id="character-profile-title">{character.sheetName}</h1>
+      <p className="dossier-kicker">{character.descriptor}</p>
+      <p className="character-codex-quote">{character.highlight}</p>
+      <div className="character-codex-facts"><span>{character.ancestry??'Ancestry unrecorded'}</span><span>{character.class??'Class unrecorded'}</span><span>{character.background??'Background unrecorded'}</span></div>
+      <div className="character-codex-stats" aria-label="Reviewed character statistics">
+       {stats.map(stat=><div className="character-codex-stat" key={stat.label}><Icon name={stat.glyph} size={17}/><strong>{stat.value}</strong><span>{stat.label}</span></div>)}
+      </div>
+      <div className="dossier-actions character-codex-actions">
+       {character.beyondUrl&&<a className="btn btn-primary" href={character.beyondUrl} target="_blank" rel="noopener noreferrer"><Icon name="external" size={16}/> View on D&D Beyond</a>}
+       <a className="btn btn-outline" href={'#/dice?character='+character.id}><Icon name="dice" size={16}/> Dice Chronicle</a>
+      </div>
+      <small className="character-codex-revision">STATS REVIEWED {snapshot?.asOf??'DATE UNKNOWN'} · LIVE SHEET MAY DIFFER</small>
      </div>
     </div>
-   </div></section>
-   <div className="tab-wrapper"><div className="container tab-row" role="group" aria-label={character.name+' sections'}>{(['overview','timeline','chronicle','sheet'] as const).map(item=><button type="button" key={item} aria-pressed={tab===item} className={tab===item?'selected':''} onClick={()=>setTab(item)}>{item==='overview'?'Background & Story':item==='timeline'?'The Journey':item==='chronicle'?'Dice & Achievements':'D&D Beyond Sheet'}</button>)}</div></div>
-   <section className="container dossier-body">
-    {tab==='overview'?<div className="dossier-columns character-story-layout"><div><Label>THE CHARACTER'S ORIGIN</Label><h2>The story of <em>{character.name}.</em></h2><p className="body-muted">{character.biography??'Character history is still being documented.'}</p><p className="character-story-art-disclaimer">Story illustrations are artistic interpretations. Unverified details remain unconfirmed in the written record.</p>
-      <div className="character-story-sections">{character.profileSections.map((section,i)=><article className="character-story-chapter character-story-chapter--illustrated" key={i}>
-        <div className="character-story-image">
-          <div className="character-story-art-fallback" aria-hidden="true">
-            {character.portrait&&<img src={import.meta.env.BASE_URL+character.portrait} alt="" loading="lazy" decoding="async"/>}
-          </div>
-          <img className="character-story-artwork" src={sceneBase+'beat-'+(i+1)+'.webp'} alt={`Illustrated interpretation of ${character.name}'s story: ${section.title}`} loading="lazy" decoding="async" onError={e=>{e.currentTarget.style.display='none'}}/>
-          <span className="character-story-image-mark" aria-hidden="true">✦</span>
-        </div>
-        <div className="character-story-text">
-          <span>{String(i+1).padStart(2,'0')}{section.status==='concept'?' / CHARACTER CONCEPT, NOT CANON':' / CHARACTER HISTORY'}</span>
-          <h3>{section.title}</h3><p>{section.text}</p>
-        </div>
-       </article>)}</div>
-      </div><div className="dossier-side character-story-support"><div className="small-panel"><Icon name="scroll" size={23}/><h3>Character sheet</h3><p>See the living D&D Beyond sheet or a reviewed PDF snapshot when attached.</p><span>SHEET TAB</span></div><div className="small-panel"><Icon name="trophy" size={23}/><h3>Dice & achievements</h3><p>See the character's story achievements, verified rolls and trophy unlocks.</p><span>CHRONICLE TAB</span></div></div>
-    </div>:tab==='timeline'?(character.moments.length?<div className="moments-list"><Label>RECORDED CHARACTER MOMENTS</Label><h2>The path <em>so far.</em></h2>{character.moments.map((moment,i)=><article className="moment-entry" key={i}><span>{String(i+1).padStart(2,'0')}</span><div><h3>{moment.title}</h3><p>{moment.description}</p></div></article>)}</div>:<EmptyState glyph="hourglass" heading="The introduction awaits" detail="No played moments are confirmed for this character yet."/>):tab==='chronicle'?<CharacterDicePanel character={character}/>:<CharacterSheetPanel character={character}/>}
-   </section>
-   <div className="container dossier-next"><span>CONTINUE THE STORY</span><a href={'#/character/'+characters[(characters.indexOf(character)+1)%characters.length].id}>NEXT DOSSIER <strong>{characters[(characters.indexOf(character)+1)%characters.length].name}</strong><Icon name="arrow" size={22}/></a></div>
+   </div>
+  </section>
+  <div className="tab-wrapper character-codex-tabbar"><div className="container tab-row" role="group" aria-label={character.name+' sections'}>
+   {(['overview','timeline','chronicle','sheet'] as const).map(item=><button type="button" key={item} aria-pressed={tab===item} className={tab===item?'selected':''} onClick={()=>setTab(item)}>
+    <Icon name={item==='overview'?'book':item==='timeline'?'compass':item==='chronicle'?'dice':'scroll'} size={16}/>
+    {item==='overview'?'His Story':item==='timeline'?'The Journey':item==='chronicle'?'Dice & Achievements':'Character Sheet'}
+   </button>)}
+  </div></div>
+  <section className="container dossier-body character-codex-content">
+   {tab==='overview'?<div className="character-codex-story-grid">
+    <aside className="character-codex-sidebar" aria-label={character.name+' character information'}>
+     <div className="character-codex-sigil" aria-hidden="true"><Icon name={archetype.glyph} size={36}/></div>
+     <strong className="character-codex-archetype">{archetype.title}</strong>
+     <p>{archetype.description}</p>
+     <div className="character-codex-side-rule"/>
+     <span className="character-codex-side-label">THE CHAPTERS</span>
+     <nav className="character-codex-chapter-nav" aria-label={character.name+' story chapters'}>
+      {character.profileSections.map((section,i)=><a key={i} href={'#story-beat-'+character.id+'-'+(i+1)} onClick={e=>{
+       e.preventDefault();
+       document.getElementById('story-beat-'+character.id+'-'+(i+1))?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});
+      }}><span>{String(i+1).padStart(2,'0')}</span>{section.title}</a>)}
+     </nav>
+     <div className="character-codex-side-rule"/>
+     <span className="character-codex-side-label">CHARACTER FACTS</span>
+     <div className="character-codex-sidebar-fact"><span>CLASS</span><strong>{character.class??'Unrecorded'}</strong></div>
+     <div className="character-codex-sidebar-fact"><span>BACKGROUND</span><strong>{character.background??'Unrecorded'}</strong></div>
+    </aside>
+    <div className="character-codex-story-main">
+     <div className="character-codex-story-heading">
+      <span className="cinema-kicker">THE STORY OF {character.name.toUpperCase()}</span>
+      <h2>Deeds behind <em>the name.</em></h2>
+      <p>{character.biography??'Character history is still being documented.'}</p>
+     </div>
+     <div className="character-story-sections">
+      {character.profileSections.map((section,i)=><article className="character-story-chapter character-story-chapter--illustrated" id={'story-beat-'+character.id+'-'+(i+1)} key={i}>
+       <div className="character-story-image">
+        <div className="character-story-art-fallback" aria-hidden="true">{character.portrait&&<img src={import.meta.env.BASE_URL+character.portrait} alt="" loading="lazy" decoding="async"/>}</div>
+        <img className="character-story-artwork" src={sceneBase+'beat-'+(i+1)+'.webp'} alt={'Illustration of '+character.name+': '+section.title} loading="lazy" decoding="async" onError={e=>{e.currentTarget.style.display='none'}}/>
+       </div>
+       <div className="character-story-text">
+        <span className="character-story-beat-index">CHAPTER {String(i+1).padStart(2,'0')}{section.status==='concept'?' / CONCEPT, NOT CANON':''}</span>
+        <h3>{section.title}</h3><p>{section.text}</p>
+        <span className="character-story-corner" aria-hidden="true">✦</span>
+       </div>
+      </article>)}
+     </div>
+     <p className="character-story-art-disclaimer">Illustrations are artistic interpretations; undocumented events remain unconfirmed.</p>
+    </div>
+   </div>:tab==='timeline'?(character.moments.length?<div className="moments-list"><Label>RECORDED CHARACTER MOMENTS</Label><h2>The path <em>so far.</em></h2>{character.moments.map((moment,i)=><article className="moment-entry" key={i}><span>{String(i+1).padStart(2,'0')}</span><div><h3>{moment.title}</h3><p>{moment.description}</p></div></article>)}</div>:<EmptyState glyph="hourglass" heading="The introduction awaits" detail="No played moments are confirmed for this character yet."/>):tab==='chronicle'?<CharacterDicePanel character={character}/>:<CharacterSheetPanel character={character}/>}
+  </section>
+  <div className="container dossier-next"><span>CONTINUE THE STORY</span><a href={'#/character/'+characters[(characters.indexOf(character)+1)%characters.length].id}>NEXT HERO <strong>{characters[(characters.indexOf(character)+1)%characters.length].name}</strong><Icon name="arrow" size={22}/></a></div>
  </main>;
 }
 
