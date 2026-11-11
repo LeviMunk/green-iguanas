@@ -22,5 +22,5 @@ test('character-specific color palettes and player sheet links remain intact',()
     assert.match(css,new RegExp('character-dossier--'+id));
   }
   assert.match(profile,/href=\{character.beyondUrl\}/);
-  assert.match(profile,/The story of <em>\{character.name\}/);
+  assert.match(profile,/THE STORY OF \{character.name.toUpperCase\(\)\}/);
 });
