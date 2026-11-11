@@ -1912,3 +1912,152 @@
  .character-profile-codex .character-codex-tabbar .tab-row button,
  .character-profile-codex .character-codex-chapter-nav a{transition:none}
 }
+
+
+/* CODEX PARITY: Bobby, Owen, Freed and Heilbrun
+   The Indigo reference defines the common layout already. These skins bring
+   the other four the same atmospheric depth, edge lighting and typographic
+   contrast, without changing their original character identities or art. */
+.character-profile-codex.character-dossier--bobby-kills{
+  --codex-light-a:rgba(205,116,56,.29);
+  --codex-light-b:rgba(135,64,35,.19);
+  --codex-top:#170d0c;
+  --codex-core:#352015;
+  --codex-bottom:#100b0a;
+  --codex-art-edge:rgba(240,185,115,.71);
+  --codex-warmth:rgba(227,151,74,.22);
+}
+.character-profile-codex.character-dossier--owen{
+  --codex-light-a:rgba(97,181,160,.25);
+  --codex-light-b:rgba(146,204,178,.19);
+  --codex-top:#0b1b1b;
+  --codex-core:#1a3934;
+  --codex-bottom:#091915;
+  --codex-art-edge:rgba(168,217,179,.63);
+  --codex-warmth:rgba(121,203,177,.20);
+}
+.character-profile-codex.character-dossier--freed{
+  --codex-light-a:rgba(160,51,57,.29);
+  --codex-light-b:rgba(115,127,152,.16);
+  --codex-top:#111219;
+  --codex-core:#2b202c;
+  --codex-bottom:#0d1019;
+  --codex-art-edge:rgba(232,151,140,.72);
+  --codex-warmth:rgba(231,79,76,.20);
+}
+.character-profile-codex.character-dossier--heilbrun{
+  --codex-light-a:rgba(68,118,187,.29);
+  --codex-light-b:rgba(229,184,103,.16);
+  --codex-top:#0b1629;
+  --codex-core:#213757;
+  --codex-bottom:#0a162b;
+  --codex-art-edge:rgba(243,213,141,.74);
+  --codex-warmth:rgba(153,185,238,.19);
+}
+.character-profile-codex:is(
+  .character-dossier--bobby-kills,
+  .character-dossier--owen,
+  .character-dossier--freed,
+  .character-dossier--heilbrun
+){
+  background:
+    radial-gradient(ellipse 70% 34% at 80% 43%,var(--codex-light-b),transparent 85%),
+    linear-gradient(180deg,var(--codex-top),var(--codex-bottom));
+}
+.character-profile-codex:is(
+  .character-dossier--bobby-kills,
+  .character-dossier--owen,
+  .character-dossier--freed,
+  .character-dossier--heilbrun
+) .character-codex-hero{
+  background:
+    radial-gradient(ellipse 48% 73% at 22% 49%,var(--codex-light-a),transparent 81%),
+    radial-gradient(ellipse 58% 74% at 88% 17%,var(--codex-light-b),transparent 85%),
+    linear-gradient(126deg,var(--codex-top) 0%,var(--codex-core) 60%,var(--codex-bottom) 100%);
+  border-bottom-color:var(--codex-art-edge);
+}
+.character-profile-codex:is(
+  .character-dossier--bobby-kills,
+  .character-dossier--owen,
+  .character-dossier--freed,
+  .character-dossier--heilbrun
+) .character-codex-portrait .portrait-radial{
+  opacity:.86;
+  background:radial-gradient(ellipse at 50% 65%,var(--codex-warmth),transparent 77%);
+}
+.character-profile-codex:is(
+  .character-dossier--bobby-kills,
+  .character-dossier--owen,
+  .character-dossier--freed,
+  .character-dossier--heilbrun
+) .character-codex-portrait .character-portrait-image{
+  filter:drop-shadow(0 22px 31px rgba(0,0,0,.67));
+}
+.character-profile-codex:is(
+  .character-dossier--bobby-kills,
+  .character-dossier--owen,
+  .character-dossier--freed,
+  .character-dossier--heilbrun
+) .character-codex-tabbar{
+  border-color:var(--codex-art-edge);
+  box-shadow:0 10px 32px #0007,0 0 20px var(--codex-warmth);
+}
+.character-profile-codex:is(
+  .character-dossier--bobby-kills,
+  .character-dossier--owen,
+  .character-dossier--freed,
+  .character-dossier--heilbrun
+) .character-codex-sidebar{
+  border-color:var(--codex-art-edge);
+  background:linear-gradient(155deg,var(--codex-core),var(--codex-bottom) 83%);
+  box-shadow:0 16px 48px #0009,0 0 25px var(--codex-warmth);
+}
+.character-profile-codex:is(
+  .character-dossier--bobby-kills,
+  .character-dossier--owen,
+  .character-dossier--freed,
+  .character-dossier--heilbrun
+) .character-codex-story-main .character-story-chapter--illustrated{
+  border-color:var(--codex-art-edge);
+  box-shadow:0 13px 38px #0009,0 0 22px var(--codex-warmth);
+  background:linear-gradient(106deg,var(--codex-core),var(--codex-bottom));
+  transition:border-color .25s ease,box-shadow .25s ease;
+}
+.character-profile-codex:is(
+  .character-dossier--bobby-kills,
+  .character-dossier--owen,
+  .character-dossier--freed,
+  .character-dossier--heilbrun
+) .character-codex-story-main .character-story-chapter--illustrated:hover{
+  border-color:var(--dossier-highlight);
+  box-shadow:0 17px 46px #000b,0 0 28px var(--codex-warmth);
+}
+.character-profile-codex:is(
+  .character-dossier--bobby-kills,
+  .character-dossier--owen,
+  .character-dossier--freed,
+  .character-dossier--heilbrun
+) .character-codex-story-main .character-story-image{
+  background:
+    radial-gradient(ellipse 70% 78% at 50% 52%,var(--codex-light-a),transparent 83%),
+    linear-gradient(136deg,var(--codex-core),var(--codex-bottom));
+}
+.character-profile-codex:is(
+  .character-dossier--bobby-kills,
+  .character-dossier--owen,
+  .character-dossier--freed,
+  .character-dossier--heilbrun
+) .character-codex-story-main .character-story-text{
+  background:linear-gradient(95deg,var(--codex-core),var(--codex-bottom) 88%);
+}
+.character-profile-codex:is(
+  .character-dossier--bobby-kills,
+  .character-dossier--owen,
+  .character-dossier--freed,
+  .character-dossier--heilbrun
+) .character-codex-stat strong{
+  color:var(--dossier-highlight);
+}
+@media(prefers-reduced-motion:reduce){
+ .character-profile-codex:is(.character-dossier--bobby-kills,.character-dossier--owen,.character-dossier--freed,.character-dossier--heilbrun) .character-codex-story-main .character-story-chapter--illustrated{transition:none}
+}
