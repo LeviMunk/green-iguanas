@@ -31,7 +31,7 @@ for (const [name, browserType, device] of browsers) {
       const at = `${base}${hash}`;
       try {
         const response = await page.goto(at, { waitUntil: 'networkidle', timeout: 30000 });
-        if (!response?.ok()) throw new Error(`HTTP ${response?.status() || 'no response'}`);
+        if (response && !response.ok()) throw new Error(`HTTP ${response.status()}`);
         await page.locator('#main-content').waitFor({ state: 'visible', timeout: 15000 });
         await page.waitForTimeout(350);
         const dimensions = await page.evaluate(() => ({
