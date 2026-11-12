@@ -108,10 +108,10 @@ export const characters: Character[] = [
       {title:'The Whispering Maw',text:'Armed with a rusted wood-axe and a stolen vial of alchemist’s fire, he tracked a necrotic shambling mound beneath a dead willow. He hurled the fire at it, expecting an easy kill. Instead, the burning creature panicked and fled toward the hearths of Oakhaven.'},
       {title:'The tragedy',text:'Freed chased it, but reached the village too late. The monster smashed through the granary and communal hall, spreading fire and necrotic sickness. By morning the Maw was dead, but the village lay in ashes. Freed was physically unharmed and carried a terrible guilt. The survivors banished him.'},
       {title:'Eighteen years of redemption',text:'He took up the blade of a fallen villager and became a wandering hunter, joining guilds, completing quest-board contracts and helping common people. The work has earned him allies, favors, information and opportunities. His mission is to protect others from monsters, including monsters who wear human faces. He seeks not fame or wealth but to save as many lives as he can.'},
-      {title:'The Eye of Freed',text:'Before entering the red dragon’s den, Freed sacrificed an eye as part of a Wish. A natural 100 on the d100 roll yielded the unique, evolving Eye of Freed. His player notes also mention ideas for a Beast Master’s Eye made with a Wish and an eye from the defeated red dragon; the relationship between those designs and the established Eye of Freed has not yet been reconciled. Specific mechanical powers await his character sheet.'},
+      {title:'The Eye of Freed · After the Dragon',text:'After the Green Iguanas defeated the red dragon, Freed sacrificed an eye as part of a Wish. A natural 100 on the d100 roll yielded the unique, evolving Eye of Freed. His player notes also mention ideas for a Beast Master’s Eye made with a Wish and an eye from the defeated red dragon; the relationship between those designs and the established Eye of Freed has not yet been reconciled. Specific mechanical powers await his character sheet.'},
       {title:'Blood in the arena',text:'Against Cackle Crew, Freed severed Gnashhu / King Cackle’s arm, then held it aloft in celebration after the Green Iguanas’ victory.'}
     ],
-    moments:[{title:'The fall of Oakhaven',description:'His reckless battle with the Whispering Maw destroyed his home; he was banished and chose a life of protecting others.'},{title:'The Wish',description:'Sacrificed an eye, rolled a natural 100 on d100, and received the Eye of Freed.'},{title:'Dragonbowl · Round One',description:'Severed King Cackle’s arm and raised it after the team won.'}],
+    moments:[{title:'The fall of Oakhaven',description:'His reckless battle with the Whispering Maw destroyed his home; he was banished and chose a life of protecting others.'},{title:'After the red dragon',description:'Following the dragon’s defeat, sacrificed an eye, rolled a natural 100 on d100, and received the Eye of Freed.'},{title:'Dragonbowl · Round One',description:'Severed King Cackle’s arm and raised it after the team won.'}],
     sheetName:'Freed Gloomshine',beyondUrl:'https://www.dndbeyond.com/characters/159982298',sheetPdf:null,
     sheetSnapshot:{asOf:'2026-11-10',armorClass:21,maxHitPoints:40,speed:'30 ft.',initiative:'+3',passivePerception:15,abilityScores:{strength:16,dexterity:17,constitution:11,intelligence:11,wisdom:14,charisma:8}},
     sheetHighlights:['Action Surge · 1 use per short rest','Improved Critical · 19–20','Hunter’s Mark · 2 free uses per long rest']
@@ -196,17 +196,6 @@ export const storyChapters: StoryChapter[] = [
     ]
   },
   {
-    id:'eye-of-freed', title:'The Price of Sight', kicker:'ONE WISH. ONE SACRIFICE. ONE HUNDRED.',
-    summary:'Before entering the red dragon’s den, Freed sacrificed one of his eyes as part of a Wish. A natural 100 on the d100 roll brought forth the Eye of Freed, an evolving artifact-grade replacement. Its exact mechanical powers still await verification against the character sheet.',
-    record:[
-      {title:"The sacrifice",text:"Before the red dragon confrontation, Freed sacrificed an eye as part of a Wish. This is established campaign history."},
-      {title:"A perfect hundred",text:"A natural 100 on the d100 roll brought forth the Eye of Freed, an evolving replacement with artifact-level significance. Its precise mechanical powers and later evolution await documentation."}
-    ],
-    status:'confirmed', mood:'freed',
-    hero:{src:'history/freed-eye.webp',alt:'A close-up of Freed in steel armor, sword raised across his chest and a red glow visible within his visor',caption:'The Eye of Freed · character illustration',label:'THE SACRIFICE'},
-    gallery:[]
-  },
-  {
     id:'red-dragon', title:'The Dragon’s False Fortune', kicker:'NOT ALL THAT GLITTERS IS GOLD',
     summary:'The Green Iguanas fought and defeated a red dragon. Its immense hoard was largely counterfeit: painted wooden coins, gilded cheap metal and glass. The party also freed a wizard who had been forced to manufacture the illusion of wealth.',
     record:[
@@ -218,6 +207,17 @@ export const storyChapters: StoryChapter[] = [
     gallery:[
       {src:'history/dragon-original.webp',alt:'A huge crimson dragon spreads its wings inside a torchlit vaulted chamber above the four adventurers',caption:'The dragon confrontation · another perspective',label:'THE ENCOUNTER'}
     ]
+  },
+  {
+    id:'eye-of-freed', title:'The Price of Sight', kicker:'ONE WISH. ONE SACRIFICE. ONE HUNDRED.',
+    summary:'After the Green Iguanas defeated the red dragon, Freed sacrificed one of his eyes as part of a Wish. A natural 100 on the d100 roll brought forth the Eye of Freed, an evolving artifact-grade replacement. Its exact mechanical powers still await verification against the character sheet.',
+    record:[
+      {title:"The sacrifice",text:"After the red dragon confrontation, Freed sacrificed an eye as part of a Wish. His eye was intact throughout the battle."},
+      {title:"A perfect hundred",text:"A natural 100 on the d100 roll brought forth the Eye of Freed, an evolving replacement with artifact-level significance. Its precise mechanical powers and later evolution await documentation."}
+    ],
+    status:'confirmed', mood:'freed',
+    hero:{src:'history/freed-eye.webp',alt:'A close-up of Freed in steel armor, sword raised across his chest and a red glow visible within his visor',caption:'The Eye of Freed · character illustration',label:'THE SACRIFICE'},
+    gallery:[]
   },
   {
     id:'dragonbowl-arrival', title:'Under Mount Waterdeep', kicker:'THE WORLD’S BIGGEST ARENA AWAITS',
