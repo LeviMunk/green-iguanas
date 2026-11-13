@@ -1,5 +1,5 @@
 /* Phase 1 PWA: app-shell caching only. Never cache authenticated API traffic. */
-const CACHE = 'green-iguanas-shell-v3';
+const CACHE = 'green-iguanas-shell-v4';
 /* GENERATED_PRECACHE */
 const SCOPE = self.registration.scope;
 self.addEventListener('install', event => {
