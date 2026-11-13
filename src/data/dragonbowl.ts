@@ -2,9 +2,9 @@ import { dragonbowlOpeningOdds } from './campaign.ts';
 
 /**
  * Public tournament record. The source document mixes actual play with DM prep;
- * planned winners NEVER appear here as completed results.
+ * DM-planned winners are labeled as projected, NEVER as played results.
  */
-export type MatchStatus = 'final' | 'upcoming' | 'unverified' | 'pending';
+export type MatchStatus = 'final' | 'upcoming' | 'projected' | 'unverified' | 'pending';
 export type BracketMatch = {
   id: string;
   teamA: string | null;
@@ -21,14 +21,13 @@ export type BracketRound = {
   matches: BracketMatch[];
 };
 
-const unverified = (id:string, teamA:string, teamB:string):BracketMatch=>({
-  id,teamA,teamB,status:'unverified',winner:null,
-  kicker:'DRAW LISTED · RESULT UNVERIFIED',
-  description:'This pairing appears in the campaign planning record; its played outcome has not been confirmed.'
+const projected = (id:string,teamA:string,teamB:string,winner:string,description:string):BracketMatch=>({
+  id,teamA,teamB,status:'projected',winner,
+  kicker:'DM BRACKET PLAN · NOT A PLAYED RESULT',description
 });
-const pending = (id:string):BracketMatch=>({
-  id,teamA:null,teamB:null,status:'pending',winner:null,
-  kicker:'AWAITING RESULTS',description:'Participants will be entered when earlier rounds are confirmed.'
+const future = (id:string,teamA:string,teamB:string,description:string):BracketMatch=>({
+  id,teamA,teamB,status:'pending',winner:null,
+  kicker:'PLANNED PATH · NOT YET PLAYED',description
 });
 
 export const dragonbowlBracket:BracketRound[] = [
@@ -38,13 +37,13 @@ export const dragonbowlBracket:BracketRound[] = [
       status:'final',winner:'THE GREEN IGUANAS',kicker:'FINAL · PLAYED',
       description:'Green Iguanas defeated Cackle Crew in their first Dragonbowl fight.'
     },
-    unverified('r16-dandy-wild','The Dandy War Dolls','Wild Cats'),
-    unverified('r16-twisted-shifty','Twisted Firestarters','Shifty Blades of Gray'),
-    unverified('r16-apocalypse-stokey','Apocalypse Drow','Stokey and the Bandits'),
-    unverified('r16-ghost-old','The Ghostmakers','The Old Guard'),
-    unverified('r16-furry-orphans','The Furry & The Furious','The Awful Orphans'),
-    unverified('r16-kiss-lizard','Kiss of Death','Lizard Blizzard'),
-    unverified('r16-scimitar-machine','Scimitar Sisters','Green Machine')
+    projected('r16-dandy-wild','The Dandy War Dolls','Wild Cats','The Dandy War Dolls','DM-set advancement to the Green Iguanas quarterfinal; opening-round play not independently recorded.'),
+    projected('r16-twisted-shifty','Twisted Firestarters','Shifty Blades of Gray','Twisted Firestarters','DM-planned opening-round winner.'),
+    projected('r16-apocalypse-stokey','Apocalypse Drow','Stokey and the Bandits','Apocalypse Drow','DM-planned opening-round winner.'),
+    projected('r16-ghost-old','The Ghostmakers','The Old Guard','The Ghostmakers','DM-planned opening-round winner.'),
+    projected('r16-furry-orphans','The Furry & The Furious','The Awful Orphans','The Furry & The Furious','DM-planned opening-round winner.'),
+    projected('r16-kiss-lizard','Kiss of Death','Lizard Blizzard','Kiss of Death','DM-planned opening-round winner.'),
+    projected('r16-scimitar-machine','Scimitar Sisters','Green Machine','Scimitar Sisters','DM-planned opening-round winner.')
   ]},
   {id:'quarterfinals',title:'Quarterfinals',subtitle:'4 contests',matches:[
     {
@@ -52,13 +51,16 @@ export const dragonbowlBracket:BracketRound[] = [
       status:'upcoming',winner:null,kicker:'UP NEXT · CONFIRMED',
       description:'Known next matchup: five Green Iguanas against five Dandy War Dolls. Not yet played.'
     },
-    pending('qf-other-1'),pending('qf-other-2'),pending('qf-other-3')
+    projected('qf-twisted-apocalypse','Twisted Firestarters','Apocalypse Drow','Twisted Firestarters','Planned winner to meet the Green Iguanas if they defeat Dandy War Dolls.'),
+    projected('qf-ghost-furry','The Ghostmakers','The Furry & The Furious','The Ghostmakers','Planned winner on the opposite side of the bracket.'),
+    projected('qf-kiss-scimitar','Kiss of Death','Scimitar Sisters','Kiss of Death','Planned winner to meet the Ghostmakers in the other semifinal.')
   ]},
-  {id:'semifinals',title:'Semifinals',subtitle:'2 contests',matches:[
-    pending('sf-1'),pending('sf-2')
+  {id:'semifinals',title:'Semifinals',subtitle:'2 contests · projected',matches:[
+    future('sf-green-twisted','THE GREEN IGUANAS','Twisted Firestarters','Projected semifinal if the Green Iguanas beat Dandy War Dolls and the Firestarters advance.'),
+    future('sf-ghost-kiss','The Ghostmakers','Kiss of Death','Projected semifinal on the opposite side of the bracket.')
   ]},
-  {id:'final',title:'Championship',subtitle:'The final contest',matches:[
-    pending('final')
+  {id:'final',title:'Championship',subtitle:'The final contest · projected',matches:[
+    future('final-green-ghost','THE GREEN IGUANAS','The Ghostmakers','Intended championship pairing, contingent on both teams winning their remaining matches.')
   ]}
 ];
 
