@@ -603,6 +603,16 @@ function DragonbowlOverview(){
        <div><span>NEXT ESTABLISHED BOUT</span><strong>Dandy War Dolls</strong><small>Quarterfinal · 5 vs 5 · Not yet played</small></div>
        <div><span>CHAMPION'S PRIZE</span><strong>{dragonbowlFacts.prize}</strong><small>Plus Platinum Dragonbowl Rings</small></div>
      </div>
+     <div className="dragon-quarterfinal-summary" aria-label="All four Dragonbowl quarterfinal matchups">
+       <div className="dragon-quarterfinal-summary-header"><span>THE FINAL EIGHT</span><h3>Quarterfinal matchups</h3><p>All four matchups at a glance. DM picks on the other bouts are planned, not confirmed results.</p></div>
+       <div className="dragon-quarterfinal-summary-grid">
+         {dragonbowlBracket.find(round=>round.id==='quarterfinals')!.matches.map((match,index)=><article key={match.id} className={'dragon-quarterfinal-summary-card '+(match.status==='upcoming'?'is-next':'')}>
+           <small>{match.status==='upcoming'?'UP NEXT · NOT PLAYED':'DM PICK · PROJECTED'}</small>
+           <strong>{match.teamA}<span>vs.</span>{match.teamB}</strong>
+           <p>{match.status==='upcoming'?'The Green Iguanas take on the Dandy War Dolls.':<>Projected advancement: <b>{match.winner}</b></>}</p>
+         </article>)}
+       </div>
+     </div>
      <div className="dragon-bracket-head">
        <div><span className="dragon-bracket-kicker">SINGLE ELIMINATION · 16 TEAMS</span><h3>Championship Bracket</h3></div>
        <div className="dragon-bracket-legend"><span><i className="dragon-legend-final"/>Played result</span><span><i className="dragon-legend-next"/>Known next bout</span><span><i className="dragon-legend-pending"/>DM picks / projected</span></div>
