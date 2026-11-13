@@ -2126,3 +2126,21 @@
     transition:opacity .2s ease,transform .2s ease;
   }
 }
+
+
+/* Quarterfinal overview stays visible without scrolling the wide bracket. */
+.dragon-quarterfinal-summary{margin:32px 0 24px}
+.dragon-quarterfinal-summary-header>span{color:#d8ba7e;font:700 10px 'DM Sans',sans-serif;letter-spacing:.16em}
+.dragon-quarterfinal-summary-header h3{font:400 clamp(27px,3.2vw,38px)/1.18 'Cinzel',Georgia,serif;color:#f2e6cb;margin:8px 0}
+.dragon-quarterfinal-summary-header p{font-size:12px;color:#a9b9a9;margin:0 0 16px}
+.dragon-quarterfinal-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.dragon-quarterfinal-summary-card{min-width:0;background:#18271f;border:1px solid rgba(198,174,116,.28);padding:17px 18px}
+.dragon-quarterfinal-summary-card.is-next{border-color:#cfac66;background:linear-gradient(135deg,#393324,#1a291f)}
+.dragon-quarterfinal-summary-card small{display:block;color:#ddbc7a;font:700 9px 'DM Sans',sans-serif;letter-spacing:.12em;margin-bottom:12px}
+.dragon-quarterfinal-summary-card strong{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font:600 15px/1.5 'DM Sans',sans-serif;color:#eceddc}
+.dragon-quarterfinal-summary-card strong span{color:#b7a37a;font-size:11px;font-weight:400;text-transform:uppercase}
+.dragon-quarterfinal-summary-card p{margin:12px 0 0;color:#b9c5b1;font:400 11px/1.6 'DM Sans',sans-serif}
+.dragon-quarterfinal-summary-card p b{color:#d8ebbd}
+.dragon-bracket-match--projected{border-color:rgba(206,177,110,.48)}
+.dragon-bracket-match--projected .dragon-match-state{color:#dfc088}
+@media(max-width:700px){.dragon-quarterfinal-summary-grid{grid-template-columns:1fr}.dragon-quarterfinal-summary{margin:26px 0 20px}}
