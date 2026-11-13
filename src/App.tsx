@@ -565,19 +565,20 @@ function AdventurePage({id}:{id:string}){
 
 function DragonbowlMatch({match,round}:{match:BracketMatch;round:BracketRound['id']}) {
  const known=match.status==='final';
+ const planned=match.status==='projected';
  const next=match.status==='upcoming';
  const isParty=(name:string|null)=>name==='THE GREEN IGUANAS';
  const names=[match.teamA,match.teamB];
  return <article className={['dragon-bracket-match','dragon-bracket-match--'+match.status,(names.some(isParty)?'dragon-bracket-match--iguana':'')].join(' ')} aria-label={match.kicker+': '+(match.teamA??'To be determined')+' versus '+(match.teamB??'To be determined')}>
    <div className="dragon-bracket-match-head">
-     <span className="dragon-match-state">{known?'FINAL':next?'UP NEXT':match.status==='unverified'?'RESULT PENDING':'TBD'}</span>
+     <span className="dragon-match-state">{known?'FINAL':planned?'DM PICK':next?'UP NEXT':match.status==='unverified'?'RESULT PENDING':match.teamA&&match.teamB?'PROJECTED':'TBD'}</span>
      <span className="dragon-match-id">{match.id.replaceAll('-',' ').toUpperCase()}</span>
    </div>
-   {names.map((name,i)=><div key={i} className={['dragon-match-team',name&&isParty(name)?'is-iguana':'',known&&name===match.winner?'is-winner':''].filter(Boolean).join(' ')}>
+   {names.map((name,i)=><div key={i} className={['dragon-match-team',name&&isParty(name)?'is-iguana':'',(known||planned)&&name===match.winner?'is-winner':''].filter(Boolean).join(' ')}>
      <span className="dragon-match-team-mark" aria-hidden="true">{name&&isParty(name)?'✦':name?'◈':'·'}</span>
      <span className="dragon-match-team-name">{name??'To be determined'}</span>
      {round==='round-of-16'&&name&&<span className="dragon-team-odds" title="Original whole-tournament winning odds">{dragonbowlOddsByTeam[name]??'—'}</span>}
-     {known&&name===match.winner&&<Icon name="check" size={15}/>}
+     {(known||planned)&&name===match.winner&&<Icon name="check" size={15}/>}
    </div>)}
    {next&&<div className="dragon-match-bout">CONFIRMED QUARTERFINAL · 5 VS 5</div>}
  </article>;
@@ -595,7 +596,7 @@ function DragonbowlOverview(){
    <section className="container tournament-section" aria-labelledby="dragon-tournament-heading">
      <div className="tournament-head"><Label>DRAGONBOWL XLIX · BENEATH MOUNT WATERDEEP</Label>
        <h2 id="dragon-tournament-heading">The road to <em>glory.</em></h2>
-       <p>Sixteen teams entered the Blood Games. One Green Iguanas victory is confirmed, and their next opponent is already on the board. Every other result stays open until the table establishes what happened.</p>
+       <p>Sixteen teams entered the Blood Games. The Iguanas beat Cackle Crew and face Dandy War Dolls next. The remaining bracket shows the DM's planned path: Twisted Firestarters in the semifinals and Ghostmakers in the championship. Planned winners and future pairings are not played results.</p>
      </div>
      <div className="tournament-highlights">
        <div><span>LAST CONFIRMED VICTORY</span><strong>Green Iguanas over Cackle Crew</strong><small>Round of 16 · Played</small></div>
@@ -604,7 +605,7 @@ function DragonbowlOverview(){
      </div>
      <div className="dragon-bracket-head">
        <div><span className="dragon-bracket-kicker">SINGLE ELIMINATION · 16 TEAMS</span><h3>Championship Bracket</h3></div>
-       <div className="dragon-bracket-legend"><span><i className="dragon-legend-final"/>Played result</span><span><i className="dragon-legend-next"/>Known next bout</span><span><i className="dragon-legend-pending"/>Awaiting confirmation</span></div>
+       <div className="dragon-bracket-legend"><span><i className="dragon-legend-final"/>Played result</span><span><i className="dragon-legend-next"/>Known next bout</span><span><i className="dragon-legend-pending"/>DM picks / projected</span></div>
      </div>
      <div className="dragon-round-shortcuts" aria-label="Jump between tournament rounds">{dragonbowlBracket.map(round=>
         <button type="button" key={round.id} onClick={()=>openRound(round.id)} className={activeRound===round.id?'active':''} aria-label={'Show '+round.title}>{round.title}</button>
@@ -620,7 +621,7 @@ function DragonbowlOverview(){
        </div>
      </div>
      <div className="dragon-bracket-notes">
-       <div><Icon name="shield" size={19}/><p><strong>What is confirmed:</strong> the Green Iguanas defeated Cackle Crew, then drew a known quarterfinal against Dandy War Dolls. A listed opening pairing does not prove its fight has been played or won.</p></div>
+       <div><Icon name="shield" size={19}/><p><strong>Confirmed vs planned:</strong> the Green Iguanas defeated Cackle Crew and face Dandy War Dolls next. Other advancing teams are DM-selected bracket outcomes, not independently verified played victories. The Twisted Firestarters semifinal and Ghostmakers championship are contingent on future results.</p></div>
        <div><Icon name="coins" size={19}/><p><strong>About the odds:</strong> the small ratios beside Round One teams are their original <em>whole-tournament winner odds</em>, not single-bout prices. Green Iguanas opened at <strong>100:1</strong>; bets retain their purchase odds.</p></div>
      </div>
    </section>
