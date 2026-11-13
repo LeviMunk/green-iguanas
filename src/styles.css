@@ -2144,3 +2144,26 @@
 .dragon-bracket-match--projected{border-color:rgba(206,177,110,.48)}
 .dragon-bracket-match--projected .dragon-match-state{color:#dfc088}
 @media(max-width:700px){.dragon-quarterfinal-summary-grid{grid-template-columns:1fr}.dragon-quarterfinal-summary{margin:26px 0 20px}}
+
+
+/* Player-facing bracket: two actual rounds only, with no future path exposed. */
+.dragon-bracket-board.dragon-bracket-board--public{
+ grid-template-columns:repeat(2,minmax(285px,1fr));
+ min-width:650px;
+ gap:34px;
+}
+.dragon-bracket-board--public .dragon-bracket-round{grid-template-rows:73px repeat(8,121px)}
+.dragon-bracket-board--public .dragon-bracket-round--quarterfinals .dragon-bracket-slot{align-self:stretch}
+.dragon-bracket-board--public .dragon-bracket-round--quarterfinals .dragon-bracket-match{margin:auto 0}
+.dragon-bracket-board--public .dragon-bracket-round--round-of-16 .dragon-bracket-slot::after{width:34px}
+.dragon-bracket-board--public .dragon-bracket-round--round-of-16 .dragon-bracket-slot:nth-of-type(2n)::before{
+ content:'';position:absolute;right:-18px;top:50%;
+ height:calc(100% + 13px);border-right:1px solid rgba(188,163,107,.35);
+}
+.dragon-bracket-board--public .dragon-bracket-round--round-of-16 .dragon-bracket-slot:nth-of-type(2n+1)::before{display:none}
+@media(max-width:980px){
+ .dragon-bracket-board.dragon-bracket-board--public{grid-template-columns:repeat(2,minmax(285px,1fr));min-width:650px}
+}
+@media(max-width:640px){
+ .dragon-bracket-board.dragon-bracket-board--public{grid-template-columns:repeat(2,minmax(265px,1fr));min-width:590px;gap:27px}
+}
