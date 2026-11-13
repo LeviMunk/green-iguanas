@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { characters, storyChapters, type Character } from './data/campaign';
-import { dragonbowlBracket, dragonbowlFacts } from './data/dragonbowl';
+import { dragonbowlBracket, dragonbowlFacts, dragonbowlOddsByTeam, type BracketMatch, type BracketRound } from './data/dragonbowl';
 import { demoRolls } from './data/demo';
 import { summarize, validateEvents, type RollEvent } from './lib/dice';
 import { useCampaignContent } from './lib/content';
@@ -563,6 +563,24 @@ function AdventurePage({id}:{id:string}){
  </main>;
 }
 
+function DragonbowlMatch({match,round}:{match:BracketMatch;round:BracketRound['id']}) {
+ const played=match.status==='final';
+ const next=match.status==='upcoming';
+ return <article className={['dragon-bracket-match','dragon-bracket-match--'+match.status,match.teamA==='THE GREEN IGUANAS'?'dragon-bracket-match--iguana':''].join(' ')} aria-label={match.teamA+' versus '+match.teamB}>
+   <div className="dragon-bracket-match-head">
+     <span className="dragon-match-state">{played?'FINAL':next?'UP NEXT':round==='quarterfinals'?'MATCHUP SET':'RESULT UNVERIFIED'}</span>
+     <span className="dragon-match-id">{match.id.replaceAll('-',' ').toUpperCase()}</span>
+   </div>
+   {[match.teamA,match.teamB].map((name,i)=><div key={i} className={['dragon-match-team',name==='THE GREEN IGUANAS'?'is-iguana':'',played&&name===match.winner?'is-winner':''].filter(Boolean).join(' ')}>
+     <span className="dragon-match-team-mark" aria-hidden="true">{name==='THE GREEN IGUANAS'?'✦':'◈'}</span>
+     <span className="dragon-match-team-name">{name}</span>
+     {round==='round-of-16'&&name&&<span className="dragon-team-odds" title="Opening tournament odds">{dragonbowlOddsByTeam[name]??'—'}</span>}
+     {played&&name===match.winner&&<Icon name="check" size={15}/>}
+   </div>)}
+   {next&&<div className="dragon-match-bout">CONFIRMED QUARTERFINAL · 5 VS 5</div>}
+ </article>;
+}
+
 function DragonbowlOverview(){
  return <div className="dragon-tournament">
    <section className="container tournament-section" aria-labelledby="dragon-tournament-heading">
@@ -574,6 +592,20 @@ function DragonbowlOverview(){
        <div><span>LAST CONFIRMED VICTORY</span><strong>Green Iguanas over Cackle Crew</strong><small>Round of 16 · Played</small></div>
        <div><span>NEXT ESTABLISHED BOUT</span><strong>Dandy War Dolls</strong><small>Quarterfinal · 5 vs 5 · Not yet played</small></div>
        <div><span>CHAMPION'S PRIZE</span><strong>{dragonbowlFacts.prize}</strong><small>Plus Platinum Dragonbowl Rings</small></div>
+     </div>
+     <div className="dragon-bracket-head">
+       <div><span className="dragon-bracket-kicker">SINGLE ELIMINATION · 16 TEAMS</span><h3>Championship Bracket</h3><p>Opening round and quarterfinals only. Later rounds will be revealed as the tournament progresses.</p></div>
+       <div className="dragon-bracket-legend"><span><i className="dragon-legend-final"/>Played victory</span><span><i className="dragon-legend-next"/>Up next</span><span><i className="dragon-legend-pending"/>Matchup set / unverified</span></div>
+     </div>
+     <div className="dragon-bracket-viewport" role="region" tabIndex={0} aria-label="Tournament bracket, showing Round of 16 leading into the four quarterfinal matchups">
+       <div className="dragon-bracket-board dragon-bracket-board--public">
+         {dragonbowlBracket.map((round,index)=><section key={round.id} data-round={round.id} className={'dragon-bracket-round dragon-bracket-round--'+round.id} aria-labelledby={'dragon-round-'+round.id}>
+           <header className="dragon-bracket-round-head"><span>0{index+1} / 02</span><div><h4 id={'dragon-round-'+round.id}>{round.title}</h4><small>{round.subtitle}</small></div></header>
+           {round.matches.map((match,i)=>{const span=2**index;return <div className="dragon-bracket-slot" key={match.id} style={{gridRow:`${2+i*span} / span ${span}`}}>
+              <DragonbowlMatch match={match} round={round.id}/>
+           </div>})}
+         </section>)}
+       </div>
      </div>
      <div className="dragon-quarterfinal-summary" aria-label="All four Dragonbowl quarterfinal matchups">
        <div className="dragon-quarterfinal-summary-header"><span>THE FINAL EIGHT</span><h3>Quarterfinal matchups</h3><p>The final eight are set. No quarterfinal winners have been decided.</p></div>
