@@ -47,6 +47,9 @@ test('player-facing app does not reveal semifinals, finalists, or DM predictions
  const page=readFileSync(new URL('../src/App.tsx',import.meta.url),'utf8');
  const publicBracket=readFileSync(new URL('../src/data/dragonbowl.ts',import.meta.url),'utf8');
  assert.match(page,/Quarterfinal matchups/);
+ assert.match(page,/dragon-bracket-board--public/);
+ assert.match(page,/dragonbowlBracket\.map\(/);
+ assert.match(page,/DragonbowlMatch match=/);
  assert.doesNotMatch(page,/DM PICK|DM's planned path|Projected advancement|Twisted Firestarters in the semifinals|Ghostmakers in the championship/);
  assert.doesNotMatch(publicBracket,/sf-green|final-green|DM-planned|planned winner/i);
 });
