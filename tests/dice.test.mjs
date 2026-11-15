@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { validateEvents, summarize } from '../src/lib/dice.ts';
+import { demoRolls } from '../src/data/demo.ts';
 const valid = {
   schema_version:'1.0', event_id:'test-1', source:'tableos', occurred_at:'2026-11-09T18:30:00Z',
   campaign_external_id:'green-iguanas', session_external_id:null,character_external_id:'bobby-kills',
@@ -22,3 +23,10 @@ test('counts explicit critical hits separately from natural 20s',()=>{
  assert.equal(summary.confirmedCrits,0);
 });
 test('rejects forged attacks with critical flag on checks',()=>assert.throws(()=>validateEvents([{...valid,roll_type:'saving_throw',critical_hit:true}]),/attack rolls/));
+test('keeps the synthetic public demo feed separate and schema-valid',()=>{
+ assert.equal(demoRolls.length,125);
+ assert.equal(validateEvents(demoRolls).length,125);
+ assert.ok(demoRolls.every(e=>e.event_id.startsWith('demo:')&&e.source==='synthetic-demo'&&e.visibility==='public'));
+ assert.deepEqual([...new Set(demoRolls.map(e=>e.character_external_id))].sort(),['bobby-kills','freed','heilbrun','indigo','owen']);
+ assert.ok(summarize(demoRolls).natural20s>0&&summarize(demoRolls).natural1s>0);
+});
