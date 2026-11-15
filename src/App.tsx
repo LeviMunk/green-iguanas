@@ -271,7 +271,7 @@ function CharacterSheetPanel({character}:{character:Character}) {
   </div>;
 }
 function CharacterDicePanel({character}:{character:Character}) {
-  const {events,loading,error}=usePublishedRolls();
+  const {events,loading,error,demonstration}=usePublishedRolls();
   const {content}=useCampaignContent();
   const rolls=useMemo(()=>characterRolls(events,character.id),[events,character.id]);
   const stats=useMemo(()=>summarize(rolls),[rolls]);
@@ -280,7 +280,7 @@ function CharacterDicePanel({character}:{character:Character}) {
   const played=content.achievements.filter(a=>a.characterId===character.id);
   return <div className="character-chronicle">
     <Label>GAME LOG · CHARACTER RECORD</Label><h2>Dice & <em>achievements.</em></h2>
-    <p className="body-muted">RollWarden-inspired personal history: raw die faces, modifiers, totals, memorable rolls and trophies. Only published, validated game events count. No unverified luck ratings or fabricated statistics.</p>
+    <p className="body-muted">{demonstration?'DEMO DATA: fictional test rolls power these sample counters and dice trophies. They are not campaign history or permanent achievements.':'RollWarden-inspired personal history: raw die faces, modifiers, totals, memorable rolls and trophies. Only published, validated game events count. No unverified luck ratings or fabricated statistics.'}</p>
     <div className="character-dice-stats">{[
       ['D20 FACES',stats.d20s],['NATURAL 20S',stats.natural20s],
       ['NATURAL 1S',stats.natural1s],['AVG RAW D20',stats.average===null?'—':stats.average.toFixed(2)],
@@ -288,12 +288,12 @@ function CharacterDicePanel({character}:{character:Character}) {
     ].map(([label,value])=><div key={label}><span>{label}</span><strong>{loading?'…':value}</strong></div>)}</div>
     {error&&<p role="alert" className="dice-import-notice">Published roll feed unavailable: {error}</p>}
     {!loading&&rolls.length===0&&<p className="dice-import-notice">No verified dice events have been published for {character.name} yet. These counters describe the published archive, not everything rolled at the table.</p>}
-    <div className="record-heading"><h3>The trophy case</h3><span>{played.length+trophies.filter(t=>t.unlocked).length} UNLOCKED</span></div>
+    <div className="record-heading"><h3>{demonstration?'Demo trophy case':'The trophy case'}</h3><span>{demonstration?'DEMO ONLY':played.length+trophies.filter(t=>t.unlocked).length+' UNLOCKED'}</span></div>
     <div className="character-award-grid">
       {played.map(a=><article className="character-award is-unlocked" key={a.id}><span>✦ PLAYED STORY MILESTONE</span><h4>{a.title}</h4><p>{a.description}</p><small>CONFIRMED IN PLAY</small></article>)}
-      {trophies.map(t=><article className={'character-award '+(t.unlocked?'is-unlocked':'is-locked')} key={t.id}><span>{t.unlocked?'✦ DICE TROPHY':'◇ LOCKED DICE TROPHY'}</span><h4>{t.title}</h4><p>{t.description}</p><small>{t.unlocked?'UNLOCKED · '+new Date(t.unlockedAt as string).toLocaleDateString():Math.min(t.current,t.target)+' / '+t.target+' VERIFIED'}</small></article>)}
+      {trophies.map(t=><article className={'character-award '+(t.unlocked?'is-unlocked':'is-locked')} key={t.id}><span>{t.unlocked?(demonstration?'✦ DEMO DICE TROPHY':'✦ DICE TROPHY'):'◇ LOCKED DICE TROPHY'}</span><h4>{t.title}</h4><p>{t.description}</p><small>{t.unlocked?(demonstration?'DEMO UNLOCKED':'UNLOCKED · '+new Date(t.unlockedAt as string).toLocaleDateString()):Math.min(t.current,t.target)+' / '+t.target+' VERIFIED'}</small></article>)}
     </div>
-    <div className="record-heading"><h3>Personal Game Log</h3><span>{rolls.length} VERIFIED EVENTS</span></div>
+    <div className="record-heading"><h3>Personal Game Log</h3><span>{rolls.length} {demonstration?'DEMO':'VERIFIED'} EVENTS</span></div>
     {rolls.length?<div className="character-roll-list">{rolls.slice(0,12).map(e=>{
       const raw=e.dice.filter(d=>d.sides===20&&d.kept).map(d=>d.face);
       return <div className="character-roll-row" key={e.event_id}><div><strong>{e.roll_type.replaceAll('_',' ')}</strong><small>{new Date(e.occurred_at).toLocaleString()}</small></div><span>RAW {raw.join('/')||'—'} · MOD {e.modifier_total>=0?'+':''}{e.modifier_total}</span><strong>{e.total}</strong></div>;

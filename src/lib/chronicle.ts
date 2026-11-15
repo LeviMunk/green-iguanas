@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { summarize, validateEvents, type RollEvent } from './dice.ts';
+import { demoRolls } from '../data/demo.ts';
 
 export type DiceTrophy = {
   id: string;
@@ -30,13 +31,13 @@ export function usePublishedRolls() {
       .then(raw=>{
         const checked=validateEvents(raw);
         if(checked.some(e=>e.visibility!=='public'))throw new Error('Roll feed contains non-public entries');
-        if(active){setEvents(checked);setError('');}
+        if(active){setEvents(checked.length?checked:demoRolls);setError('');}
       })
-      .catch(e=>{if(active)setError(e instanceof Error?e.message:'Unable to read the roll archive')})
+      .catch(e=>{if(active){setEvents(demoRolls);setError(e instanceof Error?e.message:'Unable to read the roll archive')}})
       .finally(()=>{if(active)setLoading(false)});
     return()=>{active=false};
   },[]);
-  return {events,loading,error};
+  return {events,loading,error,demonstration:events.length>0&&events.every(e=>e.source==='synthetic-demo')};
 }
 
 export function characterRolls(events: RollEvent[], characterId:string):RollEvent[]{

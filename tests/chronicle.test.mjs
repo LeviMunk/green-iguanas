@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {diceTrophies,characterRolls,rollNights} from '../src/lib/chronicle.ts';
+import {demoRolls} from '../src/data/demo.ts';
 const roll=(id,character,face,day,critical=false)=>({
  schema_version:'1.0',event_id:id,source:'tableos',occurred_at:day,
  campaign_external_id:'green-iguanas',session_external_id:'test-session',
@@ -34,4 +35,9 @@ test('character roll history ignores other characters and sorts newest first',()
 test('play-day grouping uses UTC dates and preserved events',()=>{
  const days=rollNights([a,b,c]);
  assert.deepEqual(days.map(x=>[x.date,x.rolls]),[['2026-11-02',2],['2026-11-01',1]]);
+});
+test('synthetic demo rolls unlock only derived demo trophies',()=>{
+ const badges=diceTrophies(demoRolls);
+ assert.ok(badges.some(x=>x.unlocked));
+ assert.ok(demoRolls.every(x=>x.source==='synthetic-demo'));
 });
