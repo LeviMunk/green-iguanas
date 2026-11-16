@@ -2170,3 +2170,21 @@
 @media(max-width:640px){
  .dragon-bracket-board.dragon-bracket-board--public{grid-template-columns:repeat(2,minmax(265px,1fr));min-width:590px;gap:27px}
 }
+
+
+/* Collapsible lifetime combat analytics detail sections */
+.combat-disclosure{padding:0;overflow:hidden}
+.combat-disclosure>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;list-style:none;padding:20px 24px;color:#f0e2c2}
+.combat-disclosure>summary::-webkit-details-marker{display:none}
+.combat-disclosure>summary strong{font:400 25px var(--display)}
+.combat-disclosure>summary span{font-size:11px;color:#adbaac;text-align:right}
+.combat-disclosure>summary::after{content:"+";font:400 26px var(--display);color:#d6ba83;flex-shrink:0}
+.combat-disclosure[open]>summary::after{content:"−"}
+.combat-disclosure>summary:hover,.combat-disclosure>summary:focus-visible{background:#1b3024}
+.combat-disclosure>summary:focus-visible{outline:2px solid #d6ba83;outline-offset:-3px}
+.combat-disclosure>.combat-filters,.combat-disclosure>.combat-action-list,.combat-disclosure>.combat-event-list,.combat-disclosure>.body-muted,.combat-disclosure>.combat-unavailable{margin-left:24px;margin-right:24px}
+.combat-disclosure>.combat-action-list,.combat-disclosure>.combat-event-list{margin-bottom:20px}
+.combat-disclosure>.combat-filters{flex-wrap:wrap}
+.combat-disclosure>.combat-filters label{flex:1 1 150px;min-width:0}
+.combat-disclosure>.combat-filters select{min-width:0;width:100%;max-width:100%}
+@media(max-width:650px){.combat-disclosure>summary{padding:17px;flex-wrap:wrap}.combat-disclosure>summary strong{font-size:22px}.combat-disclosure>summary span{flex:1 1 100%;text-align:left;order:3}.combat-disclosure>.combat-filters,.combat-disclosure>.combat-action-list,.combat-disclosure>.combat-event-list,.combat-disclosure>.body-muted,.combat-disclosure>.combat-unavailable{margin-left:16px;margin-right:16px}}
