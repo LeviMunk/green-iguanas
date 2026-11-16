@@ -44,9 +44,11 @@ export function usePublishedCombatAnalytics(){
 
 export function combatSummary(events:CombatAnalyticsEvent[]){
   const attacks=events.filter(e=>e.attack); const damages=events.filter(e=>e.damage);
+  const attackTotals=attacks.map(e=>e.attack?.total??0), damageTotals=damages.map(e=>e.damage?.total??0);
+  const selectedD20=attacks.flatMap(e=>e.attack?.dice.filter(d=>d.selected&&d.sides===20).map(d=>d.face)??[]);
   const actions=new Map<string,{uses:number;damage:number[]}>();
   for(const e of events){if(!e.action)continue;const row=actions.get(e.action)??{uses:0,damage:[]};if(e.attack)row.uses++;if(e.damage)row.damage.push(e.damage.total);actions.set(e.action,row);}
-  return {attacks:attacks.length, damages:damages.length, checks:events.filter(e=>e.kind==='ability_check').length, saves:events.filter(e=>e.kind==='saving_throw').length, criticals:attacks.filter(e=>e.attack?.critical===true).length, outcomes:attacks.filter(e=>e.outcome!==null).length, effective:damages.filter(e=>e.effective_damage!==null).length,
+  return {attacks:attacks.length, damages:damages.length, checks:events.filter(e=>e.kind==='ability_check').length, saves:events.filter(e=>e.kind==='saving_throw').length, natural20s:selectedD20.filter(x=>x===20).length,natural1s:selectedD20.filter(x=>x===1).length,averageAttack:attackTotals.length?attackTotals.reduce((a,b)=>a+b,0)/attackTotals.length:null,totalDamage:damageTotals.reduce((a,b)=>a+b,0),highestDamage:damageTotals.length?Math.max(...damageTotals):null,averageDamage:damageTotals.length?damageTotals.reduce((a,b)=>a+b,0)/damageTotals.length:null, criticals:attacks.filter(e=>e.attack?.critical===true).length, outcomes:attacks.filter(e=>e.outcome!==null).length, effective:damages.filter(e=>e.effective_damage!==null).length,
     actions:[...actions.entries()].map(([name,value])=>({name,...value,totalDamage:value.damage.reduce((a,b)=>a+b,0),highestDamage:value.damage.length?Math.max(...value.damage):null,averageDamage:value.damage.length?value.damage.reduce((a,b)=>a+b,0)/value.damage.length:null})).sort((a,b)=>b.uses-a.uses||b.totalDamage-a.totalDamage||a.name.localeCompare(b.name)),
     sessions:[...new Set(events.map(e=>e.session_id).filter((x):x is string=>!!x))].sort()};
 }
