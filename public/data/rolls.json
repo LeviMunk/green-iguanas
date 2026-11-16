@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "schema_version": "1.0",
+    "event_id": "tableos:ddb:rehearsal:fictional-001",
+    "source": "tableos-dndbeyond-game-log",
+    "occurred_at": "2026-11-22T20:00:00Z",
+    "campaign_external_id": "green-iguanas",
+    "session_external_id": "rehearsal",
+    "character_external_id": "bobby-kills",
+    "roll_type": "attack",
+    "dice": [
+      {
+        "sides": 20,
+        "face": 20,
+        "kept": true
+      }
+    ],
+    "modifier_total": 4,
+    "total": 24,
+    "critical_hit": true,
+    "visibility": "public"
+  }
+]

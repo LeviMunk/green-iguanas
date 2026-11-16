@@ -1,1 +1,32 @@
-{"schema_version":"1.0","events":[]}
+{
+  "schema_version": "1.0",
+  "events": [
+    {
+      "schema_version": "1.0",
+      "analytics_event_id": "tableos:analytics:rehearsal:fictional-001",
+      "source_event_id": "rehearsal:fictional-001",
+      "occurred_at": "2026-11-22T20:00:00Z",
+      "session_id": "rehearsal",
+      "character_id": "bobby-kills",
+      "action": "Rehearsal Action",
+      "outcome": null,
+      "target": null,
+      "effective_damage": null,
+      "kind": "attack",
+      "attack": {
+        "total": 24,
+        "modifier": 4,
+        "mode": "normal",
+        "dice": [
+          {
+            "sides": 20,
+            "face": 20,
+            "selected": true
+          }
+        ],
+        "critical": true
+      },
+      "damage": null
+    }
+  ]
+}
