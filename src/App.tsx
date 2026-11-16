@@ -5,6 +5,7 @@ import { demoRolls } from './data/demo';
 import { summarize, validateEvents, type RollEvent } from './lib/dice';
 import { useCampaignContent } from './lib/content';
 import { characterRolls, diceTrophies, rollNights, usePublishedRolls } from './lib/chronicle';
+import { combatSummary, usePublishedCombatAnalytics, type CombatAnalyticsEvent } from './lib/combat-analytics';
 
 type Glyph = 'arrow'|'arrow-up'|'chevron'|'compass'|'book'|'dice'|'shield'|'users'|'spark'|'crown'|'hourglass'|'lock'|'menu'|'close'|'search'|'plus'|'scroll'|'download'|'upload'|'feather'|'trophy'|'external'|'moon'|'check'|'filter'|'swords'|'user'|'coins';
 function Icon({name, size=20}: {name:Glyph; size?:number}) {
@@ -302,6 +303,25 @@ function CharacterDicePanel({character}:{character:Character}) {
     <div className="centered"><Action href={'#/dice?character='+encodeURIComponent(character.id)} variant="outline">Open full Dice Chronicle</Action></div>
   </div>;
 }
+function CombatAnalyticsPanel({characterId}:{characterId?:string}){
+ const {events,loading,error,demonstration}=usePublishedCombatAnalytics();
+ const [session,setSession]=useState('all'); const [action,setAction]=useState('all');
+ const visible=useMemo(()=>events.filter(e=>(!characterId||e.character_id===characterId)&&(session==='all'||e.session_id===session)&&(action==='all'||e.action===action)),[events,characterId,session,action]);
+ const summary=useMemo(()=>combatSummary(visible),[visible]);
+ const allSummary=useMemo(()=>combatSummary(events.filter(e=>!characterId||e.character_id===characterId)),[events,characterId]);
+ return <section className="combat-dashboard" aria-label="Combat analytics">
+  <div className="record-heading"><div><Label>{demonstration?'DEMO DATA · FICTIONAL FACTS':'AUTHORIZED COMBAT FACTS'}</Label><h3>Combat <em>ledger.</em></h3></div><span>{loading?'LOADING':visible.length+' EVENTS'}</span></div>
+  <p className="body-muted">{demonstration?'DEMO DATA: fictional combat facts demonstrate the interface only; they are not campaign history. Attack and damage events remain separate.':'Only authorized public facts appear here. An attack is not treated as a hit because damage exists nearby.'}</p>
+  <div className="combat-filters"><label><span>SESSION</span><select value={session} onChange={e=>setSession(e.target.value)}><option value="all">All sessions</option>{allSummary.sessions.map(x=><option value={x} key={x}>{x}</option>)}</select></label><label><span>ACTION</span><select value={action} onChange={e=>setAction(e.target.value)}><option value="all">All actions</option>{allSummary.actions.map(x=><option value={x.name} key={x.name}>{x.name}</option>)}</select></label></div>
+  {error&&<p role="alert" className="dice-import-notice">Combat analytics feed unavailable: {error}. Showing fictional demo data.</p>}
+  <div className="combat-stat-grid">{[
+   ['ATTACKS',summary.attacks],['DAMAGE ROLLS',summary.damages],['CONFIRMED CRITS',summary.criticals],['OUTCOMES',summary.outcomes||'—'],['EFFECTIVE DAMAGE',summary.effective||'—']
+  ].map(([label,value])=><div key={String(label)}><span>{label}</span><strong>{value}</strong></div>)}</div>
+  <div className="combat-columns"><div className="combat-panel"><Label>FAVORITE ACTIONS</Label><h4>Use & <em>damage.</em></h4>{summary.actions.length?<div className="combat-action-list">{summary.actions.slice(0,6).map(row=><div key={row.name}><strong>{row.name}</strong><span>{row.uses} attacks · {row.damage.length?`${row.averageDamage?.toFixed(1)} avg / ${row.totalDamage} total / ${row.highestDamage} high`:'no damage facts'}</span></div>)}</div>:<EmptyState glyph="swords" heading="No matching actions" detail="Adjust the session or action filters."/>}</div>
+   <div className="combat-panel"><Label>SESSION PERFORMANCE</Label><h4>Across the <em>table.</em></h4><div className="combat-session-list">{summary.sessions.map(id=>{const group=visible.filter(e=>e.session_id===id);const s=combatSummary(group);return <div key={id}><strong>{id}</strong><span>{group.length} events · {s.attacks} attacks · {s.damages} damage rolls</span></div>})}</div></div></div>
+  <div className="combat-panel combat-history"><Label>RECENT COMBAT FACTS</Label><h4>What was <em>recorded.</em></h4>{visible.length?<div className="combat-event-list">{[...visible].sort((a,b)=>b.occurred_at.localeCompare(a.occurred_at)).slice(0,10).map((e:CombatAnalyticsEvent)=><div key={e.analytics_event_id}><div><strong>{e.action??e.kind.replaceAll('_',' ')}</strong><span>{new Date(e.occurred_at).toLocaleDateString()} · {e.kind.replaceAll('_',' ')}</span></div><span>{e.attack?`Attack ${e.attack.total} (${e.attack.mode})`:e.damage?`${e.damage.total} ${e.damage.type??'damage'} · unlinked`:'No roll total published'}</span></div>)}</div>:<EmptyState glyph="scroll" heading="No combat facts" detail="No authorized combat events match these filters."/>}<p className="combat-unavailable">Hit rate, target identity/AC, and effective damage: unavailable unless TableOS records a verified combat outcome.</p></div>
+ </section>;
+}
 const dossierThemes:Record<string,{accent:string;highlight:string;deep:string;mid:string;ink:string}>={
  'bobby-kills':{accent:'#d9a063',highlight:'#f4c88a',deep:'#170e0b',mid:'#422618',ink:'#1d120f'},
  indigo:{accent:'#e5b968',highlight:'#ffe0a0',deep:'#0d0c24',mid:'#30214b',ink:'#17122f'},
@@ -404,7 +424,7 @@ function CharacterPage({id}:{id:string}){
      </div>
      <p className="character-story-art-disclaimer">Illustrations are artistic interpretations; undocumented events remain unconfirmed.</p>
     </div>
-   </div>:tab==='chronicle'?<CharacterDicePanel character={character}/>:<CharacterSheetPanel character={character}/>}
+   </div>:tab==='chronicle'?<><CharacterDicePanel character={character}/><CombatAnalyticsPanel characterId={character.id}/></>:<CharacterSheetPanel character={character}/>}
   </section>
   <div className="container dossier-next"><span>CONTINUE THE STORY</span><a href={'#/character/'+characters[(characters.indexOf(character)+1)%characters.length].id}>NEXT HERO <strong>{characters[(characters.indexOf(character)+1)%characters.length].name}</strong><Icon name="arrow" size={22}/></a></div>
  </main>;
@@ -436,6 +456,7 @@ function DiceChronicle() {
   <div className="stat-grid">{[{label:'D20 FACES',value:stats.d20s|| (bundle?'0':'—'),note:'Kept d20 results'},{label:'NATURAL 20S',value:bundle?stats.natural20s:'—',note:'Raw faces of 20'},{label:'NATURAL 1S',value:bundle?stats.natural1s:'—',note:'Raw faces of 1'},{label:'AVERAGE RAW D20',value:stats.average===null?'—':stats.average.toFixed(2),note:'Unmodified mean'}].map((s,i)=><div className="stat-card" key={s.label}><div className="stat-head"><span>{s.label}</span><span>0{i+1}</span></div><strong>{s.value}</strong><small>{s.note}</small></div>)}</div>
   <div className="analytics-grid"><div className="analytics-panel"><div className="panel-heading"><div><Label>ROLL DISTRIBUTION</Label><h3>Twenty faces. <em>Endless possibilities.</em></h3></div><span className="panel-index">01 / 02</span></div>{stats.d20s>0?<><div className="distribution" role="img" aria-label="Raw kept d20 face distribution">{stats.distribution.map((count,i)=><div className="bar-column" key={i}><span className="bar-count">{count||''}</span><div className={`bar ${i===0||i===19?'bar-special':''}`} style={{height:`${Math.max(3,(count/Math.max(...stats.distribution))*100)}%`}} title={`Face ${i+1}: ${count} rolls`}/><span className="bar-label">{i+1}</span></div>)}</div><p className="chart-footnote">Based on {stats.d20s} kept raw d20 faces. Advantage/disadvantage discarded dice are excluded. Interpret small samples cautiously.</p></>:<EmptyState glyph="dice" heading="Nothing to chart yet" detail="The face distribution will appear when dice events are loaded."/>}</div>
   <div className="analytics-panel records-panel"><div className="panel-heading"><div><Label>THE LOGBOOK</Label><h3>Roll <em>history.</em></h3></div><span className="panel-index">02 / 02</span></div>{filtered.length?<div className="roll-list">{filtered.slice(0,30).map(e=>{const d=e.dice.find(d=>d.sides===20&&d.kept);return <div className="roll-row" key={e.event_id}><div className={`roll-face ${d?.face===20?'nat20':d?.face===1?'nat1':''}`}>{d?.face??'—'}</div><div className="roll-description"><strong>{characterName(e.character_external_id)}</strong><span>{e.roll_type.replaceAll('_',' ')} · {new Date(e.occurred_at).toLocaleDateString()}</span></div><div className="roll-total"><span>RAW {d?.face??'—'} · MOD {e.modifier_total>=0?'+':''}{e.modifier_total}</span><strong>{e.total}</strong></div></div>})}</div>:<EmptyState glyph="scroll" heading="An empty ledger" detail="No events match the current filters. Import an export or try demonstration data."/>}</div></div>
+  <CombatAnalyticsPanel characterId={character==='all'?undefined:character}/>
   <div className="dice-disclaimer"><Icon name="shield" size={19}/><div><strong>Integrity of the record</strong><p>Imported JSON is validated locally, not authenticated. The production ingestion service will enforce event IDs, role-based permissions, deduplication and signatures. Critical hits are recorded only when explicitly supplied for attack rolls.</p></div></div>
  </section></main>;
 }
